@@ -123,6 +123,12 @@ public class AnsiSDKLib {
 
     private final int kDefaultDeviceInstance = 0;
 
+    private int m_ImageWidth;
+    private int m_ImageHeight;
+    private long m_hDevice;
+    private long m_glbIoCtxRef;
+    private int m_ErrorCode;
+
     public AnsiSDKLib() {
         m_hDevice = 0;
         m_glbIoCtxRef = 0;
@@ -200,11 +206,4 @@ public class AnsiSDKLib {
     static {
         System.loadLibrary("ftrAnsiSDKAndroidJni");
     }
-
-    private int m_ImageWidth;
-    private int m_ImageHeight;
-    private long m_hDevice;
-    private long m_glbIoCtxRef;
-    private int m_ErrorCode;
-
 }
