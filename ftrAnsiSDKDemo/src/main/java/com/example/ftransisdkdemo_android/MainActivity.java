@@ -144,6 +144,7 @@ public class MainActivity extends Activity {
         // Get database folder
         try {
             mDbDir = GetDatabaseDir();
+            Log.d(TAG, "onCreate: mDbDir = " + mDbDir);
         } catch (AppException e) {
             Toast.makeText(getApplicationContext(), "Initialization failed. Application will be close.\nError description: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
@@ -481,7 +482,7 @@ public class MainActivity extends Activity {
                 }
 
                 byte[] img_buffer = new byte[ansi_lib.GetImageSize()];
-                Log.d(TAG, "run: img_buffer = " + img_buffer);
+                Log.d(TAG, "run: img_buffer size = " + img_buffer.length);
 
                 for (; ; ) {
                     if (IsCanceled()) {
