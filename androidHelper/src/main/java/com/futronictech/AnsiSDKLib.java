@@ -14,14 +14,17 @@ public class AnsiSDKLib {
      */
     public native boolean FillImageSize();
 
-    public native boolean IsFingerPresent();
-
     /**
      * 采集指纹
      *
      * @param pImage 保存指纹图片数据的数组
      */
     public native boolean CaptureImage(byte[] pImage);
+
+    /**
+     * 获取模板数据的最大值
+     */
+    public native int GetMaxTemplateSize();
 
     /**
      * 创建模板
@@ -52,12 +55,17 @@ public class AnsiSDKLib {
      */
     public native boolean MatchTemplates(byte[] pProbeTemplate, byte[] pGaleryTemplate, float[] pMatchResult);
 
+    /**
+     * 将ansi的模板转换成iso的模板
+     *
+     * @param pAnsiTemplate
+     * @param pIsoTemplate
+     * @param pIsoTemplateSize
+     * @return
+     */
     public native boolean ConvertAnsiTemplateToIso(byte[] pAnsiTemplate, byte[] pIsoTemplate, int[] pIsoTemplateSize);
 
-    /**
-     * 获取模板数据的最大值
-     */
-    public native int GetMaxTemplateSize();
+    public native boolean IsFingerPresent();
 
     // error code
     static public final int FTR_ANSISDK_ERROR_NO_ERROR = 0;
