@@ -33,43 +33,38 @@ public class UsbDeviceDataExchangeImpl {
     public static final int MESSAGE_ALLOW_DEVICE = 255;
     public static final int MESSAGE_DENY_DEVICE = 256;
 
+    private final BroadcastReceiver mUsbReceiver;
     private PendingIntent mPermissionIntent = null;
 
     private byte[] max_transfer_buffer = new byte[transfer_buffer_size];
-
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (ACTION_USB_PERMISSION.equals(action)) {
-                synchronized (mPermissionIntent) {
-                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if (device != null) {
-                            usb_ctx = OpenDevice(device);
-                        }
-                        handler.obtainMessage(MESSAGE_ALLOW_DEVICE).sendToTarget();
-                    } else {
-                        handler.obtainMessage(MESSAGE_DENY_DEVICE).sendToTarget();
-                    }
-                }
-            }
-        }
-    };
 
     public UsbDeviceDataExchangeImpl(Context ctx, Handler trg_handler) {
         context = ctx;
         handler = trg_handler;
 
+        mUsbReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ACTION_USB_PERMISSION.equals(action)) {
+                    synchronized (mPermissionIntent) {
+                        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            if (device != null) {
+                                usb_ctx = OpenDevice(device);
+                            }
+                            handler.obtainMessage(MESSAGE_ALLOW_DEVICE).sendToTarget();
+                        } else {
+                            handler.obtainMessage(MESSAGE_DENY_DEVICE).sendToTarget();
+                        }
+                    }
+                }
+            }
+        };
+
         mDevManager = (UsbManager) ctx.getSystemService(Context.USB_SERVICE);
         mPermissionIntent = PendingIntent.getBroadcast(ctx, 0, new Intent(ACTION_USB_PERMISSION), 0);
-
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         context.registerReceiver(mUsbReceiver, filter);
-    }
-
-    public void Destroy() {
-        context.unregisterReceiver(mUsbReceiver);
     }
 
     /**
@@ -122,6 +117,73 @@ public class UsbDeviceDataExchangeImpl {
         }
     }
 
+    /**
+     * 判断是否是需要的设备
+     *
+     * @param idVendor  厂商ID
+     * @param idProduct 产品ID
+     */
+    public static boolean IsFutronicDevice(int idVendor, int idProduct) {
+        boolean res = false;
+        if ((idVendor == 0x0834 && idProduct == 0x0020)
+                || (idVendor == 0x0958 && idProduct == 0x0307)
+                || (idVendor == 0x1491 && (idProduct == 0x0020
+                || idProduct == 0x0025
+                || idProduct == 0x0088
+                || idProduct == 0x0090
+                || idProduct == 0x0050
+                || idProduct == 0x0060
+                || idProduct == 0x0098
+                || idProduct == 0x8098
+                || idProduct == 0x9860))
+                || (idVendor == 0x1FBA && (idProduct == 0x0013 || idProduct == 0x0012))) {
+            res = true;
+        }
+
+        return res;
+    }
+
+    /**
+     * 真正的打开设备的类
+     *
+     * @param device usb设备
+     * @return
+     */
+    private FTR_USB_DEVICE_INTERNAL OpenDevice(UsbDevice device) {
+        FTR_USB_DEVICE_INTERNAL res = null;
+        UsbInterface intf = device.getInterface(0);
+
+        if (intf != null) {
+            UsbEndpoint readpoint = null;
+            UsbEndpoint writepoint = null;
+            for (int i = 0; i < intf.getEndpointCount(); i++) {
+                if (intf.getEndpoint(i).getDirection() == UsbConstants.USB_DIR_OUT) {
+                    writepoint = intf.getEndpoint(i);
+                }
+
+                if (intf.getEndpoint(i).getDirection() == UsbConstants.USB_DIR_IN) {
+                    readpoint = intf.getEndpoint(i);
+                }
+            }
+
+            if (readpoint != null && writepoint != null) {
+                UsbDeviceConnection connection = mDevManager.openDevice(device);
+                if (connection != null) {
+                    Log.i(log_tag, "Open device: " + device);
+                    res = new FTR_USB_DEVICE_INTERNAL(device, intf, readpoint, writepoint, connection);
+                } else {
+                    Log.e(log_tag, "open device failed: " + device);
+                }
+            } else {
+                Log.e(log_tag, "End points not found in device: " + device);
+            }
+        } else {
+            Log.e(log_tag, "Get interface failed failed in device: " + device);
+        }
+
+        return res;
+    }
+
     public void CloseDevice() {
         synchronized (this) {
             if (usb_ctx != null) {
@@ -135,6 +197,44 @@ public class UsbDeviceDataExchangeImpl {
 
     public boolean IsPendingOpen() {
         return pending_open;
+    }
+
+    public boolean ValidateContext() {
+        synchronized (this) {
+            boolean res = false;
+            if (usb_ctx != null) {
+                res = usb_ctx.mIntf_ != null && usb_ctx.mDevConnetion_ != null && usb_ctx.mReadPoint_ != null && usb_ctx.mWritePoint_ != null;
+            }
+
+            return res;
+        }
+    }
+
+    public void Destroy() {
+        context.unregisterReceiver(mUsbReceiver);
+    }
+
+    public class FTR_USB_DEVICE_INTERNAL {
+        public UsbDevice mDev_;
+        public UsbInterface mIntf_;
+        public UsbEndpoint mReadPoint_;
+        public UsbEndpoint mWritePoint_;
+        public UsbDeviceConnection mDevConnetion_;
+        public boolean mHandleClaimed_;
+
+        public FTR_USB_DEVICE_INTERNAL(
+                UsbDevice mDev,
+                UsbInterface mIntf,
+                UsbEndpoint mReadPoint,
+                UsbEndpoint mWritePoint,
+                UsbDeviceConnection mDevConnetion) {
+            mDev_ = mDev;
+            mIntf_ = mIntf;
+            mReadPoint_ = mReadPoint;
+            mWritePoint_ = mWritePoint;
+            mDevConnetion_ = mDevConnetion;
+            mHandleClaimed_ = false;
+        }
     }
 
     public boolean DataExchange(byte[] out_data, byte[] in_data, int in_time_out, int out_time_out, boolean keep_open, boolean use_max_end_point_size, int trace_level) {
@@ -280,15 +380,8 @@ public class UsbDeviceDataExchangeImpl {
         }
     }
 
-    public boolean ValidateContext() {
-        synchronized (this) {
-            boolean res = false;
-            if (usb_ctx != null) {
-                res = usb_ctx.mIntf_ != null && usb_ctx.mDevConnetion_ != null && usb_ctx.mReadPoint_ != null && usb_ctx.mWritePoint_ != null;
-            }
-
-            return res;
-        }
+    public byte[] getTransferBuffer() {
+        return max_transfer_buffer;
     }
 
     public void DataExchangeEnd() {
@@ -356,128 +449,36 @@ public class UsbDeviceDataExchangeImpl {
         return res;
     }
 
-
-    public static boolean IsFutronicDevice(int idVendor, int idProduct) {
-        boolean res = false;
-        if (
-                (idVendor == 0x0834 && idProduct == 0x0020) ||
-                        (idVendor == 0x0958 && idProduct == 0x0307) ||
-                        (idVendor == 0x1491 &&
-                                (idProduct == 0x0020 ||
-                                        idProduct == 0x0025 ||
-                                        idProduct == 0x0088 ||
-                                        idProduct == 0x0090 ||
-                                        idProduct == 0x0050 ||
-                                        idProduct == 0x0060 ||
-                                        idProduct == 0x0098 ||
-                                        idProduct == 0x8098 ||
-                                        idProduct == 0x9860)) ||
-                        (idVendor == 0x1FBA && (idProduct == 0x0013 || idProduct == 0x0012))
-                ) {
-            res = true;
-        }
-
-        return res;
-    }
-
-    /**
-     * 真正的打开设备的类
-     *
-     * @param device usb设备
-     * @return
-     */
-    private FTR_USB_DEVICE_INTERNAL OpenDevice(UsbDevice device) {
-        FTR_USB_DEVICE_INTERNAL res = null;
-        UsbInterface intf = device.getInterface(0);
-
-        if (intf != null) {
-            UsbEndpoint readpoint = null;
-            UsbEndpoint writepoint = null;
-            for (int i = 0; i < intf.getEndpointCount(); i++) {
-                if (intf.getEndpoint(i).getDirection() == UsbConstants.USB_DIR_OUT) {
-                    writepoint = intf.getEndpoint(i);
-                }
-
-                if (intf.getEndpoint(i).getDirection() == UsbConstants.USB_DIR_IN) {
-                    readpoint = intf.getEndpoint(i);
-                }
-            }
-
-            if (readpoint != null && writepoint != null) {
-                UsbDeviceConnection connection = mDevManager.openDevice(device);
-                if (connection != null) {
-                    Log.i(log_tag, "Open device: " + device);
-                    res = new FTR_USB_DEVICE_INTERNAL(device, intf, readpoint, writepoint, connection);
-                } else {
-                    Log.e(log_tag, "open device failed: " + device);
-                }
-            } else {
-                Log.e(log_tag, "End points not found in device: " + device);
-            }
-        } else {
-            Log.e(log_tag, "Get interface failed failed in device: " + device);
-        }
-
-        return res;
-    }
-
-    public byte[] getTransferBuffer() {
-        return max_transfer_buffer;
-    }
-
     public void setTransferBuffer(byte[] max_transfer_buffer) {
         this.max_transfer_buffer = max_transfer_buffer;
     }
 
-	/*public static void GetInterfaces(Context ctx, byte[] pInterfaceList)
+    /*public static void GetInterfaces(Context ctx, byte[] pInterfaceList)
     {
 		UsbManager DevManager = (UsbManager)ctx.getSystemService(Context.USB_SERVICE);
-		
+
 		HashMap<String, UsbDevice> usb_devs =  DevManager.getDeviceList();
-    	
+
     	Iterator<UsbDevice> deviceIterator = usb_devs.values().iterator();
-    	
+
     	int index = 0;
-    	
+
     	for( index = 0; index < Scanner.FTR_MAX_INTERFACE_NUMBER; index++ )
     	{
     		pInterfaceList[index] = Scanner.FTRSCAN_INTERFACE_STATUS_DISCONNECTED;
     	}
-    	
+
     	index = 0;
-       
+
     	while(deviceIterator.hasNext())
     	{
     	    UsbDevice device = deviceIterator.next();
-    	    
+
     	    if( IsFutronicDevice(device.getVendorId(), device.getProductId()))
     	    {
     	    	pInterfaceList[index] = Scanner.FTRSCAN_INTERFACE_STATUS_CONNECTED;
     	    }
     	}
- 	
+
 	}*/
-
-    public class FTR_USB_DEVICE_INTERNAL {
-        public UsbDevice mDev_;
-        public UsbInterface mIntf_;
-        public UsbEndpoint mReadPoint_;
-        public UsbEndpoint mWritePoint_;
-        public UsbDeviceConnection mDevConnetion_;
-        public boolean mHandleClaimed_;
-
-        public FTR_USB_DEVICE_INTERNAL(
-                UsbDevice mDev,
-                UsbInterface mIntf,
-                UsbEndpoint mReadPoint,
-                UsbEndpoint mWritePoint,
-                UsbDeviceConnection mDevConnetion) {
-            mDev_ = mDev;
-            mIntf_ = mIntf;
-            mReadPoint_ = mReadPoint;
-            mWritePoint_ = mWritePoint;
-            mDevConnetion_ = mDevConnetion;
-            mHandleClaimed_ = false;
-        }
-    }
 }
