@@ -28,8 +28,7 @@ public class UsbDeviceDataExchangeImpl {
     static final int transfer_buffer_size = 1024 * 64;
     static final int transfer_buffer_size_2 = 1024 * 16;
     static final String log_tag = "FUTRONICFTR_J";
-    static final String ACTION_USB_PERMISSION =
-            "com.futronictech.FtrScanDemoActivity.USB_PERMISSION";
+    static final String ACTION_USB_PERMISSION = "com.futronictech.FtrScanDemoActivity.USB_PERMISSION";
 
     public static final int MESSAGE_ALLOW_DEVICE = 255;
     public static final int MESSAGE_DENY_DEVICE = 256;
@@ -44,20 +43,16 @@ public class UsbDeviceDataExchangeImpl {
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (mPermissionIntent) {
-                    UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
+                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (device != null) {
                             usb_ctx = OpenDevice(device);
                         }
-
                         handler.obtainMessage(MESSAGE_ALLOW_DEVICE).sendToTarget();
                     } else {
                         handler.obtainMessage(MESSAGE_DENY_DEVICE).sendToTarget();
                     }
-
                 }
-
             }
         }
     };
@@ -77,29 +72,30 @@ public class UsbDeviceDataExchangeImpl {
         context.unregisterReceiver(mUsbReceiver);
     }
 
+    /**
+     * 搜索所有的设备，并找到正确的打开
+     *
+     * @param instance
+     * @param is_activity_thread
+     * @return
+     */
     public boolean OpenDevice(int instance, boolean is_activity_thread) {
         synchronized (this) {
             if (usb_ctx == null) {
                 pending_open = false;
 
                 HashMap<String, UsbDevice> usb_devs = mDevManager.getDeviceList();
-
                 Iterator<UsbDevice> deviceIterator = usb_devs.values().iterator();
-
                 int index = 0;
-
                 while (deviceIterator.hasNext()) {
                     UsbDevice device = deviceIterator.next();
-
                     if (IsFutronicDevice(device.getVendorId(), device.getProductId())) {
                         if (index < instance) {
                             index++;
                             continue;
                         }
-
                         if (!mDevManager.hasPermission(device)) {
                             mDevManager.requestPermission(device, mPermissionIntent);
-
                             if (!is_activity_thread) {
                                 pending_open = false;
                                 synchronized (mPermissionIntent) {
@@ -114,7 +110,6 @@ public class UsbDeviceDataExchangeImpl {
                                 return false;
                             }
                         }
-
                         if (mDevManager.hasPermission(device)) {
                             usb_ctx = OpenDevice(device);
                         } else {
@@ -122,10 +117,7 @@ public class UsbDeviceDataExchangeImpl {
                         }
                     }
                 }
-
-
             }
-
             return usb_ctx != null;
         }
     }
@@ -137,7 +129,6 @@ public class UsbDeviceDataExchangeImpl {
                     usb_ctx.mDevConnetion_.close();
                 }
             }
-
             usb_ctx = null;
         }
     }
@@ -292,7 +283,6 @@ public class UsbDeviceDataExchangeImpl {
     public boolean ValidateContext() {
         synchronized (this) {
             boolean res = false;
-
             if (usb_ctx != null) {
                 res = usb_ctx.mIntf_ != null && usb_ctx.mDevConnetion_ != null && usb_ctx.mReadPoint_ != null && usb_ctx.mWritePoint_ != null;
             }
@@ -314,37 +304,27 @@ public class UsbDeviceDataExchangeImpl {
 
     public boolean GetDeviceInfo(byte[] pack_data) {
         boolean res = false;
-
         synchronized (this) {
             if (usb_ctx != null) {
-
                 try {
-
                     int pack_data_index = 0;
-
                     int vendorId = usb_ctx.mDev_.getVendorId();
-
                     pack_data[pack_data_index++] = (byte) (vendorId /*>> 0*/);
                     pack_data[pack_data_index++] = (byte) (vendorId >> 8);
                     pack_data[pack_data_index++] = (byte) (vendorId >> 16);
                     pack_data[pack_data_index++] = (byte) (vendorId >> 24);
 
                     int productId = usb_ctx.mDev_.getProductId();
-
                     pack_data[pack_data_index++] = (byte) (productId /*>> 0*/);
                     pack_data[pack_data_index++] = (byte) (productId >> 8);
                     pack_data[pack_data_index++] = (byte) (productId >> 16);
                     pack_data[pack_data_index++] = (byte) (productId >> 24);
 
                     String sn = usb_ctx.mDevConnetion_.getSerial();
-
                     if (null != sn) {
                         pack_data[pack_data_index++] = 1;
-
                         byte[] string_bytes = sn.getBytes();
-
                         int sn_size = string_bytes.length;
-
                         pack_data[pack_data_index++] = (byte) (sn_size /*>> 0*/);
                         pack_data[pack_data_index++] = (byte) (sn_size >> 8);
                         pack_data[pack_data_index++] = (byte) (sn_size >> 16);
@@ -366,7 +346,6 @@ public class UsbDeviceDataExchangeImpl {
 					}
 					
 					Log.i(log_tag , "Device info blob: " + out_put_res );*/
-
                     res = true;
                 } catch (Exception e) {
                     Log.e(log_tag, "Get device info failed: " + e.toString());
@@ -375,13 +354,11 @@ public class UsbDeviceDataExchangeImpl {
         }
 
         return res;
-
     }
 
 
     public static boolean IsFutronicDevice(int idVendor, int idProduct) {
         boolean res = false;
-
         if (
                 (idVendor == 0x0834 && idProduct == 0x0020) ||
                         (idVendor == 0x0958 && idProduct == 0x0307) ||
@@ -403,15 +380,19 @@ public class UsbDeviceDataExchangeImpl {
         return res;
     }
 
+    /**
+     * 真正的打开设备的类
+     *
+     * @param device usb设备
+     * @return
+     */
     private FTR_USB_DEVICE_INTERNAL OpenDevice(UsbDevice device) {
         FTR_USB_DEVICE_INTERNAL res = null;
-
         UsbInterface intf = device.getInterface(0);
 
         if (intf != null) {
             UsbEndpoint readpoint = null;
             UsbEndpoint writepoint = null;
-
             for (int i = 0; i < intf.getEndpointCount(); i++) {
                 if (intf.getEndpoint(i).getDirection() == UsbConstants.USB_DIR_OUT) {
                     writepoint = intf.getEndpoint(i);
@@ -423,9 +404,7 @@ public class UsbDeviceDataExchangeImpl {
             }
 
             if (readpoint != null && writepoint != null) {
-
                 UsbDeviceConnection connection = mDevManager.openDevice(device);
-
                 if (connection != null) {
                     Log.i(log_tag, "Open device: " + device);
                     res = new FTR_USB_DEVICE_INTERNAL(device, intf, readpoint, writepoint, connection);
