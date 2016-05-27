@@ -9,11 +9,19 @@ public class AnsiSDKLib {
 
     public native boolean CloseDevice();//会导致整个应用退出
 
-    public native boolean FillImageSize();//设置图片的尺寸
+    /**
+     * 设置指纹图片的大小
+     */
+    public native boolean FillImageSize();
 
     public native boolean IsFingerPresent();
 
-    public native boolean CaptureImage(byte[] pImage);//拍照
+    /**
+     * 采集指纹
+     *
+     * @param pImage 保存指纹图片数据的数组
+     */
+    public native boolean CaptureImage(byte[] pImage);
 
     /**
      * 创建模板
@@ -25,12 +33,23 @@ public class AnsiSDKLib {
      */
     public native boolean CreateTemplate(int finger, byte[] pImage, byte[] pTemplate, int[] pTemplateSize);
 
-    public native boolean VerifyTemplate(int finger, byte[] pImage, byte[] pTemplate, float[] pVerifyResult);
+    /**
+     * 验证指纹
+     *
+     * @param finger        手指编号
+     * @param pImage        要验证的模板的内容
+     * @param pTemplate     接收图片数据的数组
+     * @param pVerifyResult 验证结果
+     */
+    public native boolean VerifyTemplate(int finger, byte[] pTemplate, byte[] pImage, float[] pVerifyResult);
 
     public native boolean MatchTemplates(byte[] pProbeTemplate, byte[] pGaleryTemplate, float[] pMatchResult);
 
     public native boolean ConvertAnsiTemplateToIso(byte[] pAnsiTemplate, byte[] pIsoTemplate, int[] pIsoTemplateSize);
 
+    /**
+     * 获取模板数据的最大值
+     */
     public native int GetMaxTemplateSize();
 
     // error code
