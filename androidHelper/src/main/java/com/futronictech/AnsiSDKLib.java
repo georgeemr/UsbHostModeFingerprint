@@ -3,9 +3,21 @@ package com.futronictech;
 import android.annotation.SuppressLint;
 
 public class AnsiSDKLib {
-    public native boolean OpenDevice(int instance);
-
+    /**
+     * usb host模式调用该方法
+     *
+     * @param io_ctx
+     * @return
+     */
     public native boolean OpenDeviceCtx(Object io_ctx);
+
+    /**
+     * usb accessory模式调用该方法
+     *
+     * @param instance
+     * @return
+     */
+    public native boolean OpenDevice(int instance);
 
     public native boolean CloseDevice();//会导致整个应用退出
 
