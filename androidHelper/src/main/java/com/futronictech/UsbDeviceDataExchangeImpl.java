@@ -294,12 +294,7 @@ public class UsbDeviceDataExchangeImpl {
             boolean res = false;
 
             if (usb_ctx != null) {
-                res =
-                        usb_ctx.mIntf_ != null &&
-                                usb_ctx.mDevConnetion_ != null &&
-                                usb_ctx.mReadPoint_ != null &&
-                                usb_ctx.mWritePoint_ != null;
-
+                res = usb_ctx.mIntf_ != null && usb_ctx.mDevConnetion_ != null && usb_ctx.mReadPoint_ != null && usb_ctx.mWritePoint_ != null;
             }
 
             return res;
@@ -362,7 +357,7 @@ public class UsbDeviceDataExchangeImpl {
                     }
 
 					/*String out_put_res = "";
-					
+
 					for(int i = 0; i < pack_data_index; i++)
 					{
 						String byte_str;
@@ -454,9 +449,9 @@ public class UsbDeviceDataExchangeImpl {
     public void setTransferBuffer(byte[] max_transfer_buffer) {
         this.max_transfer_buffer = max_transfer_buffer;
     }
-	
+
 	/*public static void GetInterfaces(Context ctx, byte[] pInterfaceList)
-	{
+    {
 		UsbManager DevManager = (UsbManager)ctx.getSystemService(Context.USB_SERVICE);
 		
 		HashMap<String, UsbDevice> usb_devs =  DevManager.getDeviceList();
