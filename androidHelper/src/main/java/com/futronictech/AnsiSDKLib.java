@@ -5,7 +5,7 @@ import android.annotation.SuppressLint;
 public class AnsiSDKLib {
     public native boolean OpenDevice(int instance);
 	public native boolean OpenDeviceCtx(Object io_ctx);
-    public native boolean CloseDevice();
+    public native boolean CloseDevice();//会导致整个应用退出
     public native boolean FillImageSize();
     public native boolean IsFingerPresent();
     public native boolean CaptureImage(byte[] pImage);
