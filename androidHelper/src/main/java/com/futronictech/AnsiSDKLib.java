@@ -43,6 +43,13 @@ public class AnsiSDKLib {
      */
     public native boolean VerifyTemplate(int finger, byte[] pTemplate, byte[] pImage, float[] pVerifyResult);
 
+    /**
+     * 匹配模板
+     *
+     * @param pProbeTemplate  要验证是否存在的模板
+     * @param pGaleryTemplate 用来对比的模板
+     * @param pMatchResult    匹配结果
+     */
     public native boolean MatchTemplates(byte[] pProbeTemplate, byte[] pGaleryTemplate, float[] pMatchResult);
 
     public native boolean ConvertAnsiTemplateToIso(byte[] pAnsiTemplate, byte[] pIsoTemplate, int[] pIsoTemplateSize);
