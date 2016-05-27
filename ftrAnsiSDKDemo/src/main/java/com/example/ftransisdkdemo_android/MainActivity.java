@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -36,6 +37,7 @@ import com.futronictech.*;
 import com.example.ftransisdkdemo_android.R;
 
 public class MainActivity extends Activity {
+    private final String TAG = "moubiao";
 
     public static final int MESSAGE_SHOW_MSG = 1;
     public static final int MESSAGE_SHOW_IMAGE = 2;
@@ -49,8 +51,8 @@ public class MainActivity extends Activity {
     private static final int OPERATION_IDENTIFY = 4;
 
     // Intent request codes
-    private static final int REQUEST_INPUT_TMPL_NAME = 1;
-    private static final int REQUEST_SELECT_TMPL_NAME = 2;
+    private static final int REQUEST_INPUT_TMPL_NAME = 1;//创建模板
+    private static final int REQUEST_SELECT_TMPL_NAME = 2;//验证模板
 
     private static final String kAnsiTemplatePostfix = "(ANSI)";
     private static final String kIsoTemplatePostfix = "(ISO)";
@@ -144,6 +146,7 @@ public class MainActivity extends Activity {
             mDbDir = GetDatabaseDir();
         } catch (AppException e) {
             Toast.makeText(getApplicationContext(), "Initialization failed. Application will be close.\nError description: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
             System.exit(0);
         }
 
@@ -306,6 +309,7 @@ public class MainActivity extends Activity {
             try {
                 Dir.mkdirs();
             } catch (SecurityException e) {
+                e.printStackTrace();
                 throw new AppException("Can not create database directory " + Dir.getAbsolutePath() +
                         ". Access denied.");
             }
@@ -314,6 +318,13 @@ public class MainActivity extends Activity {
         return szDbDir;
     }
 
+    /**
+     * 创建指纹的bitmap
+     *
+     * @param imgWidth  bitmap的宽
+     * @param imgHeight bitmap的高
+     * @param imgBytes  bitmap的数据
+     */
     private Bitmap CreateFingerBitmap(int imgWidth, int imgHeight, byte[] imgBytes) {
         int[] pixels = new int[imgWidth * imgHeight];
         for (int i = 0; i < imgWidth * imgHeight; i++) {
@@ -389,6 +400,7 @@ public class MainActivity extends Activity {
 
             templateContent = fileContent;
         } catch (Exception e) {
+            e.printStackTrace();
             String error = String.format("Failed to load template from file %s. Error: %s.", tmplName, e.toString());
             mErrMessage.setText(error);
         }
@@ -469,6 +481,7 @@ public class MainActivity extends Activity {
                 }
 
                 byte[] img_buffer = new byte[ansi_lib.GetImageSize()];
+                Log.d(TAG, "run: img_buffer = " + img_buffer);
 
                 for (; ; ) {
                     if (IsCanceled()) {
@@ -508,7 +521,7 @@ public class MainActivity extends Activity {
             }
 
             if (dev_open) {
-                ansi_lib.CloseDevice();
+//                ansi_lib.CloseDevice();
             }
 
             mHandler.obtainMessage(MESSAGE_END_OPERATION).sendToTarget();
@@ -620,7 +633,7 @@ public class MainActivity extends Activity {
             }
 
             if (dev_open) {
-                ansi_lib.CloseDevice();
+//                ansi_lib.CloseDevice();
             }
 
             mHandler.obtainMessage(MESSAGE_END_OPERATION).sendToTarget();
@@ -727,7 +740,7 @@ public class MainActivity extends Activity {
             }
 
             if (dev_open) {
-                ansi_lib.CloseDevice();
+//                ansi_lib.CloseDevice();
             }
 
             mHandler.obtainMessage(MESSAGE_END_OPERATION).sendToTarget();
@@ -823,7 +836,7 @@ public class MainActivity extends Activity {
             }
 
             if (dev_open) {
-                ansi_lib.CloseDevice();
+//                ansi_lib.CloseDevice();
             }
 
             mHandler.obtainMessage(MESSAGE_END_OPERATION).sendToTarget();
