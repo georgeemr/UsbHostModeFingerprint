@@ -1,2 +1,4 @@
+
 include ':androidHelper', ':recognition'
 include ':ftrAnsiSDKDemo'
+project(':recognition').projectDir = new File('多余的/recognition')

@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
+jobject m_glbIoCtxRef = NULL;
+
 FTRHANDLE GetDeviceHandle(JNIEnv *env, jobject obj)
 {
     /* Get a reference to obj¡¦s class */
@@ -22,29 +24,6 @@ FTR_BOOL SetDeviceHandle(JNIEnv *env, jobject obj, FTRHANDLE hDevice)
     jfieldID handle = NULL; 
     handle = env->GetFieldID( cls, "m_hDevice", "J" );
     env->SetLongField( obj, handle, reinterpret_cast<jlong>(hDevice) );
-    return TRUE;
-}
-
-jobject GetGlobalCtx(JNIEnv *env, jobject obj)
-{
-    /* Get a reference to obj¡¦s class */
-    jclass cls = env->GetObjectClass(obj);
-    jfieldID handle = NULL; 
-    handle = env->GetFieldID( cls, "m_glbIoCtxRef", "J" );
-    if( handle == NULL )
-        return NULL;
-    jobject ctx = reinterpret_cast<jobject>(env->GetLongField( obj, handle ));
-    return ctx;
-}
-
-FTR_BOOL SetGlobalCtx(JNIEnv *env, jobject obj, jobject dev_ctx)
-{
-    /* Get a reference to obj¡¦s class */
-    jclass cls = env->GetObjectClass(obj);
-    jfieldID handle = NULL; 
-    handle = env->GetFieldID( cls, "m_glbIoCtxRef", "J" );
-    env->SetLongField( obj, handle, reinterpret_cast<jlong>(dev_ctx) );
-
     return TRUE;
 }
 
@@ -81,27 +60,26 @@ jboolean JNICALL Java_com_futronictech_AnsiSDKLib_OpenDeviceCtx(JNIEnv *env, job
 {
     FTRHANDLE hDevice;
 
-    jobject dev_ctx = env->NewGlobalRef(io_ctx);
-   
-    if(dev_ctx && SetGlobalCtx(env,obj,dev_ctx))
-    {
-        ANDROID_CTX ctx;
-        ctx.io_ctx = dev_ctx;
-        ctx.zero_field = 0;
-        ctx.ctx_version = FTR_ANDROID_CTX_VERSION_2;
-        ctx.ctx_flags = FTR_ANDROID_CTX_FLAG_GLB_DONE;
+    m_glbIoCtxRef = env->NewGlobalRef(io_ctx);
+    if( m_glbIoCtxRef == NULL )
+    	return JNI_FALSE;
 
-        hDevice = ftrScanOpenDeviceWithIoContext( &ctx );
-        if( hDevice == NULL )
-        {
-            SetErrorCode(env, obj, (jint)ftrScanGetLastError());
-            return JNI_FALSE;
-        }
-        if( SetDeviceHandle( env, obj, hDevice ) )
-        {
-            return JNI_TRUE;
-        }
-    }
+	ANDROID_CTX ctx;
+	ctx.io_ctx = m_glbIoCtxRef;
+	ctx.zero_field = 0;
+	ctx.ctx_version = FTR_ANDROID_CTX_VERSION_2;
+	ctx.ctx_flags = FTR_ANDROID_CTX_FLAG_GLB_DONE;
+
+	hDevice = ftrScanOpenDeviceWithIoContext( &ctx );
+	if( hDevice == NULL )
+	{
+		SetErrorCode(env, obj, (jint)ftrScanGetLastError());
+		return JNI_FALSE;
+	}
+	if( SetDeviceHandle( env, obj, hDevice ) )
+	{
+		return JNI_TRUE;
+	}
 
     return JNI_FALSE;
 }
@@ -114,13 +92,10 @@ jboolean JNICALL Java_com_futronictech_AnsiSDKLib_CloseDevice(JNIEnv *env, jobje
         ftrScanCloseDevice(hDevice);
         SetDeviceHandle( env, obj, NULL );
     }
-
-    jobject dev_ctx = GetGlobalCtx(env,obj);
-
-    if(dev_ctx)
+    if( m_glbIoCtxRef != NULL )
     {
-        env->DeleteGlobalRef(dev_ctx);
-        SetGlobalCtx(env,obj,NULL);
+    	//env->DeleteGlobalRef(m_glbIoCtxRef);
+		m_glbIoCtxRef  = NULL;
     }
 
     return JNI_TRUE;

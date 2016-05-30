@@ -1,5 +1,4 @@
 apply plugin: 'com.android.model.application'
-
 model {
     android {
         compileSdkVersion 23
@@ -19,7 +18,6 @@ model {
         }
     }
 }
-
 dependencies {
     compile project(':androidHelper')
 }

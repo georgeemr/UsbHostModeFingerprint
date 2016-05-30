@@ -40,11 +40,11 @@ In AndroidHelper:
 * res\ => androidHelper\src\main\res\
 * src\ => androidHelper\src\main\java\
 In ftrAnsiSDKDemo_Android:
-* AndroidManifest.xml => ftrAnsiSDKDemo_Android\src\main\AndroidManifest.xml
-* assets\ => ftrAnsiSDKDemo_Android\src\main\assets
-* lint.xml => ftrAnsiSDKDemo_Android\lint.xml
-* res\ => ftrAnsiSDKDemo_Android\src\main\res\
-* src\ => ftrAnsiSDKDemo_Android\src\main\java\
+* AndroidManifest.xml => ftrAnsiSDKDemo\src\main\AndroidManifest.xml
+* assets\ => ftrAnsiSDKDemo\src\main\assets
+* lint.xml => ftrAnsiSDKDemo\lint.xml
+* res\ => ftrAnsiSDKDemo\src\main\res\
+* src\ => ftrAnsiSDKDemo\src\main\java\
 
 Next Steps:
 -----------
