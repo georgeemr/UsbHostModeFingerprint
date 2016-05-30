@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="common_blue">#0092da</color>
+    <color name="common_title_gray">#333333</color>
+
+    <color name="colorWhite">#ffffffff</color>
+    <color name="colorGray">#22ffffff</color>
+    <color name="Gray">#f5f5f5</color>
+
+    <color name="deepBlue">#003366</color>
+
+    <color name="crop_button_bar">#f3f3f3</color>
+    <color name="crop_button_text">#666666</color>
+    <color name="crop_selector_pressed">#1a000000</color>
+    <color name="crop_selector_focused">#77000000</color>
+
+    <!--登录框-->
+    <color name="login_box_color">#cccccc</color>
+    <color name="web_url_color">#666666</color>
+</resources>

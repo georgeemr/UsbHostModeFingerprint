@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@mipmap/login_bg"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/user_name_margin_top"
+        android:gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/editText_name"
+            style="@style/LoginBoxStyle"
+            android:drawableLeft="@mipmap/user_icon"
+            android:drawablePadding="@dimen/icon_padding"
+            android:drawableStart="@mipmap/user_icon"
+            android:imeOptions="actionNext|flagNoFullscreen"
+            android:inputType="textPersonName"
+            android:paddingBottom="@dimen/user_padding_top_bottom"
+            android:paddingLeft="@dimen/user_padding_left"
+            android:paddingTop="@dimen/user_padding_top_bottom"
+            android:singleLine="true"
+            android:text="@string/login_default_user"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/editText_psw"
+            style="@style/LoginBoxStyle"
+            android:drawableLeft="@mipmap/password_icon"
+            android:drawablePadding="@dimen/icon_padding"
+            android:drawableStart="@mipmap/password_icon"
+            android:imeOptions="actionDone|flagNoFullscreen"
+            android:inputType="textPassword"
+            android:padding="@dimen/input_padding"
+            android:singleLine="true"
+            android:text="@string/login_default_password"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/login_bt"
+        style="@style/CommonTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/login_bt_margin_side"
+        android:background="@drawable/login_bt_bg"
+        android:paddingEnd="@dimen/login_bt_margin_side"
+        android:paddingStart="@dimen/login_bt_margin_side"
+        android:text="@string/login"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/login_font_size"/>
+
+    <TextView
+        style="@style/CommonTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/web_url_margin_bottom"
+        android:gravity="center"
+        android:text="@string/web_url"
+        android:textColor="@color/web_url_color"/>
+
+</RelativeLayout>
