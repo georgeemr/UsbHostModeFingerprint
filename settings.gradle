@@ -1,2 +1,2 @@
-include ':androidHelper'
+include ':androidHelper', ':recognition'
 include ':ftrAnsiSDKDemo'
