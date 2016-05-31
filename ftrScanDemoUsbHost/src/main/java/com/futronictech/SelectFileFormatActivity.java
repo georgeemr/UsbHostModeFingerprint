@@ -18,7 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-public class SelectFileFormatActivity extends AppCompatActivity {
+public class SelectFileFormatActivity extends Activity {
 
 	private Button mButtonOK;
 	private RadioGroup mRadioGroup;

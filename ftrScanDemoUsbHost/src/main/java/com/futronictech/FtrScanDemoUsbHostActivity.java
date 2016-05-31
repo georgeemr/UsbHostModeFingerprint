@@ -25,7 +25,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FtrScanDemoUsbHostActivity extends AppCompatActivity {
+public class FtrScanDemoUsbHostActivity extends Activity {
     /** Called when the activity is first created. */
 	private static Button mButtonScan;
 	private static Button mButtonStop;
