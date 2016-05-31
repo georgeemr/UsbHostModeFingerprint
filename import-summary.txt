@@ -16,35 +16,72 @@ The following files were *not* copied into the new Gradle project; you
 should evaluate whether these are still needed in your project and if
 so manually move them:
 
-* ic_launcher-web.png
+From FtrScanDemoUsbHost:
+* proguard.cfg
+From ftrScanApiAndroidHelperUsbHost:
+* proguard.cfg
+From ftrWsqAndroidHelper:
 * proguard-project.txt
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:18.+
 
 Moved Files:
 ------------
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-In AndroidHelper:
-* AndroidManifest.xml => androidHelper\src\main\AndroidManifest.xml
-* assets\ => androidHelper\src\main\assets
-* jni\ => androidHelper\src\main\jni\
-* libs\armeabi-v7a\libftrAnsiSDK.so => androidHelper\src\main\jniLibs\armeabi-v7a\libftrAnsiSDK.so
-* libs\armeabi-v7a\libftrAnsiSDKAndroidJni.so => androidHelper\src\main\jniLibs\armeabi-v7a\libftrAnsiSDKAndroidJni.so
-* libs\armeabi-v7a\libftrScanAPI.so => androidHelper\src\main\jniLibs\armeabi-v7a\libftrScanAPI.so
-* libs\armeabi-v7a\libusb-1.0.so => androidHelper\src\main\jniLibs\armeabi-v7a\libusb-1.0.so
-* libs\armeabi\libftrAnsiSDK.so => androidHelper\src\main\jniLibs\armeabi\libftrAnsiSDK.so
-* libs\armeabi\libftrAnsiSDKAndroidJni.so => androidHelper\src\main\jniLibs\armeabi\libftrAnsiSDKAndroidJni.so
-* libs\armeabi\libftrScanAPI.so => androidHelper\src\main\jniLibs\armeabi\libftrScanAPI.so
-* libs\armeabi\libusb-1.0.so => androidHelper\src\main\jniLibs\armeabi\libusb-1.0.so
-* lint.xml => androidHelper\lint.xml
-* res\ => androidHelper\src\main\res\
-* src\ => androidHelper\src\main\java\
-In ftrAnsiSDKDemo_Android:
-* AndroidManifest.xml => ftrAnsiSDKDemo\src\main\AndroidManifest.xml
-* assets\ => ftrAnsiSDKDemo\src\main\assets
-* lint.xml => ftrAnsiSDKDemo\lint.xml
-* res\ => ftrAnsiSDKDemo\src\main\res\
-* src\ => ftrAnsiSDKDemo\src\main\java\
+In ftrScanApiAndroidHelperUsbHost:
+* AndroidManifest.xml => ftrScanApiAndroidHelperUsbHost\src\main\AndroidManifest.xml
+* assets\ => ftrScanApiAndroidHelperUsbHost\src\main\assets
+* jni\ => ftrScanApiAndroidHelperUsbHost\src\main\jni\
+* libs\armeabi-v7a\libftrScanAPI.so => ftrScanApiAndroidHelperUsbHost\src\main\jniLibs\armeabi-v7a\libftrScanAPI.so
+* libs\armeabi-v7a\libftrScanApiAndroidJni.so => ftrScanApiAndroidHelperUsbHost\src\main\jniLibs\armeabi-v7a\libftrScanApiAndroidJni.so
+* libs\armeabi-v7a\libusb-1.0.so => ftrScanApiAndroidHelperUsbHost\src\main\jniLibs\armeabi-v7a\libusb-1.0.so
+* libs\armeabi\libftrScanAPI.so => ftrScanApiAndroidHelperUsbHost\src\main\jniLibs\armeabi\libftrScanAPI.so
+* libs\armeabi\libftrScanApiAndroidJni.so => ftrScanApiAndroidHelperUsbHost\src\main\jniLibs\armeabi\libftrScanApiAndroidJni.so
+* libs\armeabi\libusb-1.0.so => ftrScanApiAndroidHelperUsbHost\src\main\jniLibs\armeabi\libusb-1.0.so
+* lint.xml => ftrScanApiAndroidHelperUsbHost\lint.xml
+* res\ => ftrScanApiAndroidHelperUsbHost\src\main\res\
+* src\ => ftrScanApiAndroidHelperUsbHost\src\main\java\
+In ftrWsqAndroidHelper:
+* AndroidManifest.xml => ftrWsqAndroidHelper\src\main\AndroidManifest.xml
+* assets\ => ftrWsqAndroidHelper\src\main\assets
+* jni\ => ftrWsqAndroidHelper\src\main\jni\
+* libs\armeabi-v7a\libftrWSQAndroid.so => ftrWsqAndroidHelper\src\main\jniLibs\armeabi-v7a\libftrWSQAndroid.so
+* libs\armeabi-v7a\libftrWSQAndroidJni.so => ftrWsqAndroidHelper\src\main\jniLibs\armeabi-v7a\libftrWSQAndroidJni.so
+* libs\armeabi\libftrWSQAndroid.so => ftrWsqAndroidHelper\src\main\jniLibs\armeabi\libftrWSQAndroid.so
+* libs\armeabi\libftrWSQAndroidJni.so => ftrWsqAndroidHelper\src\main\jniLibs\armeabi\libftrWSQAndroidJni.so
+* res\ => ftrWsqAndroidHelper\src\main\res\
+* src\ => ftrWsqAndroidHelper\src\main\java\
+In FtrScanDemoUsbHost:
+* AndroidManifest.xml => ftrScanDemoUsbHost\src\main\AndroidManifest.xml
+* assets\ => ftrScanDemoUsbHost\src\main\assets
+* res\ => ftrScanDemoUsbHost\src\main\res\
+* src\ => ftrScanDemoUsbHost\src\main\java\
+
+Missing Android Support Repository:
+-----------------------------------
+Some useful libraries, such as the Android Support Library, are
+installed from a special Maven repository, which should be installed
+via the SDK manager.
+
+It looks like this library is missing from your SDK installation at:
+null
+
+To install it, open the SDK manager, and in the Extras category,
+select "Android Support Repository". You may also want to install the
+"Google Repository" if you want to use libraries like Google Play
+Services.
 
 Next Steps:
 -----------

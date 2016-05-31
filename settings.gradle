@@ -1,4 +1,7 @@
 
-include ':androidHelper', ':recognition'
+include ':androidHelper'
 include ':ftrAnsiSDKDemo'
-project(':recognition').projectDir = new File('多余的/recognition')
+include ':ftrScanApiAndroidHelperUsbHost'
+include ':ftrWsqAndroidHelper'
+include ':ftrScanDemoUsbHost'
+include ':recognition'
