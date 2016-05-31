@@ -42,7 +42,7 @@ public class AnsiSDKLib {
      * @param finger        手指编号
      * @param pImage        保存指纹数据的数组
      * @param pTemplate     保存模板数据的数据（比实际值大）
-     * @param pTemplateSize （模板的实际大小）
+     * @param pTemplateSize 保存模板数据的实际大小
      */
     public native boolean CreateTemplate(int finger, byte[] pImage, byte[] pTemplate, int[] pTemplateSize);
 
