@@ -1,9 +1,7 @@
 package com.xiongdi.recognition.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,11 +17,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.jy.demo.fingerprint.CallDecoder;
-import com.example.jy.demo.fingerprint.CallFprint;
 import com.xiongdi.OpenJpeg;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.adapter.GatherInfoVpAdapter;
+import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
 import com.xiongdi.recognition.fragment.RightHandFragment;
@@ -177,7 +174,6 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         protected Void doInBackground(Void... params) {
-            saveFingerprint();
             return null;
         }
 
@@ -189,8 +185,8 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 data.putExtra("pictureUrl", pictureUrl);
                 data.putExtra("compressPicUrl", compressPicUrl);
             }
-            if (fingerprintUrl != null) {
-                data.putExtra("fingerPrintUrl", fingerprintUrl);
+            if (MainApplication.fingerprintPath != null) {
+                data.putExtra("fingerPrintUrl", MainApplication.fingerprintPath);
             }
             setResult(Activity.RESULT_OK, data);
             finish();
@@ -221,43 +217,6 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                     break;
             }
         }
-    }
-
-    /**
-     * 保存指纹
-     */
-    private void saveFingerprint() {
-        String picPath = getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + gatherID + "_" + fingerNUM;
-
-        CallDecoder.Bmp2Pgm(picPath + ".bmp", picPath + ".pgm");//将bmp转换为pgm
-        CallFprint.pgmChangeToXyt(picPath + ".pgm", picPath + ".xyt");//将pgm转换成xyt
-
-        //将xyt文件由现在的目录复制到Fingerprint目录下面
-        String oldPicPath = getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + gatherID + "_" + fingerNUM + ".xyt";
-        String newFilepath = getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + "Fingerprint";
-        fileUtil.isDirExist(newFilepath);
-        fingerprintUrl = getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + "Fingerprint" + "/" + "vote" + fingerNUM + ".xyt";
-        try {
-            fileUtil.copyFile(oldPicPath, fingerprintUrl);
-            SharedPreferences.Editor editor = getSharedPreferences("fingerprintPath", Context.MODE_PRIVATE).edit();
-            editor.putString("fingerprintPath", fingerprintUrl);
-            editor.apply();
-            fingerPrint_pic_path = fingerprintUrl;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //删除中间文件
-        fileUtil.deleteFile(getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + gatherID + "_" + fingerNUM + ".bmp");
-        fileUtil.deleteFile(getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + gatherID + "_" + fingerNUM + ".pgm");
-        fileUtil.deleteFile(getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
-                + gatherID + "/" + gatherID + "_" + fingerNUM + ".xyt");
     }
 
     private class CompressTask extends AsyncTask<String, Integer, Boolean> {
