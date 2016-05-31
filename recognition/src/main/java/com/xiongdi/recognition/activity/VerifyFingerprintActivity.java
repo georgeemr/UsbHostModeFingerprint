@@ -1,239 +1,264 @@
 package com.xiongdi.recognition.activity;
 
-import android.app.Activity;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.Camera;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-import com.example.jy.demo.fingerprint.CallDecoder;
-import com.example.jy.demo.fingerprint.CallFprint;
-import com.opencv.LibImgFun;
+import com.futronictech.AnsiSDKLib;
+import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.recognition.R;
-import com.xiongdi.recognition.audio.AudioPlay;
+import com.xiongdi.recognition.util.ToastUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.lang.ref.WeakReference;
 
 /**
  * Created by moubiao on 2016/3/25.
  * 验证指纹界面
  */
-public class VerifyFingerprintActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback, Camera.AutoFocusCallback {
-    private int KEY_CODE_RIGHT_BOTTOM = 249;
-    private int KEY_CODE_LEFT_BOTTOM = 250;
-    private int KEY_CODE_LEFT_TOP = 251;
-    private int KEY_CODE_RIGHT_TOP = 252;
-    private int KEY_CODE_FRONT_CAMERA = 27;//前置摄像头
+public class VerifyFingerprintActivity extends AppCompatActivity implements View.OnClickListener {
+    private final String TAG = "moubiao";
 
-    private SurfaceView previewSFV;
+    private static final int MESSAGE_SHOW_MSG = 1;
+    private static final int MESSAGE_SHOW_IMAGE = 2;
+    private static final int MESSAGE_SHOW_ERROR_MSG = 3;
+
+    private ImageView fingerIMG;
     private ImageButton takeBT;
+    private Bitmap mFingerBitmap;
 
-    private Camera verifyCamera;
-    private SurfaceHolder verifyHolder;
+    VerifyHandler mHandler;
+    private UsbDeviceDataExchangeImpl usb_host_ctx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gather_fingerprint_layout);
 
+        initData();
         initView();
         setListener();
     }
 
-    private void initView() {
-        previewSFV = (SurfaceView) findViewById(R.id.fingerprint_SurfaceView);
-        takeBT = (ImageButton) findViewById(R.id.take_fingerprint_bt);
+    private void initData() {
+        mHandler = new VerifyHandler(this);
+        usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
+    }
 
-        verifyHolder = previewSFV.getHolder();
-        verifyHolder.addCallback(this);
-        verifyHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    private void initView() {
+        fingerIMG = (ImageView) findViewById(R.id.fingerprint_img);
+        takeBT = (ImageButton) findViewById(R.id.take_fingerprint_bt);
     }
 
     private void setListener() {
         takeBT.setOnClickListener(this);
     }
 
-    private void initCamera() {
-        try {
-            verifyCamera = Camera.open(1);//一共两个摄像头，1是采集指纹的. 0是拍照的.
-            verifyCamera.setPreviewDisplay(verifyHolder);
-        } catch (IOException e) {
-            Toast.makeText(this, R.string.camera_open_failed, Toast.LENGTH_SHORT).show();
-            finish();
-            e.printStackTrace();
-        }
-
-        setCameraParams();
-    }
-
-    private void setCameraParams() {
-        Camera.Parameters parameters = verifyCamera.getParameters();
-        verifyCamera.setDisplayOrientation(180);
-        parameters.setRotation(180);
-
-        parameters.setPictureSize(640, 480);
-        parameters.setPreviewSize(640, 480);
-
-        verifyCamera.setParameters(parameters);
-        verifyCamera.startPreview();
-    }
-
-    private void releaseCamera() {
-        if (verifyCamera != null) {
-            verifyCamera.stopPreview();
-            verifyCamera.release();
-            verifyCamera = null;
-        }
-    }
-
-    private boolean focus = false;
-    private boolean active = false;
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((KEY_CODE_LEFT_BOTTOM == keyCode || KEY_CODE_LEFT_TOP == keyCode
-                || KEY_CODE_RIGHT_BOTTOM == keyCode || KEY_CODE_RIGHT_TOP == keyCode) && !focus && !active) {
-            active = true;
-            verifyCamera.autoFocus(this);
-        }
-
-        if (KEY_CODE_FRONT_CAMERA == keyCode) {
-            if (event.getRepeatCount() == 25 && verifyCamera != null && !focus) {
-                verifyCamera.autoFocus(this);
-                return true;
-            }
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.take_fingerprint_bt:
-                if (!focus) {
-                    verifyCamera.autoFocus(this);
-                }
+                verifyFingerprint();
                 break;
             default:
                 break;
         }
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        initCamera();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        releaseCamera();
-    }
-
-    @Override
-    public void onAutoFocus(boolean success, Camera camera) {
-        focus = success;
-        if (success) {
-            verifyCamera.takePicture(new Camera.ShutterCallback() {
-                @Override
-                public void onShutter() {
+    /**
+     * 验证指纹
+     */
+    private void verifyFingerprint() {
+        if (usb_host_ctx.OpenDevice(0, true)) {
+            byte[] templateContent = null;
+            String savePath = getExternalFilesDir(null).getPath() + File.separator + "null_5(ANSI)";
+            FileInputStream fs;
+            File f;
+            try {
+                f = new File(savePath);
+                if (!f.exists() || !f.canRead()) {
+                    throw new FileNotFoundException();
                 }
-            }, null, null, new Camera.PictureCallback() {
-                @Override
-                public void onPictureTaken(byte[] data, Camera camera) {
-                    try {
-                        int w = camera.getParameters().getPictureSize().width;
-                        int h = camera.getParameters().getPictureSize().height;
+                long nFileSize = f.length();
+                fs = new FileInputStream(f);
+                byte[] fileContent = new byte[(int) nFileSize];
+                fs.read(fileContent);
+                fs.close();
+                templateContent = fileContent;
+            } catch (Exception e) {
+                String error = String.format("Failed to load template from file %s. Error: %s.", "null_5(ANSI)", e.toString());
+                Log.d(TAG, "verifyFingerprint: " + error);
+                e.printStackTrace();
+            }
 
-                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        Bitmap bmp2 = BitmapFactory.decodeByteArray(data, 0, data.length);
-
-                        int[] pix = new int[w * h];
-                        bmp.getPixels(pix, 0, w, 0, 0, w, h);
-                        bmp2.getPixels(pix, 0, w, 0, 0, w, h);
-                        String filePath = getFilesDir().getParent() + "/" + getResources().getString(R.string.app_name) + ".bmp";
-                        int result = LibImgFun.mySaveImage(pix, w, h, filePath);
-                        Log.v("crjlog", "result = " + result + "filePath = " + filePath);
-                        verifyResult();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            new VerifyThread(1, templateContent, 0).start();
+        } else {
+            ToastUtil.getInstance().showToast(this, "open module failed!");
         }
     }
 
     /**
-     * 验证指纹后的结果
+     * 验证指纹的线程
      */
-    private void verifyResult() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            String bmpFile = getFilesDir().getParent() + "/" + getResources().getString(R.string.app_name) + ".bmp";
-            String pgmFile = getFilesDir().getParent() + "/" + getResources().getString(R.string.app_name) + ".pgm";
-            String xytFile = getFilesDir().getParent() + "/" + getResources().getString(R.string.app_name) + ".xyt";
+    private class VerifyThread extends Thread {
+        private AnsiSDKLib ansi_lib = null;
+        private int mFinger = 0;
+        private byte[] mTmpl = null;
+        private float mMatchScore = 0;
+        private boolean mCanceled = false;
 
-            CallDecoder.Bmp2Pgm(bmpFile, pgmFile);
-            CallFprint.pgmChangeToXyt(pgmFile, xytFile);
+        public VerifyThread(int finger, byte[] template, float matchScore) {
+            ansi_lib = new AnsiSDKLib();
+            mFinger = finger;
+            mTmpl = template;
+            mMatchScore = matchScore;
+        }
 
-            AudioPlay ap = new AudioPlay();
-            final int audioType;
-            if (null == GatherActivity.fingerPrint_pic_path || GatherActivity.fingerPrint_pic_path.equals("")) {
-                //以前是将.xyt文件按的路径保存在sharedPreferences里面，现在将.xyt的路径固定在下面的新路径下
-//                SharedPreferences sp = getSharedPreferences("fingerprintPath", Context.MODE_PRIVATE);
-//                GatherActivity.fingerPrint_pic_path = sp.getString("fingerprintPath", null);
-                GatherActivity.fingerPrint_pic_path = getExternalFilesDir("card") + File.separator + "cardFingerprint.xyt";
-            }
-            if (null != GatherActivity.fingerPrint_pic_path && !GatherActivity.fingerPrint_pic_path.equals("")) {
-                int ret = CallFprint.fprintCompare(xytFile, GatherActivity.fingerPrint_pic_path);
-                if (ret >= 16) {
-                    Log.d("moubiao", "verify success---->");
-                    Toast.makeText(this, "Verify the fingerprint success!", Toast.LENGTH_SHORT).show();
-                    audioType = AudioPlay.PLAY_SOUND_FINGER_VERIFICATION;
-                    setResult(Activity.RESULT_OK);
-                } else {
-                    Log.e("moubiao", "verify failed");
-                    Toast.makeText(this, "Verify the fingerprint failed!", Toast.LENGTH_SHORT).show();
-                    audioType = AudioPlay.PLAY_SOUND_FINGER_AUTHENTICATION_FAIL;
-                }
-            } else {
-                Toast.makeText(this, "No fingerprint data!", Toast.LENGTH_SHORT).show();
-                audioType = AudioPlay.PLAY_SOUND_FINGER_AUTHENTICATION_FAIL;
-            }
+        public boolean isCanceled() {
+            return mCanceled;
+        }
 
+        public void cancel() {
+            mCanceled = true;
             try {
-                AssetManager am = getAssets();
-                ap.PlayAsset(audioType, am);
-            } catch (IOException e) {
+                this.join();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
 
-            active = false;
-            //延时一秒后结束是因为当快速拍照键时，相机服务会报错
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    finish();
+        @Override
+        public void run() {
+            boolean dev_open = false;
+            try {
+                //打开设备
+                if (!ansi_lib.OpenDeviceCtx(usb_host_ctx)) {
+                    mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, ansi_lib.GetErrorMessage()).sendToTarget();
+                    return;
                 }
-            }, 1000);
+                dev_open = true;
+                //计算指纹图像的大小
+                if (!ansi_lib.FillImageSize()) {
+                    mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, ansi_lib.GetErrorMessage()).sendToTarget();
+                    return;
+                }
+                byte[] img_buffer = new byte[ansi_lib.GetImageSize()];
+                //验证指纹
+                for (; ; ) {
+                    if (isCanceled()) {
+                        break;
+                    }
+                    float[] matchResult = new float[1];
+                    if (ansi_lib.VerifyTemplate(mFinger, mTmpl, img_buffer, matchResult)) {
+                        mFingerBitmap = createFingerBitmap(ansi_lib.GetImageWidth(), ansi_lib.GetImageHeight(), img_buffer);
+                        mHandler.obtainMessage(MESSAGE_SHOW_IMAGE).sendToTarget();
+                        Log.d(TAG, "run: verify passed");
+                        break;
+                    } else {
+                        Log.e(TAG, "run: verify failed");
+                        int lastError = ansi_lib.GetErrorCode();
+                        if (lastError == AnsiSDKLib.FTR_ERROR_EMPTY_FRAME
+                                || lastError == AnsiSDKLib.FTR_ERROR_NO_FRAME
+                                || lastError == AnsiSDKLib.FTR_ERROR_MOVABLE_FINGER) {
+                            Thread.sleep(100);
+                        } else {
+                            String error = String.format("Verify failed. Error: %s.", ansi_lib.GetErrorMessage());
+                            mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, error).sendToTarget();
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, e.getMessage()).sendToTarget();
+            }
+
+            //关闭模块
+            if (dev_open) {
+                ansi_lib.CloseDevice();
+            }
+        }
+    }
+
+    /**
+     * 创建指纹的bitmap
+     *
+     * @param imgWidth  bitmap的宽
+     * @param imgHeight bitmap的高
+     * @param imgBytes  bitmap的数据
+     * @return
+     */
+    private Bitmap createFingerBitmap(int imgWidth, int imgHeight, byte[] imgBytes) {
+        int[] pixels = new int[imgWidth * imgHeight];
+        for (int i = 0; i < imgWidth * imgHeight; i++) {
+            pixels[i] = imgBytes[i];
+        }
+
+        Bitmap emptyBmp = Bitmap.createBitmap(pixels, imgWidth, imgHeight, Bitmap.Config.RGB_565);
+        int width, height;
+        height = emptyBmp.getHeight();
+        width = emptyBmp.getWidth();
+        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(result);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(emptyBmp, 0, 0, paint);
+
+        return result;
+    }
+
+    private static class VerifyHandler extends Handler {
+        private WeakReference<VerifyFingerprintActivity> mWeakReference;
+
+        public VerifyHandler(VerifyFingerprintActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final VerifyFingerprintActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case MESSAGE_SHOW_MSG:
+                    String showMsg = (String) msg.obj;
+                    break;
+                case MESSAGE_SHOW_ERROR_MSG:
+                    String showErr = (String) msg.obj;
+                    ToastUtil.getInstance().showToast(activity, showErr);
+                    break;
+                case MESSAGE_SHOW_IMAGE:
+                    activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
+                    break;
+                case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {
+                    if (activity.usb_host_ctx.ValidateContext()) {
+
+                    } else {
+                    }
+
+                    break;
+                }
+                case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {
+                    break;
+                }
+                default:
+                    break;
+
+            }
         }
     }
 }
