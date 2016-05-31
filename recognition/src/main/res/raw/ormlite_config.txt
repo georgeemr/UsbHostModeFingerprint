@@ -1,0 +1,57 @@
+#
+# generated on 2016/03/25 05:22:23
+#
+# --table-start--
+dataClass=com.xiongdi.recognition.bean.Account
+tableName=account
+# --table-fields-start--
+# --field-start--
+fieldName=accountID
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=name
+canBeNull=false
+unique=true
+# --field-end--
+# --field-start--
+fieldName=password
+canBeNull=false
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.xiongdi.recognition.bean.Person
+tableName=person
+# --table-fields-start--
+# --field-start--
+fieldName=personID
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=name
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=gender
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=birthday
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=address
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=ID_NO
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=gatherPictureUrl
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################

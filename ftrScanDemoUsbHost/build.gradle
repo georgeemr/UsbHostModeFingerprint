@@ -1,0 +1,27 @@
+apply plugin: 'com.android.model.application'
+model {
+    android {
+        compileSdkVersion 23
+        buildToolsVersion "23.0.2"
+
+        defaultConfig {
+            applicationId "com.futronictech"
+            minSdkVersion.apiLevel 15
+            targetSdkVersion.apiLevel 23
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles.add(file("proguard-rules.pro"))
+            }
+        }
+    }
+}
+
+dependencies {
+    compile project(':ftrWsqAndroidHelper')
+    compile project(':ftrScanApiAndroidHelperUsbHost')
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+}

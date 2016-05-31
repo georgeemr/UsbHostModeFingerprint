@@ -1,0 +1,136 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="CommonTextStyle">
+        <item name="android:textColor">@color/colorGray</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- 登录框的样式 -->
+    <style name="LoginBoxStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginLeft">@dimen/login_bt_margin_side</item>
+        <item name="android:layout_marginRight">@dimen/login_bt_margin_side</item>
+        <item name="android:background">@drawable/rectangle_gray</item>
+        <item name="android:ems">10</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/input_font_size</item>
+    </style>
+
+    <!-- 填写录入信息界面-->
+    <style name="WriteInfoItemTitleStyle">
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textColor">@color/common_title_gray</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/fill_information_row_margin_left</item>
+    </style>
+
+    <style name="WriteInfoItemTitleStyleLand">
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textColor">@color/common_title_gray</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="WriteInfoItemContentStyle">
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:background">@drawable/rectangle_gray</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_marginLeft">@dimen/fill_information_row_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/fill_information_row_margin_left</item>
+    </style>
+
+    <style name="WriteInfoItemContentStyleLand">
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:background">@drawable/rectangle_gray</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!--手指的样式-->
+    <style name="FingerStyle">
+        <item name="android:layout_width">33dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/fingerprint_bg</item>
+    </style>
+
+    <!-- tabLayout的样式-->
+    <style name="TabLayoutStyle" parent="Widget.Design.TabLayout">
+        <item name="tabGravity">fill</item>
+        <item name="tabMode">fixed</item>
+        <!--<item name="tabMaxWidth">100dp</item>-->
+        <item name="tabIndicatorColor">@color/deepBlue</item>
+        <!--<item name="tabIndicatorHeight">2dp</item>-->
+        <!--<item name="tabPaddingStart">12dp</item>-->
+        <!--<item name="tabPaddingEnd">12dp</item>-->
+        <item name="tabBackground">?attr/selectableItemBackground</item>
+        <!--<item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>-->
+        <!--<item name="tabSelectedTextColor">?android:textColorPrimary</item>-->
+    </style>
+
+    <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <!--<item name="android:textSize">14sp</item>-->
+        <!--<item name="android:textColor">?android:textColorSecondary</item>-->
+        <!--<item name="textAllCaps">true</item>-->
+    </style>
+
+    <!--裁剪图片的样式-->
+    <style name="Crop"></style>
+
+    <style name="Crop.ActionButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/crop__selectable_background</item>
+    </style>
+
+    <style name="Crop.DoneCancelBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/crop__bar_height</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:divider">@drawable/crop_divider</item>
+        <item name="android:showDividers" tools:ignore="NewApi">middle</item>
+        <item name="android:dividerPadding" tools:ignore="NewApi">12dp</item>
+        <item name="android:background">@color/crop_button_bar</item>
+    </style>
+
+    <style name="Crop.ActionButtonText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingRight">20dp</item> <!-- Offsets left drawable -->
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textColor">@color/crop_button_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Crop.ActionButtonText.Cancel">
+        <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
+        <item name="android:text">@string/crop_cancel</item>
+    </style>
+
+    <style name="Crop.ActionButtonText.Done">
+        <item name="android:drawableLeft">@drawable/crop__ic_done</item>
+        <item name="android:text">@string/crop_done</item>
+    </style>
+</resources>
