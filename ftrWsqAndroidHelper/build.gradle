@@ -21,6 +21,3 @@ model {
         }
     }
 }
-dependencies {
-    compile project(':ftrScanApiAndroidHelperUsbHost')
-}

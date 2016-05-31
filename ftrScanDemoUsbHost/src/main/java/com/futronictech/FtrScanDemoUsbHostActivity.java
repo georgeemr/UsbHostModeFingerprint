@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,7 +25,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FtrScanDemoUsbHostActivity extends Activity {
+public class FtrScanDemoUsbHostActivity extends AppCompatActivity {
     /** Called when the activity is first created. */
 	private static Button mButtonScan;
 	private static Button mButtonStop;

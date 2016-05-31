@@ -1,4 +1,5 @@
 apply plugin: 'com.android.model.application'
+
 model {
     android {
         compileSdkVersion 23
@@ -9,7 +10,6 @@ model {
             minSdkVersion.apiLevel 15
             targetSdkVersion.apiLevel 23
         }
-
         buildTypes {
             release {
                 minifyEnabled false
