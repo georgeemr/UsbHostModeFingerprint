@@ -68,10 +68,9 @@ public class AnsiSDKLib {
     /**
      * 将ansi的模板转换成iso的模板
      *
-     * @param pAnsiTemplate
-     * @param pIsoTemplate
-     * @param pIsoTemplateSize
-     * @return
+     * @param pAnsiTemplate    ansi格式的模板数据
+     * @param pIsoTemplate     保存iso格式的模板数据的数据
+     * @param pIsoTemplateSize iso格式数据的大小
      */
     public native boolean ConvertAnsiTemplateToIso(byte[] pAnsiTemplate, byte[] pIsoTemplate, int[] pIsoTemplateSize);
 
