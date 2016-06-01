@@ -216,6 +216,14 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 default:
                     break;
             }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            switch (requestCode) {
+                case FINGERPRINT_ACTIVITY:
+                    haveInformation = false;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -238,6 +246,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * 将照片压缩为.jp2格式
      */
+
     private boolean compressPicture() {
         Bitmap croppedImage = BitmapFactory.decodeFile(pictureUrl);
         BmpUtil bmpUtil = new BmpUtil();
