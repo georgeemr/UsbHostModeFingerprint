@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
-import com.xiongdi.recognition.helper.M1CardHelper;
+import com.xiongdi.recognition.helper.RadiofrequencyUtil;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.ProgressDialogFragment;
@@ -39,7 +39,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
 
-    private M1CardHelper m1CardHelper;
+    private RadiofrequencyUtil mRadiofrequencyUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initData() {
-        m1CardHelper = new M1CardHelper(getApplicationContext());
-        m1CardHelper.setRFModule();
+        mRadiofrequencyUtil = new RadiofrequencyUtil(this);
+        mRadiofrequencyUtil.openRFModel();
     }
 
     private void initView() {
@@ -121,27 +121,25 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         protected void onPreExecute() {
             progressDialog.setData(getString(R.string.reading_from_card));
             progressDialog.show(getSupportFragmentManager(), "save");
-            m1CardHelper.openRFSignal();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            return m1CardHelper.readM1Card();
+            return mRadiofrequencyUtil.readM1Card();
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
             progressDialog.dismiss();
-            m1CardHelper.closeRFSignal();
 
             if (success) {
-                String[] cardData = m1CardHelper.getBaseData();
+                String[] cardData = mRadiofrequencyUtil.getBaseData();
                 personIDTV.setText(String.valueOf(cardData[0]));
                 personNameTV.setText(cardData[1]);
                 personGenderTV.setText(cardData[2]);
                 personBirthdayTV.setText(cardData[3]);
                 personAddressTV.setText(cardData[4]);
-                Bitmap bitmap = m1CardHelper.getPicture();
+                Bitmap bitmap = mRadiofrequencyUtil.getPicture();
                 if (bitmap != null) {
                     pictureIMG.setImageBitmap(bitmap);
                 } else {
@@ -151,7 +149,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     ToastUtil.getInstance().showToast(getApplicationContext(), getString(R.string.common_no_data));
                 }
 
-                verifyFingerPrint();
+//                verifyFingerPrint();
             } else {
                 ToastUtil.getInstance().showToast(getApplicationContext(), getString(R.string.read_failed_message));
             }
@@ -208,7 +206,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        m1CardHelper.closeRFModule();
+        mRadiofrequencyUtil.closeRFModel();
     }
 }
