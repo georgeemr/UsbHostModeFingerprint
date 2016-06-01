@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -656,6 +657,7 @@ public class MainActivity extends Activity {
             mFinger = finger;
             mTmpl = template;
             mMatchScore = matchScore;
+            Log.d("moubiao", "VerifyThread: match score = " + matchScore);
         }
 
         public void run() {
