@@ -17,6 +17,7 @@ import java.util.List;
  * 自定义的application
  */
 public class MainApplication extends Application {
+    public static String fingerprintPath;
     private List<Activity> mActivityList;
 
     @Override
