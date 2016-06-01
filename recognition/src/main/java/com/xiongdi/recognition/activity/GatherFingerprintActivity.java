@@ -303,6 +303,19 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
                 case MESSAGE_SHOW_IMAGE:
                     activity.fingerprintIMG.setImageBitmap(activity.mFingerBitmap);
                     break;
+                case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
+                    Log.d(activity.TAG, "handleMessage: allow device---->");
+                    if (activity.usb_host_ctx.ValidateContext()) {
+
+                    } else {
+                    }
+
+                    break;
+                }
+                case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
+                    Log.d(activity.TAG, "handleMessage: deny device---->");
+                    break;
+                }
                 default:
                     break;
             }
