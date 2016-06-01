@@ -54,7 +54,8 @@
                 android:id="@+id/fill_name_text"
                 style="@style/WriteInfoItemContentStyleLand"
                 android:imeOptions="actionNext|flagNoFullscreen"
-                android:maxLength="15"/>
+                android:maxLength="15"
+                android:text="curry Steve"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -124,7 +125,8 @@
                 android:id="@+id/address_ET"
                 style="@style/WriteInfoItemContentStyleLand"
                 android:imeOptions="actionDone|flagNoFullscreen"
-                android:maxLength="40"/>
+                android:maxLength="40"
+                android:text="Golden State"/>
         </LinearLayout>
 
         <LinearLayout

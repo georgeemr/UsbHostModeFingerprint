@@ -42,7 +42,8 @@
                 android:id="@+id/fill_name_text"
                 style="@style/WriteInfoItemContentStyle"
                 android:imeOptions="actionNext|flagNoFullscreen"
-                android:maxLength="15"/>
+                android:maxLength="15"
+                android:text="curry Steve"/>
 
             <TextView
                 style="@style/WriteInfoItemTitleStyle"
@@ -70,7 +71,8 @@
                 android:id="@+id/address_ET"
                 style="@style/WriteInfoItemContentStyle"
                 android:imeOptions="actionDone|flagNoFullscreen"
-                android:maxLength="40"/>
+                android:maxLength="40"
+                android:text="Golden State"/>
 
             <TextView
                 style="@style/WriteInfoItemTitleStyle"

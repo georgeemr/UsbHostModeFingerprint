@@ -111,8 +111,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     private void refreshView() {
         ++gatherID;
         fill_ID_tx.setText(String.format(Locale.getDefault(), "%1$,05d", gatherID));
-        nameET.setText("");
-        addressET.setText("");
+//        nameET.setText("");
+//        addressET.setText("");
         ID_NO_ET.setText(String.format(Locale.getDefault(), "%1$,05d", gatherID));
     }
 
