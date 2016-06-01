@@ -730,7 +730,7 @@ public class M1CardHelper {
     }
 
     /**
-     * 写M1卡
+     * 写M1卡(0-2扇区写基本数据，3-33扇区写指纹，34-39扇区写照片)
      */
     public boolean writeM1Card() {
         //设置射频协议
@@ -768,7 +768,7 @@ public class M1CardHelper {
     }
 
     private boolean writeBaseData(byte[] serialNo) {
-        byte[] writeBaseData = new byte[112];
+        byte[] writeBaseData = new byte[128];
         Arrays.fill(writeBaseData, (byte) 0x00);
         System.arraycopy(IDCard.getBytes(), 0, writeBaseData, 0, IDCard.getBytes().length);
         System.arraycopy(nameCard.getBytes(), 0, writeBaseData, 5, nameCard.getBytes().length);
@@ -777,260 +777,92 @@ public class M1CardHelper {
         System.arraycopy(addressCard.getBytes(), 0, writeBaseData, 37, addressCard.getBytes().length);
         System.arraycopy(IDNOCard.getBytes(), 0, writeBaseData, 97, IDNOCard.getBytes().length);
 
-        byte[] baseTemp = new byte[16];
-        StringBuilder baseStringBuilder = new StringBuilder();
-
-        int writeBaseOffset = 0;
-        //验证扇区0(0-3，只有1，2可以写数据)
-        if (!authenticateCard(0, serialNo)) {
+        loopWrite(serialNo, writeBaseData, 0, 3);
+        if (!loopWrite(serialNo, writeBaseData, 0, 3)) {
             return false;
         }
 
-        for (int i = 1; i < 3; i++) {
-            if (!writeBlock(writeBaseData, writeBaseOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeBaseData, writeBaseOffset * BLOCK_LENGTH, baseTemp, 0, BLOCK_LENGTH);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeBaseOffset++;
-        }
-
-        //验证扇区1
-        if (!authenticateCard(1, serialNo)) {
-            return false;
-        }
-
-        for (int i = 4; i < 7; i++) {
-            if (!writeBlock(writeBaseData, writeBaseOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeBaseData, writeBaseOffset * BLOCK_LENGTH, baseTemp, 0, BLOCK_LENGTH);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeBaseOffset++;
-        }
-
-        //验证扇区2
-        if (!authenticateCard(2, serialNo)) {
-            return false;
-        }
-        for (int i = 8; i < 10; i++) {
-            if (!writeBlock(writeBaseData, writeBaseOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeBaseData, writeBaseOffset * BLOCK_LENGTH, baseTemp, 0, BLOCK_LENGTH);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeBaseOffset++;
-        }
-
-        //将基本信息保存到文件，以备校对
-        String dirPath = mContext.getExternalFilesDir(null) + File.separator + "card";
-        File directory = new File(dirPath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        File desFile = new File(directory, "backup.bin");
-        if (!desFile.exists()) {
-            try {
-                desFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        FileWriter fileWriter;
-        BufferedWriter bufferedWriter;
-        try {
-            fileWriter = new FileWriter(desFile);
-            bufferedWriter = new BufferedWriter(fileWriter);
-
-            bufferedWriter.write(baseStringBuilder.toString());
-
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        byte[] baseTemp = new byte[16];
+//        StringBuilder baseStringBuilder = new StringBuilder();
+//
+//        int writeBaseOffset = 0;
+//        //验证扇区0(0-3，只有1，2可以写数据)
+//        if (!authenticateCard(0, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 1; i < 3; i++) {
+//            if (!writeBlock(writeBaseData, writeBaseOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeBaseData, writeBaseOffset * BLOCK_LENGTH, baseTemp, 0, BLOCK_LENGTH);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeBaseOffset++;
+//        }
+//
+//        //验证扇区1
+//        if (!authenticateCard(1, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 4; i < 7; i++) {
+//            if (!writeBlock(writeBaseData, writeBaseOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeBaseData, writeBaseOffset * BLOCK_LENGTH, baseTemp, 0, BLOCK_LENGTH);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeBaseOffset++;
+//        }
+//
+//        //验证扇区2
+//        if (!authenticateCard(2, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 8; i < 10; i++) {
+//            if (!writeBlock(writeBaseData, writeBaseOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeBaseData, writeBaseOffset * BLOCK_LENGTH, baseTemp, 0, BLOCK_LENGTH);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeBaseOffset++;
+//        }
+//
+//        //将基本信息保存到文件，以备校对
+//        String dirPath = mContext.getExternalFilesDir(null) + File.separator + "card";
+//        File directory = new File(dirPath);
+//        if (!directory.exists()) {
+//            directory.mkdirs();
+//        }
+//        File desFile = new File(directory, "backup.bin");
+//        if (!desFile.exists()) {
+//            try {
+//                desFile.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        FileWriter fileWriter;
+//        BufferedWriter bufferedWriter;
+//        try {
+//            fileWriter = new FileWriter(desFile);
+//            bufferedWriter = new BufferedWriter(fileWriter);
+//
+//            bufferedWriter.write(baseStringBuilder.toString());
+//
+//            bufferedWriter.flush();
+//            bufferedWriter.close();
+//            fileWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         Log.d(TAG, "write base data success!");
-        return true;
-    }
-
-    /**
-     * 写照片
-     */
-    private boolean writePicture(byte[] serialNo) {
-        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            return false;
-        }
-
-        File file = new File(imgUrlCard);
-        if (!file.exists()) {
-            return false;
-        }
-
-        int fileLen = (int) file.length();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(fileLen);
-        FileInputStream fis;
-        byte[] readData = new byte[fileLen];
-        int readLen;
-        try {
-            fis = new FileInputStream(file);
-            while ((readLen = fis.read(readData)) != -1) {
-                bos.write(readData, 0, readLen);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        final int HEAD_LENGTH = 208;//图片头的长度
-        final int PICTURE_MAX_LENGTH = 1440;//去掉头后图片的最大长度
-        final int TEMP = 2;//保存图片长度需要的字节数
-        byte[] bitmapData = bos.toByteArray();
-        int length = bitmapData.length - HEAD_LENGTH;//除去头的长度
-        if (length > PICTURE_MAX_LENGTH - TEMP) {
-            Log.d(TAG, "picture too large! current is " + length + " limit is " + PICTURE_MAX_LENGTH);
-            return false;
-        }
-
-        byte[] lengthData = Converter.short2ByteArray((short) length);
-        byte[] writePicData = new byte[PICTURE_MAX_LENGTH];
-        Arrays.fill(writePicData, (byte) 0x00);
-        System.arraycopy(lengthData, 0, writePicData, 0, lengthData.length);
-        System.arraycopy(bitmapData, HEAD_LENGTH, writePicData, lengthData.length, length);
-
-        byte[] baseTemp = new byte[16];
-        StringBuilder baseStringBuilder = new StringBuilder();
-
-        int writeOffset = 0;
-        //验证扇区34(160-175)
-        if (!authenticateCard(40, serialNo)) {
-            return false;
-        }
-        for (int i = 160; i < 175; i++) {
-            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区35(176-191)
-        if (!authenticateCard(44, serialNo)) {
-            return false;
-        }
-        for (int i = 176; i < 191; i++) {
-            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区36(192-206)
-        if (!authenticateCard(48, serialNo)) {
-            return false;
-        }
-        for (int i = 192; i < 207; i++) {
-            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区37(208-222)
-        if (!authenticateCard(52, serialNo)) {
-            return false;
-        }
-
-        for (int i = 208; i < 223; i++) {
-            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区38(224-238)
-        if (!authenticateCard(56, serialNo)) {
-            return false;
-        }
-
-        for (int i = 224; i < 239; i++) {
-            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区39(240-254)
-        if (!authenticateCard(60, serialNo)) {
-            return false;
-        }
-
-        for (int i = 240; i < 255; i++) {
-            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
-            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
-            baseStringBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //将基本信息保存到文件，以备校对
-        String dirPath = mContext.getExternalFilesDir(null) + File.separator + "card";
-        File directory = new File(dirPath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        File desFile = new File(directory, "backup.bin");
-        if (!desFile.exists()) {
-            try {
-                desFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        FileWriter fileWriter;
-        BufferedWriter bufferedWriter;
-        try {
-            fileWriter = new FileWriter(desFile, true);
-            bufferedWriter = new BufferedWriter(fileWriter);
-
-            bufferedWriter.write(baseStringBuilder.toString());
-
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Log.d(TAG, "write picture success!");
         return true;
     }
 
@@ -1042,7 +874,7 @@ public class M1CardHelper {
             return false;
         }
 
-        final int FINGER_MAX_DATA = 1392;//可以保存的指纹数据的最大值
+        final int FINGER_MAX_DATA = 1904;//可以保存的指纹数据的最大值
         File file = new File(fingerUrlCard);
         if (!file.exists()) {
             return false;
@@ -1086,402 +918,407 @@ public class M1CardHelper {
 
         }
 
-        byte[] fingerTemp = new byte[16];
-        StringBuilder fingerBuilder = new StringBuilder();
-
-        int writeOffset = 0;
-        //验证扇区3(12-15)
-        if (!authenticateCard(3, serialNo)) {
-            return false;
-        }
-        for (int i = 12; i < 15; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区4(16-19)
-        if (!authenticateCard(4, serialNo)) {
+        loopWrite(serialNo, writeFingerData, 3, 34);
+        if (!loopWrite(serialNo, writeFingerData, 3, 34)) {
             return false;
         }
 
-        for (int i = 16; i < 19; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区5(20-23)
-        if (!authenticateCard(5, serialNo)) {
-            return false;
-        }
-
-        for (int i = 20; i < 23; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区6(24-27)
-        if (!authenticateCard(6, serialNo)) {
-            return false;
-        }
-
-        for (int i = 24; i < 27; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区7(28-31)
-        if (!authenticateCard(7, serialNo)) {
-            return false;
-        }
-        for (int i = 28; i < 31; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区8(32-35)
-        if (!authenticateCard(8, serialNo)) {
-            return false;
-        }
-
-        for (int i = 32; i < 35; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区9(36-39)
-        if (!authenticateCard(9, serialNo)) {
-            return false;
-        }
-
-        for (int i = 36; i < 39; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区10(40-43)
-        if (!authenticateCard(10, serialNo)) {
-            return false;
-        }
-
-        for (int i = 40; i < 43; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区11(44-47)
-        if (!authenticateCard(11, serialNo)) {
-            return false;
-        }
-        for (int i = 44; i < 47; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区12(48-51)
-        if (!authenticateCard(12, serialNo)) {
-            return false;
-        }
-
-        for (int i = 48; i < 51; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区13(52-55)
-        if (!authenticateCard(13, serialNo)) {
-            return false;
-        }
-
-        for (int i = 52; i < 55; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区14(56-59)
-        if (!authenticateCard(14, serialNo)) {
-            return false;
-        }
-
-        for (int i = 56; i < 59; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区15(60-63)
-        if (!authenticateCard(15, serialNo)) {
-            return false;
-        }
-        for (int i = 60; i < 63; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区16(64-67)
-        if (!authenticateCard(BLOCK_LENGTH, serialNo)) {
-            return false;
-        }
-
-        for (int i = 64; i < 67; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区17(68-71)
-        if (!authenticateCard(17, serialNo)) {
-            return false;
-        }
-
-        for (int i = 68; i < 71; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区18(72-75)
-        if (!authenticateCard(18, serialNo)) {
-            return false;
-        }
-
-        for (int i = 72; i < 75; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区19(76-79)
-        if (!authenticateCard(19, serialNo)) {
-            return false;
-        }
-        for (int i = 76; i < 79; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区20(80-83)
-        if (!authenticateCard(20, serialNo)) {
-            return false;
-        }
-
-        for (int i = 80; i < 83; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区21(84-87)
-        if (!authenticateCard(21, serialNo)) {
-            return false;
-        }
-
-        for (int i = 84; i < 87; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区22(88-91)
-        if (!authenticateCard(22, serialNo)) {
-            return false;
-        }
-
-        for (int i = 88; i < 91; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区23(92-95)
-        if (!authenticateCard(23, serialNo)) {
-            return false;
-        }
-        for (int i = 92; i < 95; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区24(96-99)
-        if (!authenticateCard(24, serialNo)) {
-            return false;
-        }
-
-        for (int i = 96; i < 99; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区25(100-103)
-        if (!authenticateCard(25, serialNo)) {
-            return false;
-        }
-
-        for (int i = 100; i < 103; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区26(104-107)
-        if (!authenticateCard(26, serialNo)) {
-            return false;
-        }
-
-        for (int i = 104; i < 107; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
-
-        //验证扇区27(108-111)
-        if (!authenticateCard(27, serialNo)) {
-            return false;
-        }
-        for (int i = 108; i < 111; i++) {
-            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
-                return false;
-            }
-            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
-            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
-            fingerBuilder.append("\n");
-
-            writeOffset++;
-        }
+//        byte[] fingerTemp = new byte[16];
+//        StringBuilder fingerBuilder = new StringBuilder();
+//
+//        int writeOffset = 0;
+//        //验证扇区3(12-15)
+//        if (!authenticateCard(3, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 12; i < 15; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区4(16-19)
+//        if (!authenticateCard(4, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 16; i < 19; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区5(20-23)
+//        if (!authenticateCard(5, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 20; i < 23; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区6(24-27)
+//        if (!authenticateCard(6, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 24; i < 27; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区7(28-31)
+//        if (!authenticateCard(7, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 28; i < 31; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区8(32-35)
+//        if (!authenticateCard(8, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 32; i < 35; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区9(36-39)
+//        if (!authenticateCard(9, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 36; i < 39; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区10(40-43)
+//        if (!authenticateCard(10, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 40; i < 43; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区11(44-47)
+//        if (!authenticateCard(11, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 44; i < 47; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区12(48-51)
+//        if (!authenticateCard(12, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 48; i < 51; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区13(52-55)
+//        if (!authenticateCard(13, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 52; i < 55; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区14(56-59)
+//        if (!authenticateCard(14, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 56; i < 59; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区15(60-63)
+//        if (!authenticateCard(15, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 60; i < 63; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区16(64-67)
+//        if (!authenticateCard(BLOCK_LENGTH, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 64; i < 67; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区17(68-71)
+//        if (!authenticateCard(17, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 68; i < 71; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区18(72-75)
+//        if (!authenticateCard(18, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 72; i < 75; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区19(76-79)
+//        if (!authenticateCard(19, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 76; i < 79; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区20(80-83)
+//        if (!authenticateCard(20, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 80; i < 83; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区21(84-87)
+//        if (!authenticateCard(21, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 84; i < 87; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区22(88-91)
+//        if (!authenticateCard(22, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 88; i < 91; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区23(92-95)
+//        if (!authenticateCard(23, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 92; i < 95; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区24(96-99)
+//        if (!authenticateCard(24, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 96; i < 99; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区25(100-103)
+//        if (!authenticateCard(25, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 100; i < 103; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区26(104-107)
+//        if (!authenticateCard(26, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 104; i < 107; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区27(108-111)
+//        if (!authenticateCard(27, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 108; i < 111; i++) {
+//            if (!writeBlock(writeFingerData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writeFingerData, writeOffset * BLOCK_LENGTH, fingerTemp, 0, 16);
+//            fingerBuilder.append(Converter.hex2String(fingerTemp, 16));
+//            fingerBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
 
         //验证扇区28(112-115)
 //        if (!authenticateCard(28, serialNo)) {
@@ -1535,35 +1372,283 @@ public class M1CardHelper {
 //        }
 
         //将基本信息保存到文件，以备校对
-        String dirPath = mContext.getExternalFilesDir(null) + File.separator + "card";
-        File directory = new File(dirPath);
-        if (!directory.exists()) {
-            directory.mkdirs();
+//        String dirPath = mContext.getExternalFilesDir(null) + File.separator + "card";
+//        File directory = new File(dirPath);
+//        if (!directory.exists()) {
+//            directory.mkdirs();
+//        }
+//        File desFile = new File(directory, "backup.bin");
+//        if (!desFile.exists()) {
+//            try {
+//                desFile.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        FileWriter fileWriter;
+//        BufferedWriter bufferedWriter;
+//        try {
+//            fileWriter = new FileWriter(desFile, true);
+//            bufferedWriter = new BufferedWriter(fileWriter);
+//
+//            bufferedWriter.write(fingerBuilder.toString());
+//
+//            bufferedWriter.flush();
+//            bufferedWriter.close();
+//            fileWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        Log.d(TAG, "write fingerprint success!");
+
+        return true;
+    }
+
+    /**
+     * 写照片
+     */
+    private boolean writePicture(byte[] serialNo) {
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            return false;
         }
-        File desFile = new File(directory, "backup.bin");
-        if (!desFile.exists()) {
-            try {
-                desFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+        File file = new File(imgUrlCard);
+        if (!file.exists()) {
+            return false;
         }
-        FileWriter fileWriter;
-        BufferedWriter bufferedWriter;
+
+        int fileLen = (int) file.length();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(fileLen);
+        FileInputStream fis;
+        byte[] readData = new byte[fileLen];
+        int readLen;
         try {
-            fileWriter = new FileWriter(desFile, true);
-            bufferedWriter = new BufferedWriter(fileWriter);
-
-            bufferedWriter.write(fingerBuilder.toString());
-
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            fileWriter.close();
+            fis = new FileInputStream(file);
+            while ((readLen = fis.read(readData)) != -1) {
+                bos.write(readData, 0, readLen);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Log.d(TAG, "write fingerprint success!");
+        final int HEAD_LENGTH = 208;//图片头的长度
+        final int PICTURE_MAX_LENGTH = 1440;//去掉头后图片的最大长度
+        final int TEMP = 2;//保存图片长度需要的字节数
+        byte[] bitmapData = bos.toByteArray();
+        int length = bitmapData.length - HEAD_LENGTH;//除去头的长度
+        if (length > PICTURE_MAX_LENGTH - TEMP) {
+            Log.d(TAG, "picture too large! current is " + length + " limit is " + PICTURE_MAX_LENGTH);
+            return false;
+        }
+
+        byte[] lengthData = Converter.short2ByteArray((short) length);
+        byte[] writePicData = new byte[PICTURE_MAX_LENGTH];
+        Arrays.fill(writePicData, (byte) 0x00);
+        System.arraycopy(lengthData, 0, writePicData, 0, lengthData.length);
+        System.arraycopy(bitmapData, HEAD_LENGTH, writePicData, lengthData.length, length);
+
+        if (!loopWrite(serialNo, writePicData, 34, 40)) {
+            return false;
+        }
+//        byte[] baseTemp = new byte[16];
+//        StringBuilder baseStringBuilder = new StringBuilder();
+
+//        int writeOffset = 0;
+//        //验证扇区34(160-175)
+//        if (!authenticateCard(40, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 160; i < 175; i++) {
+//            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区35(176-191)
+//        if (!authenticateCard(44, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 176; i < 191; i++) {
+//            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区36(192-206)
+//        if (!authenticateCard(48, serialNo)) {
+//            return false;
+//        }
+//        for (int i = 192; i < 207; i++) {
+//            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区37(208-222)
+//        if (!authenticateCard(52, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 208; i < 223; i++) {
+//            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区38(224-238)
+//        if (!authenticateCard(56, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 224; i < 239; i++) {
+//            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+//
+//        //验证扇区39(240-254)
+//        if (!authenticateCard(60, serialNo)) {
+//            return false;
+//        }
+//
+//        for (int i = 240; i < 255; i++) {
+//            if (!writeBlock(writePicData, writeOffset * BLOCK_LENGTH, i)) {
+//                return false;
+//            }
+//            System.arraycopy(writePicData, writeOffset * BLOCK_LENGTH, baseTemp, 0, 16);
+//            baseStringBuilder.append(Converter.hex2String(baseTemp, 16));
+//            baseStringBuilder.append("\n");
+//
+//            writeOffset++;
+//        }
+
+        //将基本信息保存到文件，以备校对
+//        String dirPath = mContext.getExternalFilesDir(null) + File.separator + "card";
+//        File directory = new File(dirPath);
+//        if (!directory.exists()) {
+//            directory.mkdirs();
+//        }
+//        File desFile = new File(directory, "backup.bin");
+//        if (!desFile.exists()) {
+//            try {
+//                desFile.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        FileWriter fileWriter;
+//        BufferedWriter bufferedWriter;
+//        try {
+//            fileWriter = new FileWriter(desFile, true);
+//            bufferedWriter = new BufferedWriter(fileWriter);
+//
+//            bufferedWriter.write(baseStringBuilder.toString());
+//
+//            bufferedWriter.flush();
+//            bufferedWriter.close();
+//            fileWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        Log.d(TAG, "write picture success!");
+        return true;
+    }
+
+    /**
+     * 循环向卡里写入数据
+     *
+     * @param serialNo         卡的序列号
+     * @param srcData          要写入的数据
+     * @param startSectorIndex 开始的扇区号
+     * @param endSectorIndex   结束的扇区号
+     * @return
+     */
+    private boolean loopWrite(byte[] serialNo, byte[] srcData, int startSectorIndex, int endSectorIndex) {
+        int blockDensity = 4;//每个扇区的块数
+        int ret;//验证卡，读卡的返回值
+        byte[] bKey = new byte[6];
+        int dummySectorIndex;
+        int blockIndex;
+        byte[] M1Id = new byte[4];
+        M1Id[0] = serialNo[0];
+        M1Id[1] = serialNo[1];
+        M1Id[2] = serialNo[2];
+        M1Id[3] = serialNo[3];
+
+        // S50 的卡, 16 扇区;  S70的卡, 40扇区
+        int writeBaseOffset = 0;
+        for (int sectorIndex = startSectorIndex; sectorIndex < endSectorIndex; sectorIndex++) {
+            //验证扇区
+            Arrays.fill(bKey, (byte) 0xFF);
+            if (sectorIndex > 31) {
+                dummySectorIndex = 32 + (sectorIndex - 32) * 4;
+                ret = rfid.MifAuthen((byte) 0x0A, (byte) dummySectorIndex, bKey, M1Id);
+                blockDensity = 16;//如果是后八个扇区则每个扇区里有16个块
+            } else {
+                ret = rfid.MifAuthen((byte) 0x0A, (byte) sectorIndex, bKey, M1Id);
+            }
+
+            if (ret != 0) {
+                Log.e(TAG, "readCard: authenticate failed sector index = " + sectorIndex);
+                return false;
+            }
+
+            //向扇区里的数据块写数据
+            for (int j = 0; j < blockDensity; j++) {
+                if (sectorIndex > 31) {
+                    if (15 == j) {//判断是否是密钥块，如果是则跳过读下一个块
+                        continue;
+                    }
+
+                    blockIndex = 32 * 4 + (sectorIndex - 32) * blockDensity + j;
+                } else {
+                    if (0 == sectorIndex && 0 == j) {//第0扇区的第0块是厂家信息，不能写
+                        continue;
+                    }
+                    if (3 == j) {//判断是否是密钥块，如果是怎跳过读下一个块
+                        continue;
+                    }
+
+                    blockIndex = (sectorIndex * blockDensity + j);
+                }
+                //写数据
+                Log.d(TAG, "loopWrite: sectorIndex = " + sectorIndex + " blockIndex = " + blockIndex
+                        + " writeBaseOffset = " + writeBaseOffset + " offset = " + writeBaseOffset * BLOCK_LENGTH
+                        + " data size = " + srcData.length);
+                if (!writeBlock(srcData, writeBaseOffset * BLOCK_LENGTH, blockIndex)) {
+                    return false;
+                }
+
+                writeBaseOffset++;
+            }
+        }
 
         return true;
     }
