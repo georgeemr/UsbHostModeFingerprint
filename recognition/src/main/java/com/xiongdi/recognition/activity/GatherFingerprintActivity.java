@@ -281,6 +281,7 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }
+        Log.d(TAG, "saveTemplate: fingerprint path = " + MainApplication.fingerprintPath);
     }
 
     private static class FingerprintHandler extends Handler {
