@@ -56,6 +56,12 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
         setListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        verifyFingerprint();
+    }
+
     private void initData() {
         mHandler = new VerifyHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
@@ -236,16 +242,11 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
                     activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
                     break;
                 case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
-                    Log.d(activity.TAG, "handleMessage: allow device---->");
-                    if (activity.usb_host_ctx.ValidateContext()) {
-
-                    } else {
-                    }
-
+                    activity.verifyFingerprint();
                     break;
                 }
                 case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
-                    Log.d(activity.TAG, "handleMessage: deny device---->");
+                    activity.verifyFingerprint();
                     break;
                 }
                 default:
