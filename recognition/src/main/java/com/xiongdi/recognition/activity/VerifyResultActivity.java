@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.ProgressDialogFragment;
 
+import java.lang.ref.WeakReference;
 import java.util.Locale;
 
 /**
@@ -34,12 +36,17 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private final int KEY_CODE_SCAN_CARD_LEFT = 250;
     private final int KEY_CODE_VERIFY_FINGERPRINT_LEFT = 251;
     private final int KEY_CODE_VERIFY_FINGERPRINT_RIGHT = 252;
+    private static final int READ_CARD_FLAG = 0;
 
     private ImageView pictureIMG;
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
 
     private OperateCardHelper mOperateCardHelper;
+    private ReadCardHandler mReadCardHandler;
+    private ReadCardThread mReadCardThread;
+    private boolean mReadSuccess = false;
+    ProgressDialogFragment progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +61,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private void initData() {
         mOperateCardHelper = new OperateCardHelper(this);
         mOperateCardHelper.openRFModel();
+        mReadCardHandler = new ReadCardHandler(this);
+        progressDialog = new ProgressDialogFragment();
     }
 
     private void initView() {
@@ -93,7 +102,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 verifyFingerPrint();
                 break;
             case R.id.bottom_middle_bt:
-                new ReadTask().execute();
+//                new ReadTask().execute();
+                readCard();
                 break;
             default:
                 break;
@@ -103,7 +113,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (KEY_CODE_SCAN_CARD_LEFT == keyCode || KEY_CODE_SCAN_CARD_RIGHT == keyCode) {
-            new ReadTask().execute();
+            readCard();
         } else if (KEY_CODE_VERIFY_FINGERPRINT_LEFT == keyCode || KEY_CODE_VERIFY_FINGERPRINT_RIGHT == keyCode) {
             verifyFingerPrint();
         }
@@ -114,44 +124,63 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     /**
      * 读卡
      */
-    private class ReadTask extends AsyncTask<Void, Void, Boolean> {
-        ProgressDialogFragment progressDialog = new ProgressDialogFragment();
+    private void readCard() {
+        progressDialog.setData(getString(R.string.reading_from_card));
+        progressDialog.show(getSupportFragmentManager(), "save");
 
+        mReadCardThread = new ReadCardThread();
+        mReadCardThread.start();
+    }
+
+    /**
+     * 读卡的线程
+     */
+    private class ReadCardThread extends Thread {
         @Override
-        protected void onPreExecute() {
-            progressDialog.setData(getString(R.string.reading_from_card));
-            progressDialog.show(getSupportFragmentManager(), "save");
+        public void run() {
+            mReadSuccess = mOperateCardHelper.readM1Card();
+            Message message = Message.obtain();
+            message.what = READ_CARD_FLAG;
+            mReadCardHandler.sendMessage(message);
+        }
+    }
+
+    /**
+     * 处理读卡的handler
+     */
+    private static class ReadCardHandler extends Handler {
+        private WeakReference<VerifyResultActivity> mWeakReference;
+
+        public ReadCardHandler(VerifyResultActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            return mOperateCardHelper.readM1Card();
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            progressDialog.dismiss();
-
-            if (success) {
-                String[] cardData = mOperateCardHelper.getBaseData();
-                personIDTV.setText(String.valueOf(cardData[0]));
-                personNameTV.setText(cardData[1]);
-                personGenderTV.setText(cardData[2]);
-                personBirthdayTV.setText(cardData[3]);
-                personAddressTV.setText(cardData[4]);
-                Bitmap bitmap = mOperateCardHelper.getPicture();
-                if (bitmap != null) {
-                    pictureIMG.setImageBitmap(bitmap);
-                } else {
-                    pictureIMG.setImageResource(R.mipmap.person_photo);
-                }
-                if (!StringUtil.hasLength(cardData[1])) {
-                    ToastUtil.getInstance().showToast(getApplicationContext(), getString(R.string.common_no_data));
-                }
-
-//                verifyFingerPrint();
-            } else {
-                ToastUtil.getInstance().showToast(getApplicationContext(), getString(R.string.read_failed_message));
+        public void handleMessage(Message msg) {
+            final VerifyResultActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case READ_CARD_FLAG:
+                    activity.progressDialog.dismiss();
+                    if (activity.mReadSuccess) {
+                        String[] cardData = activity.mOperateCardHelper.getBaseData();
+                        activity.personIDTV.setText(String.valueOf(cardData[0]));
+                        activity.personNameTV.setText(cardData[1]);
+                        activity.personGenderTV.setText(cardData[2]);
+                        activity.personBirthdayTV.setText(cardData[3]);
+                        activity.personAddressTV.setText(cardData[4]);
+                        Bitmap bitmap = activity.mOperateCardHelper.getPicture();
+                        if (bitmap != null) {
+                            activity.pictureIMG.setImageBitmap(bitmap);
+                        } else {
+                            activity.pictureIMG.setImageResource(R.mipmap.person_photo);
+                        }
+                        if (!StringUtil.hasLength(cardData[1])) {
+                            ToastUtil.getInstance().showToast(activity, activity.getString(R.string.common_no_data));
+                        }
+                        break;
+                    }
+                default:
+                    break;
             }
         }
     }
