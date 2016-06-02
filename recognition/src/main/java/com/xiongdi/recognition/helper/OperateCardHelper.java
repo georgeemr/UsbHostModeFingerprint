@@ -923,7 +923,6 @@ public class OperateCardHelper {
         byte[] M1Id = new byte[4];
         System.arraycopy(serialNo, 0, M1Id, 0, 4);
 
-        Log.d(TAG, "loopWrite: src data size = " + srcData.length + " start = " + startSectorIndex + " end = " + endSectorIndex);
         // S50 的卡, 16 扇区;  S70的卡, 40扇区
         int writeBaseOffset = 0;
         for (int sectorIndex = startSectorIndex; sectorIndex < endSectorIndex; sectorIndex++) {
@@ -931,11 +930,9 @@ public class OperateCardHelper {
             Arrays.fill(bKey, (byte) 0xFF);
             if (sectorIndex > 31) {
                 dummySectorIndex = 32 + (sectorIndex - 32) * 4;
-                Log.d(TAG, "loopWrite: > 31 sector index = " + dummySectorIndex);
                 ret = EmpPad.Rfmif_Authen((byte) 0x0A, (byte) dummySectorIndex, bKey, M1Id);
                 blockDensity = 16;//如果是后八个扇区则每个扇区里有16个块
             } else {
-                Log.d(TAG, "loopWrite: < 31 sector index = " + sectorIndex);
                 ret = EmpPad.Rfmif_Authen((byte) 0x0A, (byte) sectorIndex, bKey, M1Id);
             }
 
@@ -990,7 +987,6 @@ public class OperateCardHelper {
         int writeRet = EmpPad.Rfmif_Write((byte) block, writeTemp);
         if (writeRet != 0) {
             Log.e(TAG, "write block " + block + " failed!");
-
             return false;
         }
 
