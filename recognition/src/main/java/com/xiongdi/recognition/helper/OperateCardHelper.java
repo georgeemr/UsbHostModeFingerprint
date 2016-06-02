@@ -286,10 +286,7 @@ public class OperateCardHelper {
         int dummySectorIndex;
         int blockIndex;
         byte[] M1Id = new byte[4];
-        M1Id[0] = serialNo[0];
-        M1Id[1] = serialNo[1];
-        M1Id[2] = serialNo[2];
-        M1Id[3] = serialNo[3];
+        System.arraycopy(serialNo, 0, M1Id, 0, 4);
         StringBuilder totalData = new StringBuilder();//读出来的所有数据
 
         // S50 的卡, 16 扇区;  S70的卡, 40扇区
@@ -924,10 +921,7 @@ public class OperateCardHelper {
         int dummySectorIndex;
         int blockIndex;
         byte[] M1Id = new byte[4];
-        M1Id[0] = serialNo[0];
-        M1Id[1] = serialNo[1];
-        M1Id[2] = serialNo[2];
-        M1Id[3] = serialNo[3];
+        System.arraycopy(serialNo, 0, M1Id, 0, 4);
 
         Log.d(TAG, "loopWrite: src data size = " + srcData.length + " start = " + startSectorIndex + " end = " + endSectorIndex);
         // S50 的卡, 16 扇区;  S70的卡, 40扇区
