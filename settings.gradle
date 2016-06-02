@@ -1,5 +1,3 @@
-
-include ':androidHelper'
 include ':ftrAnsiSDKDemo'
 include ':ftrScanDemoUsbHost'
 include ':recognition'
