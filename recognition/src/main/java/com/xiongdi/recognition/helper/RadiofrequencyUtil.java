@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.xd.Converter;
-import com.xd.rfid;
 import com.xiongdi.EmpPad;
 import com.xiongdi.OpenJpeg;
 import com.xiongdi.recognition.constant.PictureConstant;
