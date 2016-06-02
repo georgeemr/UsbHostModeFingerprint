@@ -789,7 +789,6 @@ public class RadiofrequencyUtil {
         System.arraycopy(addressCard.getBytes(), 0, writeBaseData, 37, addressCard.getBytes().length);
         System.arraycopy(IDNOCard.getBytes(), 0, writeBaseData, 97, IDNOCard.getBytes().length);
 
-        Log.d(TAG, "name = " + nameCard + " address = " + addressCard);
         if (!loopWrite(serialNo, writeBaseData, 0, 3)) {
             return false;
         }
@@ -856,7 +855,6 @@ public class RadiofrequencyUtil {
 
 
         Log.d(TAG, "write fingerprint success!");
-
         return true;
     }
 
@@ -931,7 +929,6 @@ public class RadiofrequencyUtil {
         M1Id[1] = serialNo[1];
         M1Id[2] = serialNo[2];
         M1Id[3] = serialNo[3];
-
 
         Log.d(TAG, "loopWrite: src data size = " + srcData.length + " start = " + startSectorIndex + " end = " + endSectorIndex);
         // S50 的卡, 16 扇区;  S70的卡, 40扇区
