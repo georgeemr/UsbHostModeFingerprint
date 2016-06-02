@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.xd.Converter;
+import com.xd.rfid;
 import com.xiongdi.EmpPad;
 import com.xiongdi.OpenJpeg;
 import com.xiongdi.recognition.constant.PictureConstant;
@@ -16,7 +17,9 @@ import com.xiongdi.recognition.util.FileUtil;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -729,5 +732,278 @@ public class RadiofrequencyUtil {
 
     public Bitmap getPicture() {
         return cardImg;
+    }
+
+    public void setSaveData(String[] saveData) {
+        IDCard = saveData[0];
+        nameCard = saveData[1];
+        genderCard = saveData[2];
+        birthdayCard = saveData[3];
+        addressCard = saveData[4];
+        IDNOCard = saveData[5];
+        imgUrlCard = saveData[6];
+        fingerUrlCard = saveData[7];
+    }
+
+    /**
+     * 写M1卡(0-2扇区写基本数据，3-33扇区写指纹，34-39扇区写照片)
+     */
+    public boolean writeM1Card() {
+        byte[] uidlen = new byte[1];
+        byte[] pUID = new byte[256];
+        byte[] Serial = new byte[4];
+
+        chooseAerial(1);//内置天线
+        initRFModel(1);
+        openOrCloseRFSignal(0);
+        getSerialNumber(0, uidlen, pUID);
+        System.arraycopy(pUID, 0, Serial, 0, 4);
+
+        //写基本信息数据
+        if (!writeBaseData(Serial)) {
+            return false;
+        }
+        //写指纹
+        if (fingerUrlCard != null) {
+            if (!writeFingerprint(Serial)) {
+                return false;
+            }
+        }
+        //写照片
+        if (imgUrlCard != null) {
+            if (!writePicture(Serial)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean writeBaseData(byte[] serialNo) {
+        byte[] writeBaseData = new byte[128];
+        Arrays.fill(writeBaseData, (byte) 0x00);
+        System.arraycopy(IDCard.getBytes(), 0, writeBaseData, 0, IDCard.getBytes().length);
+        System.arraycopy(nameCard.getBytes(), 0, writeBaseData, 5, nameCard.getBytes().length);
+        System.arraycopy(genderCard.getBytes(), 0, writeBaseData, 21, genderCard.getBytes().length);
+        System.arraycopy(birthdayCard.getBytes(), 0, writeBaseData, 27, birthdayCard.getBytes().length);
+        System.arraycopy(addressCard.getBytes(), 0, writeBaseData, 37, addressCard.getBytes().length);
+        System.arraycopy(IDNOCard.getBytes(), 0, writeBaseData, 97, IDNOCard.getBytes().length);
+
+        Log.d(TAG, "name = " + nameCard + " address = " + addressCard);
+        if (!loopWrite(serialNo, writeBaseData, 0, 3)) {
+            return false;
+        }
+
+        Log.d(TAG, "write base data success!");
+        return true;
+    }
+
+    /**
+     * 写指纹
+     */
+    private boolean writeFingerprint(byte[] serialNo) {
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            return false;
+        }
+
+        final int FINGER_MAX_DATA = 1904;//可以保存的指纹数据的最大值
+        File file = new File(fingerUrlCard);
+        if (!file.exists()) {
+            return false;
+        }
+
+        byte[] writeFingerData = new byte[FINGER_MAX_DATA];
+        Arrays.fill(writeFingerData, (byte) 0x00);
+        FileInputStream fis = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            fis = new FileInputStream(file);
+            baos = new ByteArrayOutputStream(FINGER_MAX_DATA);
+            byte[] temp = new byte[FINGER_MAX_DATA];
+            int n;
+            while ((n = fis.read(temp)) != -1) {
+                baos.write(temp, 0, n);
+            }
+
+            byte[] validData = baos.toByteArray();
+            int fingerLength = validData.length;
+            if (fingerLength > FINGER_MAX_DATA - 2) {
+                Log.d(TAG, "finger data too large!");
+                return false;
+            }
+            byte[] saveLength = Converter.short2ByteArray((short) fingerLength);
+            System.arraycopy(saveLength, 0, writeFingerData, 0, saveLength.length);
+            System.arraycopy(validData, 0, writeFingerData, saveLength.length, fingerLength);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (baos != null) {
+                    baos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if (!loopWrite(serialNo, writeFingerData, 3, 34)) {
+            return false;
+        }
+
+
+        Log.d(TAG, "write fingerprint success!");
+
+        return true;
+    }
+
+    /**
+     * 写照片
+     */
+    private boolean writePicture(byte[] serialNo) {
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            return false;
+        }
+
+        File file = new File(imgUrlCard);
+        if (!file.exists()) {
+            return false;
+        }
+
+        int fileLen = (int) file.length();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(fileLen);
+        FileInputStream fis;
+        byte[] readData = new byte[fileLen];
+        int readLen;
+        try {
+            fis = new FileInputStream(file);
+            while ((readLen = fis.read(readData)) != -1) {
+                bos.write(readData, 0, readLen);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final int HEAD_LENGTH = 208;//图片头的长度
+        final int PICTURE_MAX_LENGTH = 1440;//去掉头后图片的最大长度
+        final int TEMP = 2;//保存图片长度需要的字节数
+        byte[] bitmapData = bos.toByteArray();
+        int length = bitmapData.length - HEAD_LENGTH;//除去头的长度
+        if (length > PICTURE_MAX_LENGTH - TEMP) {
+            Log.d(TAG, "picture too large! current is " + length + " limit is " + PICTURE_MAX_LENGTH);
+            return false;
+        }
+
+        byte[] lengthData = Converter.short2ByteArray((short) length);
+        byte[] writePicData = new byte[PICTURE_MAX_LENGTH];
+        Arrays.fill(writePicData, (byte) 0x00);
+        System.arraycopy(lengthData, 0, writePicData, 0, lengthData.length);
+        System.arraycopy(bitmapData, HEAD_LENGTH, writePicData, lengthData.length, length);
+
+        if (!loopWrite(serialNo, writePicData, 34, 40)) {
+            return false;
+        }
+
+        Log.d(TAG, "write picture success!");
+        return true;
+    }
+
+    /**
+     * 循环向卡里写入数据
+     *
+     * @param serialNo         卡的序列号
+     * @param srcData          要写入的数据
+     * @param startSectorIndex 开始的扇区号
+     * @param endSectorIndex   结束的扇区号
+     * @return
+     */
+    private boolean loopWrite(byte[] serialNo, byte[] srcData, int startSectorIndex, int endSectorIndex) {
+        int blockDensity = 4;//每个扇区的块数
+        int ret;//验证卡，读卡的返回值
+        byte[] bKey = new byte[6];
+        int dummySectorIndex;
+        int blockIndex;
+        byte[] M1Id = new byte[4];
+        M1Id[0] = serialNo[0];
+        M1Id[1] = serialNo[1];
+        M1Id[2] = serialNo[2];
+        M1Id[3] = serialNo[3];
+
+
+        Log.d(TAG, "loopWrite: src data size = " + srcData.length + " start = " + startSectorIndex + " end = " + endSectorIndex);
+        // S50 的卡, 16 扇区;  S70的卡, 40扇区
+        int writeBaseOffset = 0;
+        for (int sectorIndex = startSectorIndex; sectorIndex < endSectorIndex; sectorIndex++) {
+            //验证扇区
+            Arrays.fill(bKey, (byte) 0xFF);
+            if (sectorIndex > 31) {
+                dummySectorIndex = 32 + (sectorIndex - 32) * 4;
+                Log.d(TAG, "loopWrite: > 31 sector index = " + dummySectorIndex);
+                ret = EmpPad.Rfmif_Authen((byte) 0x0A, (byte) dummySectorIndex, bKey, M1Id);
+                blockDensity = 16;//如果是后八个扇区则每个扇区里有16个块
+            } else {
+                Log.d(TAG, "loopWrite: < 31 sector index = " + sectorIndex);
+                ret = EmpPad.Rfmif_Authen((byte) 0x0A, (byte) sectorIndex, bKey, M1Id);
+            }
+
+            if (ret != 0) {
+                Log.e(TAG, "loopWrite: authenticate failed sector index = " + sectorIndex + " return code = " + ret);
+                return false;
+            }
+
+            //向扇区里的数据块写数据
+            for (int j = 0; j < blockDensity; j++) {
+                if (sectorIndex > 31) {
+                    if (15 == j) {//判断是否是密钥块，如果是则跳过读下一个块
+                        continue;
+                    }
+
+                    blockIndex = 32 * 4 + (sectorIndex - 32) * blockDensity + j;
+                } else {
+                    if (0 == sectorIndex && 0 == j) {//第0扇区的第0块是厂家信息，不能写
+                        continue;
+                    }
+                    if (3 == j) {//判断是否是密钥块，如果是怎跳过读下一个块
+                        continue;
+                    }
+
+                    blockIndex = (sectorIndex * blockDensity + j);
+                }
+                //写数据
+                Log.d(TAG, "loopWrite: sectorIndex = " + sectorIndex + " blockIndex = " + blockIndex
+                        + " writeBaseOffset = " + writeBaseOffset + " offset = " + writeBaseOffset * BLOCK_LENGTH
+                        + " data size = " + srcData.length);
+                if (!writeBlock(srcData, writeBaseOffset * BLOCK_LENGTH, blockIndex)) {
+                    return false;
+                }
+
+                writeBaseOffset++;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 将数据写到块里去
+     *
+     * @param srcData   要写的数据
+     * @param srcOffset 数据偏移量
+     * @param block     要写的块
+     */
+    private boolean writeBlock(byte[] srcData, int srcOffset, int block) {
+        byte[] writeTemp = new byte[BLOCK_LENGTH];
+        System.arraycopy(srcData, srcOffset, writeTemp, 0, BLOCK_LENGTH);
+        int writeRet = EmpPad.Rfmif_Write((byte) block, writeTemp);
+        if (writeRet != 0) {
+            Log.e(TAG, "write block " + block + " failed!");
+
+            return false;
+        }
+
+        return true;
     }
 }
