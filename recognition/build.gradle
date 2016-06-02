@@ -28,5 +28,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile files('src/main/lib/ormlite-android-4.48.jar')
     compile files('src/main/lib/ormlite-core-4.48.jar')
-    compile project(':androidHelper')
+//    compile project(':androidHelper')
 }
