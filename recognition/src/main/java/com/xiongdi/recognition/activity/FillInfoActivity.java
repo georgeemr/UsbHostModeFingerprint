@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
-import com.xiongdi.recognition.helper.RadiofrequencyUtil;
+import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.interfaces.DatePickerInterface;
 import com.xiongdi.recognition.util.DateUtil;
 import com.xiongdi.recognition.util.FileUtil;
@@ -66,7 +66,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     private int selectedID = 0;
 
-    RadiofrequencyUtil mRadiofrequencyUtil;
+    OperateCardHelper mOperateCardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +102,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void iniData() {
-        mRadiofrequencyUtil = new RadiofrequencyUtil(this);
-        mRadiofrequencyUtil.openRFModel();
+        mOperateCardHelper = new OperateCardHelper(this);
+        mOperateCardHelper.openRFModel();
         personDao = new PersonDao(getApplicationContext());
         gatherID = Integer.parseInt(String.valueOf(personDao.getQuantity()));
         refreshView();
@@ -205,13 +205,13 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                     gatherIDNO,
                     compressPicUrl,
                     gatherFingerUrl};
-            mRadiofrequencyUtil.setSaveData(saveData);
+            mOperateCardHelper.setSaveData(saveData);
             progressDialog.show(fgManager, "progress");
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            return mRadiofrequencyUtil.writeM1Card();
+            return mOperateCardHelper.writeM1Card();
         }
 
         @Override
@@ -335,6 +335,6 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mRadiofrequencyUtil.closeRFModel();
+        mOperateCardHelper.closeRFModel();
     }
 }

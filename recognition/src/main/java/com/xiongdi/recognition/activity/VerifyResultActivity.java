@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
-import com.xiongdi.recognition.helper.RadiofrequencyUtil;
+import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.ProgressDialogFragment;
@@ -39,7 +39,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
 
-    private RadiofrequencyUtil mRadiofrequencyUtil;
+    private OperateCardHelper mOperateCardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initData() {
-        mRadiofrequencyUtil = new RadiofrequencyUtil(this);
-        mRadiofrequencyUtil.openRFModel();
+        mOperateCardHelper = new OperateCardHelper(this);
+        mOperateCardHelper.openRFModel();
     }
 
     private void initView() {
@@ -125,7 +125,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            return mRadiofrequencyUtil.readM1Card();
+            return mOperateCardHelper.readM1Card();
         }
 
         @Override
@@ -133,13 +133,13 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             progressDialog.dismiss();
 
             if (success) {
-                String[] cardData = mRadiofrequencyUtil.getBaseData();
+                String[] cardData = mOperateCardHelper.getBaseData();
                 personIDTV.setText(String.valueOf(cardData[0]));
                 personNameTV.setText(cardData[1]);
                 personGenderTV.setText(cardData[2]);
                 personBirthdayTV.setText(cardData[3]);
                 personAddressTV.setText(cardData[4]);
-                Bitmap bitmap = mRadiofrequencyUtil.getPicture();
+                Bitmap bitmap = mOperateCardHelper.getPicture();
                 if (bitmap != null) {
                     pictureIMG.setImageBitmap(bitmap);
                 } else {
@@ -206,6 +206,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mRadiofrequencyUtil.closeRFModel();
+        mOperateCardHelper.closeRFModel();
     }
 }

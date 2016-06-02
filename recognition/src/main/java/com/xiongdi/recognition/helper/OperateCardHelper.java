@@ -29,7 +29,7 @@ import java.util.Arrays;
  * Created by moubiao on 2016/5/16.
  * 测试射频的工具类
  */
-public class RadiofrequencyUtil {
+public class OperateCardHelper {
     private static String TAG = "moubiao";
     private static int BLOCK_LENGTH = 16;
 
@@ -44,7 +44,7 @@ public class RadiofrequencyUtil {
     private String fingerUrlCard;
     private Bitmap cardImg;
 
-    public RadiofrequencyUtil(Context context) {
+    public OperateCardHelper(Context context) {
         mContext = context;
     }
 
