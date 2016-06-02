@@ -1,4 +1,4 @@
-package com.xd;
+package com.xiongdi.recognition.util;
 
 import android.util.Log;
 
