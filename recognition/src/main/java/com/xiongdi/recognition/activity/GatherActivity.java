@@ -272,17 +272,8 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
      * 裁剪照片
      */
     private void doCrop() {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setType("image/*");
-
-        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
-        int size = list.size();
-        if (size == 0) {
-            ToastUtil.getInstance().showToast(this, "Can not find image crop app");
-        } else {
-            mImageCaptureUri = Uri.fromFile(new File(pictureUrl));
-            beginCrop(mImageCaptureUri);
-        }
+        mImageCaptureUri = Uri.fromFile(new File(pictureUrl));
+        beginCrop(mImageCaptureUri);
     }
 
     @Override
