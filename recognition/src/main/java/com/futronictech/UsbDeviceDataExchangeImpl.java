@@ -18,59 +18,52 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class UsbDeviceDataExchangeImpl {
-    private UsbManager mDevManager;
-    private FTR_USB_DEVICE_INTERNAL usb_ctx = null;
-    private Context context = null;
-    private Handler handler = null;
-
-    private boolean pending_open = false;
-
-    static final int transfer_buffer_size = 1024 * 64;
-    static final int transfer_buffer_size_2 = 1024 * 16;
-    static final String log_tag = "FUTRONICFTR_J";
-    static final String ACTION_USB_PERMISSION =
-            "com.futronictech.FtrScanDemoActivity.USB_PERMISSION";
-
     public static final int MESSAGE_ALLOW_DEVICE = 255;
     public static final int MESSAGE_DENY_DEVICE = 256;
+    private static final int transfer_buffer_size = 1024 * 64;
+    private static final int transfer_buffer_size_2 = 1024 * 16;
+    private static final String log_tag = "FUTRONICFTR_J";
+    private static final String ACTION_USB_PERMISSION = "com.futronictech.FtrScanDemoActivity.USB_PERMISSION";
 
-    private PendingIntent mPermissionIntent = null;
-
+    private UsbManager mUsbManager;
+    private FTR_USB_DEVICE_INTERNAL usb_ctx = null;
+    private Context context = null;
+    private Handler mHandler = null;
+    private final PendingIntent mPermissionIntent;
+    private boolean pending_open = false;
     private byte[] max_transfer_buffer = new byte[transfer_buffer_size];
+    private final BroadcastReceiver mUsbReceiver;
 
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+    public UsbDeviceDataExchangeImpl(Context context, Handler handler) {
+        this.context = context;
+        this.mHandler = handler;
 
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (ACTION_USB_PERMISSION.equals(action)) {
-                synchronized (mPermissionIntent) {
-                    UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+        mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
 
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if (device != null) {
-                            usb_ctx = OpenDevice(device);
+        mUsbReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (ACTION_USB_PERMISSION.equals(action)) {
+                    synchronized (mPermissionIntent) {
+                        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            if (device != null) {
+                                usb_ctx = OpenDevice(device);
+                            }
+                            UsbDeviceDataExchangeImpl.this.mHandler.obtainMessage(MESSAGE_ALLOW_DEVICE).sendToTarget();
+                        } else {
+                            UsbDeviceDataExchangeImpl.this.mHandler.obtainMessage(MESSAGE_DENY_DEVICE).sendToTarget();
                         }
 
-                        handler.obtainMessage(MESSAGE_ALLOW_DEVICE).sendToTarget();
-                    } else {
-                        handler.obtainMessage(MESSAGE_DENY_DEVICE).sendToTarget();
                     }
 
                 }
-
             }
-        }
-    };
-
-    public UsbDeviceDataExchangeImpl(Context ctx, Handler trg_handler) {
-        context = ctx;
-        handler = trg_handler;
-
-        mDevManager = (UsbManager) ctx.getSystemService(Context.USB_SERVICE);
-        mPermissionIntent = PendingIntent.getBroadcast(ctx, 0, new Intent(ACTION_USB_PERMISSION), 0);
-
+        };
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        context.registerReceiver(mUsbReceiver, filter);
+        this.context.registerReceiver(mUsbReceiver, filter);
     }
 
     public void releaseResource() {
@@ -79,34 +72,23 @@ public class UsbDeviceDataExchangeImpl {
 
     /**
      * 搜索所有的设备，并找到正确的设备打开
-     *
-     * @param instance
-     * @param is_activity_thread
-     * @return
      */
     public boolean OpenDevice(int instance, boolean is_activity_thread) {
         synchronized (this) {
             if (usb_ctx == null) {
                 pending_open = false;
-
-                HashMap<String, UsbDevice> usb_devs = mDevManager.getDeviceList();
-
-                Iterator<UsbDevice> deviceIterator = usb_devs.values().iterator();
-
+                HashMap<String, UsbDevice> usb_devices = mUsbManager.getDeviceList();
+                Iterator<UsbDevice> deviceIterator = usb_devices.values().iterator();
                 int index = 0;
-
                 while (deviceIterator.hasNext()) {
                     UsbDevice device = deviceIterator.next();
-
                     if (IsFutronicDevice(device.getVendorId(), device.getProductId())) {
                         if (index < instance) {
                             index++;
                             continue;
                         }
-
-                        if (!mDevManager.hasPermission(device)) {
-                            mDevManager.requestPermission(device, mPermissionIntent);
-
+                        if (!mUsbManager.hasPermission(device)) {
+                            mUsbManager.requestPermission(device, mPermissionIntent);
                             if (!is_activity_thread) {
                                 pending_open = false;
                                 synchronized (mPermissionIntent) {
@@ -122,26 +104,25 @@ public class UsbDeviceDataExchangeImpl {
                             }
                         }
 
-                        if (mDevManager.hasPermission(device)) {
+                        if (mUsbManager.hasPermission(device)) {
                             usb_ctx = OpenDevice(device);
                         } else {
                             Log.e(log_tag, "device not allow");
                         }
                     }
                 }
-
-
             }
 
             return usb_ctx != null;
         }
     }
 
-    public void CloseDevice() {
+    public void closeDevice() {
         synchronized (this) {
             if (usb_ctx != null) {
-                if (usb_ctx.mDevConnetion_ != null) {
-                    usb_ctx.mDevConnetion_.close();
+                if (usb_ctx.mUsbDeviceConnection != null) {
+                    usb_ctx.mUsbDeviceConnection.releaseInterface(usb_ctx.mUsbInterface);
+                    usb_ctx.mUsbDeviceConnection.close();
                 }
             }
 
@@ -164,10 +145,10 @@ public class UsbDeviceDataExchangeImpl {
 
                 if (usb_ctx != null) {
                     check_res =
-                            usb_ctx.mIntf_ != null &&
-                                    usb_ctx.mDevConnetion_ != null &&
-                                    usb_ctx.mReadPoint_ != null &&
-                                    usb_ctx.mWritePoint_ != null;
+                            usb_ctx.mUsbInterface != null &&
+                                    usb_ctx.mUsbDeviceConnection != null &&
+                                    usb_ctx.mReadPoint != null &&
+                                    usb_ctx.mWritePoint != null;
 
                 }
 
@@ -181,15 +162,15 @@ public class UsbDeviceDataExchangeImpl {
                 //	Log.i( log_tag , String.format( "Java DataExchange S: %d R: %d Use max: %d", out_data.length, in_data.length, use_max_end_point_size ? 1 : 0  ) );
                 //}
 
-                if (!usb_ctx.mHandleClaimed_) {
-                    usb_ctx.mDevConnetion_.claimInterface(usb_ctx.mIntf_, false);
-                    usb_ctx.mHandleClaimed_ = true;
+                if (!usb_ctx.mHandleClaimed) {
+                    usb_ctx.mUsbDeviceConnection.claimInterface(usb_ctx.mUsbInterface, false);
+                    usb_ctx.mHandleClaimed = true;
                 }
 
                 int transfer_bytes = 0;
 
                 if (out_data.length > 0) {
-                    transfer_bytes = usb_ctx.mDevConnetion_.bulkTransfer(usb_ctx.mWritePoint_, out_data, out_data.length, out_time_out);
+                    transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mWritePoint, out_data, out_data.length, out_time_out);
 
                     if (transfer_bytes == -1) {
                         Log.e(log_tag, String.format("Send %d bytes failed", out_data.length));
@@ -201,7 +182,7 @@ public class UsbDeviceDataExchangeImpl {
                 int copy_pos = 0;
 
                 while (to_read_size >= getTransferBuffer().length) {
-                    transfer_bytes = usb_ctx.mDevConnetion_.bulkTransfer(usb_ctx.mReadPoint_, getTransferBuffer(), getTransferBuffer().length, in_time_out);
+                    transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), getTransferBuffer().length, in_time_out);
 
                     if (transfer_bytes == -1) {
                         Log.e(log_tag, String.format("Receive %d bytes failed", getTransferBuffer().length));
@@ -220,7 +201,7 @@ public class UsbDeviceDataExchangeImpl {
                 }
 
                 while (to_read_size >= transfer_buffer_size_2) {
-                    transfer_bytes = usb_ctx.mDevConnetion_.bulkTransfer(usb_ctx.mReadPoint_, getTransferBuffer(), transfer_buffer_size_2, in_time_out);
+                    transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), transfer_buffer_size_2, in_time_out);
 
                     if (transfer_bytes == -1) {
                         Log.e(log_tag, String.format("Receive %d bytes failed", getTransferBuffer().length));
@@ -238,11 +219,11 @@ public class UsbDeviceDataExchangeImpl {
                     copy_pos += transfer_bytes;
                 }
 
-                if (to_read_size > usb_ctx.mReadPoint_.getMaxPacketSize()) {
-                    int data_left = to_read_size - (to_read_size % usb_ctx.mReadPoint_.getMaxPacketSize());
+                if (to_read_size > usb_ctx.mReadPoint.getMaxPacketSize()) {
+                    int data_left = to_read_size - (to_read_size % usb_ctx.mReadPoint.getMaxPacketSize());
 
                     if (data_left > 0) {
-                        transfer_bytes = usb_ctx.mDevConnetion_.bulkTransfer(usb_ctx.mReadPoint_, getTransferBuffer(), data_left, in_time_out);
+                        transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), data_left, in_time_out);
 
                         if (transfer_bytes == -1) {
                             Log.e(log_tag, String.format("Receive(1) %d bytes failed", data_left));
@@ -262,14 +243,14 @@ public class UsbDeviceDataExchangeImpl {
                 }
 
                 while (to_read_size > 0) {
-                    transfer_bytes = usb_ctx.mDevConnetion_.bulkTransfer(usb_ctx.mReadPoint_, getTransferBuffer(), use_max_end_point_size ? usb_ctx.mReadPoint_.getMaxPacketSize() : to_read_size, in_time_out);
+                    transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), use_max_end_point_size ? usb_ctx.mReadPoint.getMaxPacketSize() : to_read_size, in_time_out);
 
                     if (transfer_bytes == -1) {
                         Log.e(log_tag, String.format("Receive(1) %d bytes failed", to_read_size));
                         return res;
                     }
 
-                    int real_read = to_read_size > usb_ctx.mReadPoint_.getMaxPacketSize() ? usb_ctx.mReadPoint_.getMaxPacketSize() : to_read_size;
+                    int real_read = to_read_size > usb_ctx.mReadPoint.getMaxPacketSize() ? usb_ctx.mReadPoint.getMaxPacketSize() : to_read_size;
 
                     if (copy_pos + real_read > in_data.length) {
                         Log.e(log_tag, String.format("Small receive buffer. Need %d bytes", copy_pos + real_read - in_data.length));
@@ -283,8 +264,8 @@ public class UsbDeviceDataExchangeImpl {
                 }
 
                 if (!keep_open) {
-                    usb_ctx.mDevConnetion_.releaseInterface(usb_ctx.mIntf_);
-                    usb_ctx.mHandleClaimed_ = false;
+                    usb_ctx.mUsbDeviceConnection.releaseInterface(usb_ctx.mUsbInterface);
+                    usb_ctx.mHandleClaimed = false;
                 }
 
                 res = true;
@@ -302,10 +283,10 @@ public class UsbDeviceDataExchangeImpl {
 
             if (usb_ctx != null) {
                 res =
-                        usb_ctx.mIntf_ != null &&
-                                usb_ctx.mDevConnetion_ != null &&
-                                usb_ctx.mReadPoint_ != null &&
-                                usb_ctx.mWritePoint_ != null;
+                        usb_ctx.mUsbInterface != null &&
+                                usb_ctx.mUsbDeviceConnection != null &&
+                                usb_ctx.mReadPoint != null &&
+                                usb_ctx.mWritePoint != null;
 
             }
 
@@ -316,9 +297,9 @@ public class UsbDeviceDataExchangeImpl {
     public void DataExchangeEnd() {
         synchronized (this) {
             if (usb_ctx != null) {
-                if (usb_ctx.mHandleClaimed_) {
-                    usb_ctx.mDevConnetion_.releaseInterface(usb_ctx.mIntf_);
-                    usb_ctx.mHandleClaimed_ = false;
+                if (usb_ctx.mHandleClaimed) {
+                    usb_ctx.mUsbDeviceConnection.releaseInterface(usb_ctx.mUsbInterface);
+                    usb_ctx.mHandleClaimed = false;
                 }
             }
         }
@@ -334,21 +315,21 @@ public class UsbDeviceDataExchangeImpl {
 
                     int pack_data_index = 0;
 
-                    int vendorId = usb_ctx.mDev_.getVendorId();
+                    int vendorId = usb_ctx.mUsbDevice.getVendorId();
 
                     pack_data[pack_data_index++] = (byte) (vendorId /*>> 0*/);
                     pack_data[pack_data_index++] = (byte) (vendorId >> 8);
                     pack_data[pack_data_index++] = (byte) (vendorId >> 16);
                     pack_data[pack_data_index++] = (byte) (vendorId >> 24);
 
-                    int productId = usb_ctx.mDev_.getProductId();
+                    int productId = usb_ctx.mUsbDevice.getProductId();
 
                     pack_data[pack_data_index++] = (byte) (productId /*>> 0*/);
                     pack_data[pack_data_index++] = (byte) (productId >> 8);
                     pack_data[pack_data_index++] = (byte) (productId >> 16);
                     pack_data[pack_data_index++] = (byte) (productId >> 24);
 
-                    String sn = usb_ctx.mDevConnetion_.getSerial();
+                    String sn = usb_ctx.mUsbDeviceConnection.getSerial();
 
                     if (null != sn) {
                         pack_data[pack_data_index++] = 1;
@@ -447,7 +428,7 @@ public class UsbDeviceDataExchangeImpl {
 
             if (readpoint != null && writepoint != null) {
 
-                UsbDeviceConnection connection = mDevManager.openDevice(device);
+                UsbDeviceConnection connection = mUsbManager.openDevice(device);
 
                 if (connection != null) {
                     Log.i(log_tag, "Open device: " + device);
@@ -503,12 +484,12 @@ public class UsbDeviceDataExchangeImpl {
 	}*/
 
     public class FTR_USB_DEVICE_INTERNAL {
-        public UsbDevice mDev_;
-        public UsbInterface mIntf_;
-        public UsbEndpoint mReadPoint_;
-        public UsbEndpoint mWritePoint_;
-        public UsbDeviceConnection mDevConnetion_;
-        public boolean mHandleClaimed_;
+        public UsbDevice mUsbDevice;
+        public UsbInterface mUsbInterface;
+        public UsbEndpoint mReadPoint;
+        public UsbEndpoint mWritePoint;
+        public UsbDeviceConnection mUsbDeviceConnection;
+        public boolean mHandleClaimed;
 
         public FTR_USB_DEVICE_INTERNAL(
                 UsbDevice mDev,
@@ -516,12 +497,12 @@ public class UsbDeviceDataExchangeImpl {
                 UsbEndpoint mReadPoint,
                 UsbEndpoint mWritePoint,
                 UsbDeviceConnection mDevConnetion) {
-            mDev_ = mDev;
-            mIntf_ = mIntf;
-            mReadPoint_ = mReadPoint;
-            mWritePoint_ = mWritePoint;
-            mDevConnetion_ = mDevConnetion;
-            mHandleClaimed_ = false;
+            mUsbDevice = mDev;
+            mUsbInterface = mIntf;
+            this.mReadPoint = mReadPoint;
+            this.mWritePoint = mWritePoint;
+            mUsbDeviceConnection = mDevConnetion;
+            mHandleClaimed = false;
         }
     }
 }

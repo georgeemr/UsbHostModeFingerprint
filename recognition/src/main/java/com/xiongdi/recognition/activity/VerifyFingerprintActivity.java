@@ -69,6 +69,7 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        usb_host_ctx.closeDevice();
         usb_host_ctx.releaseResource();
     }
 
