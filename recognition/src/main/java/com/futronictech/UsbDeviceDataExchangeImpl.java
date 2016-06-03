@@ -73,7 +73,7 @@ public class UsbDeviceDataExchangeImpl {
         context.registerReceiver(mUsbReceiver, filter);
     }
 
-    public void Destroy() {
+    public void releaseResource() {
         context.unregisterReceiver(mUsbReceiver);
     }
 

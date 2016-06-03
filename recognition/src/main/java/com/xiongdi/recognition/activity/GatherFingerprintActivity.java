@@ -70,6 +70,12 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
         gatherFingerprint();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        usb_host_ctx.releaseResource();
+    }
+
     private void initData() {
         mHandler = new FingerprintHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);

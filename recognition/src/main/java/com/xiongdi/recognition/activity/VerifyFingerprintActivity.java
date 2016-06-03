@@ -66,6 +66,12 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
         verifyFingerprint();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        usb_host_ctx.releaseResource();
+    }
+
     private void initData() {
         mHandler = new VerifyHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
