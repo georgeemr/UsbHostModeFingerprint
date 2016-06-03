@@ -7,11 +7,11 @@ import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
 
-import com.xiongdi.recognition.application.MainApplication;
-import com.xiongdi.recognition.util.Converter;
 import com.xiongdi.EmpPad;
 import com.xiongdi.OpenJpeg;
+import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.constant.PictureConstant;
+import com.xiongdi.recognition.util.Converter;
 import com.xiongdi.recognition.util.FileUtil;
 
 import java.io.BufferedOutputStream;
@@ -600,33 +600,16 @@ public class OperateCardHelper {
         byte[] validFingerData = new byte[readFingerData.length - 2];
         System.arraycopy(readFingerData, 2, validFingerData, 0, validFingerData.length);
 
-        File file = mContext.getExternalFilesDir("card");
-        if (file != null && !file.exists()) {
-            if (!file.mkdirs()) {
-                Log.d(TAG, "create the directory of fingerprint failed!");
-                return false;
-            }
-        }
-        File fingerFile = new File(file, "cardFingerprint");
-        if (!fingerFile.exists()) {
-            try {
-                if (!fingerFile.createNewFile()) {
-                    Log.d(TAG, "create the file of fingerprint failed!");
-                    return false;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        FileUtil fileUtil = new FileUtil();
+        String filePath = mContext.getExternalFilesDir("card") + File.separator + "cardFingerprint";
+        File fingerFile = fileUtil.createFile(filePath);
 
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
         try {
             fos = new FileOutputStream(fingerFile);
             bos = new BufferedOutputStream(fos);
-            if (validFingerData != null) {
-                bos.write(validFingerData);
-            }
+            bos.write(validFingerData);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
