@@ -253,13 +253,15 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
                 case MESSAGE_SHOW_IMAGE:
                     activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
                     if (activity.verifyPass) {
+                        mAudioPlay.resetMediaPlayer();
                         audioType = AudioPlay.VERIFY_PASSED;
+                        mAudioPlay.playAsset(audioType, mAssetManager);
                         activity.setResult(Activity.RESULT_OK);
                         activity.finish();
                     } else {
                         audioType = AudioPlay.VERIFY_FAILED;
+                        mAudioPlay.playAsset(audioType, mAssetManager);
                     }
-                    mAudioPlay.PlayAsset(audioType, mAssetManager);
                     break;
                 case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
                     activity.verifyFingerprint();

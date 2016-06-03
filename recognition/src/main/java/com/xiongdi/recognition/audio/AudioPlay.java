@@ -23,14 +23,13 @@ public class AudioPlay {
         sMediaPlayer = new MediaPlayer();
     }
 
+    /**
+     * 播放铃声
+     */
     public int PlayTone(int toneType, int durationMs) {
         synchronized (mLock) {
             if (mToneGenerator == null) {
                 Log.e(TAG, "playTone: mToneGenerator == null");
-                return 0;
-            }
-            if (sMediaPlayer == null) {
-                Log.e(TAG, "sMediaPlayer == null");
                 return 0;
             }
         }
@@ -39,6 +38,9 @@ public class AudioPlay {
         return 0;
     }
 
+    /**
+     * 播放本地文件
+     */
     public int PlayFile(String filePath) {
         if (sMediaPlayer != null) {
             sMediaPlayer.reset();
@@ -57,25 +59,27 @@ public class AudioPlay {
     }
 
 
-    public void PlayAsset(int key, AssetManager am) {
+    /**
+     * 播放asset里的文件
+     */
+    public void playAsset(int key, AssetManager am) {
+        AssetFileDescriptor assetFile;
         try {
-            AssetFileDescriptor assetFileDescriptor = am.openFd("verification_fail.wav");
             switch (key) {
                 case VERIFY_PASSED:
-                    playRelease();
-                    assetFileDescriptor = am.openFd("verification_passed.wav");
+                    assetFile = am.openFd("verification_passed.wav");
                     break;
                 case VERIFY_FAILED:
-                    assetFileDescriptor = am.openFd("verification_fail.wav");
-
+                    assetFile = am.openFd("verification_fail.wav");
                     break;
                 default:
+                    assetFile = am.openFd("verification_fail.wav");
                     break;
             }
 
             if (!sMediaPlayer.isPlaying()) {
                 sMediaPlayer.reset();
-                sMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
+                sMediaPlayer.setDataSource(assetFile.getFileDescriptor(), assetFile.getStartOffset(), assetFile.getLength());
                 sMediaPlayer.prepare();
                 sMediaPlayer.start();
             }
@@ -84,10 +88,10 @@ public class AudioPlay {
         }
     }
 
-    public void playRelease() {
-        if (mToneGenerator != null) {
-            mToneGenerator = null;
-        }
+    /**
+     * 重置mediaPlayer
+     */
+    public void resetMediaPlayer() {
         if (sMediaPlayer != null) {
             sMediaPlayer.stop();
             sMediaPlayer.reset();
