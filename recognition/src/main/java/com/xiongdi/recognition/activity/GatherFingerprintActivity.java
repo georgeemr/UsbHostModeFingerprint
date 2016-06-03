@@ -62,11 +62,6 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
         initData();
         initView();
         setInnerListener();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         gatherFingerprint();
     }
 

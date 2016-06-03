@@ -22,7 +22,7 @@ public class UsbDeviceDataExchangeImpl {
     public static final int MESSAGE_DENY_DEVICE = 256;
     private static final int transfer_buffer_size = 1024 * 64;
     private static final int transfer_buffer_size_2 = 1024 * 16;
-    private static final String log_tag = "FUTRONICFTR_J";
+    private static final String TAG = "moubiao";
     private static final String ACTION_USB_PERMISSION = "com.futronictech.FtrScanDemoActivity.USB_PERMISSION";
 
     private UsbManager mUsbManager;
@@ -107,7 +107,7 @@ public class UsbDeviceDataExchangeImpl {
                         if (mUsbManager.hasPermission(device)) {
                             usb_ctx = OpenDevice(device);
                         } else {
-                            Log.e(log_tag, "device not allow");
+                            Log.e(TAG, "device not allow");
                         }
                     }
                 }
@@ -173,7 +173,7 @@ public class UsbDeviceDataExchangeImpl {
                     transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mWritePoint, out_data, out_data.length, out_time_out);
 
                     if (transfer_bytes == -1) {
-                        Log.e(log_tag, String.format("Send %d bytes failed", out_data.length));
+                        Log.e(TAG, String.format("Send %d bytes failed", out_data.length));
                         return res;
                     }
                 }
@@ -185,12 +185,12 @@ public class UsbDeviceDataExchangeImpl {
                     transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), getTransferBuffer().length, in_time_out);
 
                     if (transfer_bytes == -1) {
-                        Log.e(log_tag, String.format("Receive %d bytes failed", getTransferBuffer().length));
+                        Log.e(TAG, String.format("Receive %d bytes failed", getTransferBuffer().length));
                         return res;
                     }
 
                     if (copy_pos + transfer_bytes > in_data.length) {
-                        Log.e(log_tag, String.format("Small receive buffer. Need %d bytes", copy_pos + transfer_bytes - in_data.length));
+                        Log.e(TAG, String.format("Small receive buffer. Need %d bytes", copy_pos + transfer_bytes - in_data.length));
                         return res;
                     }
 
@@ -204,12 +204,12 @@ public class UsbDeviceDataExchangeImpl {
                     transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), transfer_buffer_size_2, in_time_out);
 
                     if (transfer_bytes == -1) {
-                        Log.e(log_tag, String.format("Receive %d bytes failed", getTransferBuffer().length));
+                        Log.e(TAG, String.format("Receive %d bytes failed", getTransferBuffer().length));
                         return res;
                     }
 
                     if (copy_pos + transfer_bytes > in_data.length) {
-                        Log.e(log_tag, String.format("Small receive buffer. Need %d bytes", copy_pos + transfer_bytes - in_data.length));
+                        Log.e(TAG, String.format("Small receive buffer. Need %d bytes", copy_pos + transfer_bytes - in_data.length));
                         return res;
                     }
 
@@ -226,12 +226,12 @@ public class UsbDeviceDataExchangeImpl {
                         transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), data_left, in_time_out);
 
                         if (transfer_bytes == -1) {
-                            Log.e(log_tag, String.format("Receive(1) %d bytes failed", data_left));
+                            Log.e(TAG, String.format("Receive(1) %d bytes failed", data_left));
                             return res;
                         }
 
                         if (copy_pos + transfer_bytes > in_data.length) {
-                            Log.e(log_tag, String.format("Small receive buffer. Need %d bytes", copy_pos + transfer_bytes - in_data.length));
+                            Log.e(TAG, String.format("Small receive buffer. Need %d bytes", copy_pos + transfer_bytes - in_data.length));
                             return res;
                         }
 
@@ -246,14 +246,14 @@ public class UsbDeviceDataExchangeImpl {
                     transfer_bytes = usb_ctx.mUsbDeviceConnection.bulkTransfer(usb_ctx.mReadPoint, getTransferBuffer(), use_max_end_point_size ? usb_ctx.mReadPoint.getMaxPacketSize() : to_read_size, in_time_out);
 
                     if (transfer_bytes == -1) {
-                        Log.e(log_tag, String.format("Receive(1) %d bytes failed", to_read_size));
+                        Log.e(TAG, String.format("Receive(1) %d bytes failed", to_read_size));
                         return res;
                     }
 
                     int real_read = to_read_size > usb_ctx.mReadPoint.getMaxPacketSize() ? usb_ctx.mReadPoint.getMaxPacketSize() : to_read_size;
 
                     if (copy_pos + real_read > in_data.length) {
-                        Log.e(log_tag, String.format("Small receive buffer. Need %d bytes", copy_pos + real_read - in_data.length));
+                        Log.e(TAG, String.format("Small receive buffer. Need %d bytes", copy_pos + real_read - in_data.length));
                         return res;
                     }
 
@@ -270,7 +270,7 @@ public class UsbDeviceDataExchangeImpl {
 
                 res = true;
             } catch (Exception e) {
-                Log.e(log_tag, String.format("Data exchange fail %s", e.toString()));
+                Log.e(TAG, String.format("Data exchange fail %s", e.toString()));
             }
 
             return res;
@@ -358,11 +358,11 @@ public class UsbDeviceDataExchangeImpl {
 						out_put_res += byte_str;
 					}
 					
-					Log.i(log_tag , "Device info blob: " + out_put_res );*/
+					Log.i(TAG , "Device info blob: " + out_put_res );*/
 
                     res = true;
                 } catch (Exception e) {
-                    Log.e(log_tag, "Get device info failed: " + e.toString());
+                    Log.e(TAG, "Get device info failed: " + e.toString());
                 }
             }
         }
@@ -431,16 +431,16 @@ public class UsbDeviceDataExchangeImpl {
                 UsbDeviceConnection connection = mUsbManager.openDevice(device);
 
                 if (connection != null) {
-                    Log.i(log_tag, "Open device: " + device);
+                    Log.i(TAG, "Open device: " + device);
                     res = new FTR_USB_DEVICE_INTERNAL(device, intf, readpoint, writepoint, connection);
                 } else {
-                    Log.e(log_tag, "open device failed: " + device);
+                    Log.e(TAG, "open device failed: " + device);
                 }
             } else {
-                Log.e(log_tag, "End points not found in device: " + device);
+                Log.e(TAG, "End points not found in device: " + device);
             }
         } else {
-            Log.e(log_tag, "Get interface failed failed in device: " + device);
+            Log.e(TAG, "Get interface failed failed in device: " + device);
         }
 
         return res;

@@ -58,11 +58,6 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
         initData();
         initView();
         setListener();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         verifyFingerprint();
     }
 
