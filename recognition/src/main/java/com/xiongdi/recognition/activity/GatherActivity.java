@@ -2,7 +2,6 @@ package com.xiongdi.recognition.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -27,7 +26,6 @@ import com.xiongdi.recognition.fragment.RightHandFragment;
 import com.xiongdi.recognition.util.BmpUtil;
 import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.ToastUtil;
-import com.xiongdi.recognition.widget.ProgressDialogFragment;
 import com.xiongdi.recognition.widget.crop.Crop;
 
 import java.io.File;
@@ -59,19 +57,13 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     private String gatherID;
     private String pictureUrl;
     private String compressPicUrl;
-    private String fingerprintUrl;
+    private int fingerNUM;
     Uri mImageCaptureUri;
-    FileUtil fileUtil;
 
+    FileUtil fileUtil;
     PictureFragment pictureFg;
 
     private boolean haveInformation = false;//判断是否有有效信息
-
-    public void setFingerNUM(int fingerNUM) {
-        this.fingerNUM = fingerNUM;
-    }
-
-    private int fingerNUM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,21 +73,6 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         iniData();
         initView();
         setListener();
-    }
-
-    private void initView() {
-        backBT = (ImageButton) findViewById(R.id.bottom_left_bt);
-        takePictureBT = (ImageButton) findViewById(R.id.bottom_middle_bt);
-        saveBT = (ImageButton) findViewById(R.id.bottom_right_bt);
-
-        gatherTab = (TabLayout) findViewById(R.id.gather_tab);
-        gatherVP = (ViewPager) findViewById(R.id.gather_viewpager);
-        if (gatherVP != null) {
-            gatherVP.setAdapter(gatherAdapter);
-            gatherVP.setOffscreenPageLimit(2);
-        }
-
-        gatherTab.setupWithViewPager(gatherVP);
     }
 
     private void iniData() {
@@ -119,10 +96,29 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         fileUtil = new FileUtil();
     }
 
+    private void initView() {
+        backBT = (ImageButton) findViewById(R.id.bottom_left_bt);
+        takePictureBT = (ImageButton) findViewById(R.id.bottom_middle_bt);
+        saveBT = (ImageButton) findViewById(R.id.bottom_right_bt);
+
+        gatherTab = (TabLayout) findViewById(R.id.gather_tab);
+        gatherVP = (ViewPager) findViewById(R.id.gather_viewpager);
+        if (gatherVP != null) {
+            gatherVP.setAdapter(gatherAdapter);
+            gatherVP.setOffscreenPageLimit(2);
+        }
+
+        gatherTab.setupWithViewPager(gatherVP);
+    }
+
     private void setListener() {
         backBT.setOnClickListener(this);
         takePictureBT.setOnClickListener(this);
         saveBT.setOnClickListener(this);
+    }
+
+    public void setFingerNUM(int fingerNUM) {
+        this.fingerNUM = fingerNUM;
     }
 
     @Override
@@ -137,7 +133,16 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.bottom_right_bt:
                 if (haveInformation) {
-                    new SaveTask().execute();
+                    Intent data = new Intent();
+                    if (pictureUrl != null) {
+                        data.putExtra("pictureUrl", pictureUrl);
+                        data.putExtra("compressPicUrl", compressPicUrl);
+                    }
+                    if (MainApplication.fingerprintPath != null) {
+                        data.putExtra("fingerPrintUrl", MainApplication.fingerprintPath);
+                    }
+                    setResult(Activity.RESULT_OK, data);
+                    finish();
                 } else {
                     Toast.makeText(GatherActivity.this, getString(R.string.no_fingerprint), Toast.LENGTH_SHORT).show();
                 }
@@ -163,36 +168,6 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         intent.setClass(GatherActivity.this, GatherPictureActivity.class);
         intent.putExtra("pictureName", gatherID);
         startActivityForResult(intent, PICTURE_ACTIVITY);
-    }
-
-    private class SaveTask extends AsyncTask<Void, Void, Void> {
-        ProgressDialogFragment progressDialog = new ProgressDialogFragment();
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog.setData(getString(R.string.saving_to_card));
-            progressDialog.show(getSupportFragmentManager(), "save");
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void o) {
-            progressDialog.dismiss();
-            Intent data = new Intent();
-            if (pictureUrl != null) {
-                data.putExtra("pictureUrl", pictureUrl);
-                data.putExtra("compressPicUrl", compressPicUrl);
-            }
-            if (MainApplication.fingerprintPath != null) {
-                data.putExtra("fingerPrintUrl", MainApplication.fingerprintPath);
-            }
-            setResult(Activity.RESULT_OK, data);
-            finish();
-        }
     }
 
     public String getGatherID() {
