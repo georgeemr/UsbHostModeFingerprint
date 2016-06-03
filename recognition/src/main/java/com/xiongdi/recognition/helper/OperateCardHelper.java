@@ -597,14 +597,8 @@ public class OperateCardHelper {
             return false;
         }
 
-        byte[] validFingerData = null;
-        for (int i = (readFingerData.length - 1); i >= 0; i--) {
-            if (readFingerData[i] != 0) {
-                validFingerData = new byte[i + 1];
-                System.arraycopy(readFingerData, 0, validFingerData, 0, i + 1);
-                break;
-            }
-        }
+        byte[] validFingerData = new byte[readFingerData.length - 2];
+        System.arraycopy(readFingerData, 2, validFingerData, 0, validFingerData.length);
 
         File file = mContext.getExternalFilesDir("card");
         if (file != null && !file.exists()) {
