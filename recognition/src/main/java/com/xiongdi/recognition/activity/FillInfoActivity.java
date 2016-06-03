@@ -331,7 +331,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     private void saveFileToDevice(String toSaveString) {
         try {
-            String filePath = getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/" +
+            String filePath = getExternalFilesDir(null) + "/" +
                     String.format(Locale.getDefault(), "%1$,05d", gatherID) + "/" + TXT_NAME + ".ini";
 
             File saveFile = new File(filePath);
