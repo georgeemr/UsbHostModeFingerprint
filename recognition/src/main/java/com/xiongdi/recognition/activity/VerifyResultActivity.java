@@ -102,7 +102,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 verifyFingerPrint();
                 break;
             case R.id.bottom_middle_bt:
-//                new ReadTask().execute();
                 readCard();
                 break;
             default:
@@ -177,6 +176,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         if (!StringUtil.hasLength(cardData[1])) {
                             ToastUtil.getInstance().showToast(activity, activity.getString(R.string.common_no_data));
                         }
+                        activity.verifyFingerPrint();
                         break;
                     }
                 default:

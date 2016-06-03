@@ -1,5 +1,6 @@
 package com.xiongdi.recognition.activity;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -45,6 +46,7 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
     private UsbDeviceDataExchangeImpl usb_host_ctx;
     private VerifyHandler mHandler;
     private VerifyThread mVerifyThread;
+    private boolean verifyPass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,10 +195,12 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
                     float[] matchResult = new float[1];
                     if (ansi_lib.VerifyTemplate(fingerIndex, templeData, img_buffer, matchResult)) {
                         mFingerBitmap = createFingerBitmap(ansi_lib.GetImageWidth(), ansi_lib.GetImageHeight(), img_buffer);
+                        verifyPass = matchResult[0] > matchScore;
                         mHandler.obtainMessage(MESSAGE_SHOW_IMAGE).sendToTarget();
-                        boolean pass = matchResult[0] > matchScore;
-                        Log.d(TAG, "run: verify passed match result = " + matchResult[0] + " success = " + pass);
-                        break;
+                        Log.d(TAG, "run: verify passed match result = " + matchResult[0] + " success = " + verifyPass);
+                        if (verifyPass) {
+                            break;
+                        }
                     } else {
                         int lastError = ansi_lib.GetErrorCode();
                         if (lastError == AnsiSDKLib.FTR_ERROR_EMPTY_FRAME
@@ -240,6 +244,10 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
                     break;
                 case MESSAGE_SHOW_IMAGE:
                     activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
+                    if (activity.verifyPass) {
+                        activity.setResult(Activity.RESULT_OK);
+                        activity.finish();
+                    }
                     break;
                 case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
                     activity.verifyFingerprint();
