@@ -1,6 +1,7 @@
 package com.xiongdi.recognition.activity;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -20,6 +21,7 @@ import com.futronictech.AnsiSDKLib;
 import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.audio.AudioPlay;
 import com.xiongdi.recognition.util.ToastUtil;
 
 import java.io.File;
@@ -228,9 +230,15 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
 
     private static class VerifyHandler extends Handler {
         private WeakReference<VerifyFingerprintActivity> mWeakReference;
+        private int audioType;
+        private AudioPlay mAudioPlay;
+        AssetManager mAssetManager;
+
 
         public VerifyHandler(VerifyFingerprintActivity activity) {
             mWeakReference = new WeakReference<>(activity);
+            mAudioPlay = new AudioPlay();
+            mAssetManager = activity.getAssets();
         }
 
         @Override
@@ -245,9 +253,13 @@ public class VerifyFingerprintActivity extends AppCompatActivity implements View
                 case MESSAGE_SHOW_IMAGE:
                     activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
                     if (activity.verifyPass) {
+                        audioType = AudioPlay.VERIFY_PASSED;
                         activity.setResult(Activity.RESULT_OK);
                         activity.finish();
+                    } else {
+                        audioType = AudioPlay.VERIFY_FAILED;
                     }
+                    mAudioPlay.PlayAsset(audioType, mAssetManager);
                     break;
                 case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
                     activity.verifyFingerprint();
