@@ -7,6 +7,7 @@ import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
 
+import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.util.Converter;
 import com.xiongdi.EmpPad;
 import com.xiongdi.OpenJpeg;
@@ -612,7 +613,7 @@ public class OperateCardHelper {
                 return false;
             }
         }
-        File fingerFile = new File(file, "cardFingerprint.xyt");
+        File fingerFile = new File(file, "cardFingerprint");
         if (!fingerFile.exists()) {
             try {
                 if (!fingerFile.createNewFile()) {
@@ -647,9 +648,10 @@ public class OperateCardHelper {
             }
 
             String[] scanFile = new String[]{
-                    mContext.getExternalFilesDir("card") + File.separator + "cardFingerprint.xyt"
+                    mContext.getExternalFilesDir("card") + File.separator + "cardFingerprint"
             };
             MediaScannerConnection.scanFile(mContext, scanFile, null, null);
+            MainApplication.fingerprintPath = fingerFile.getPath();
         }
 
         Log.d(TAG, "read fingerprint information success!");
