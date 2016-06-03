@@ -21,12 +21,14 @@ import com.futronictech.AnsiSDKLib;
 import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 /**
  * Created by moubiao on 2016/3/23.
@@ -267,11 +269,17 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
             return;
         }
 
-        MainApplication.fingerprintPath = getExternalFilesDir(null) + File.separator + templeName;
+        MainApplication.fingerprintPath = getExternalFilesDir(null) + File.separator + getString(R.string.app_name) + File.separator
+                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
+        FileUtil fileUtil = new FileUtil();
         File saveFile;
         FileOutputStream fos = null;
         try {
-            saveFile = new File(MainApplication.fingerprintPath);
+            saveFile = fileUtil.createFile(MainApplication.fingerprintPath);
+            if (saveFile == null) {
+                Log.e(TAG, "saveTemplate: template file create failed!");
+                return;
+            }
             fos = new FileOutputStream(saveFile);
             byte[] writeTemplate = new byte[size];
             System.arraycopy(template, 0, writeTemplate, 0, size);
