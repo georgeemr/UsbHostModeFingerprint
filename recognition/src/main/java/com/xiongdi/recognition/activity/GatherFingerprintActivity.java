@@ -269,7 +269,7 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
             return;
         }
 
-        MainApplication.fingerprintPath = getExternalFilesDir(null) + File.separator + getString(R.string.app_name) + File.separator
+        MainApplication.fingerprintPath = getExternalFilesDir(null) + File.separator
                 + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
         FileUtil fileUtil = new FileUtil();
         File saveFile;
