@@ -90,8 +90,10 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
 
         gatherTab = (TabLayout) findViewById(R.id.gather_tab);
         gatherVP = (ViewPager) findViewById(R.id.gather_viewpager);
-        gatherVP.setAdapter(gatherAdapter);
-        gatherVP.setOffscreenPageLimit(2);
+        if (gatherVP != null) {
+            gatherVP.setAdapter(gatherAdapter);
+            gatherVP.setOffscreenPageLimit(2);
+        }
 
         gatherTab.setupWithViewPager(gatherVP);
     }
