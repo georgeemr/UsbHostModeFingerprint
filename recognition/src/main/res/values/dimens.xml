@@ -42,7 +42,7 @@
     <dimen name="user_name_margin_top">180dp</dimen>
     <dimen name="user_name_margin_top_land">100dp</dimen>
     <dimen name="login_bt_margin_side">30dp</dimen>
-    <dimen name="input_font_size">22sp</dimen>
+    <dimen name="input_font_size">26sp</dimen>
     <dimen name="input_padding">5dp</dimen>
     <dimen name="login_bt_width">120dp</dimen>
     <dimen name="login_bt_height">60dp</dimen>
