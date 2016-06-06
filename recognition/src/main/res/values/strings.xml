@@ -59,4 +59,5 @@
     <string name="crop_saving">Saving picture…</string>
     <string name="crop_wait">Please wait…</string>
 
+    <string name="verify_detail">详细信息</string>
 </resources>

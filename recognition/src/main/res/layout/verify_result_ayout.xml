@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center_horizontal"
@@ -14,52 +15,105 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/verify_photo_img"
-                android:layout_width="@dimen/dp_size_140"
-                android:layout_height="@dimen/dp_size_160"
-                android:layout_marginTop="@dimen/dp_size_3"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/person_photo"/>
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="5dp">
 
-            <ImageView
-                android:id="@+id/verify_finger_img"
-                android:layout_width="@dimen/dp_size_140"
-                android:layout_height="@dimen/dp_size_160"
-                android:layout_marginTop="@dimen/dp_size_3"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/fingerprint"/>
+                <ImageView
+                    android:id="@+id/verify_photo_img"
+                    android:layout_width="@dimen/dp_size_140"
+                    android:layout_height="@dimen/dp_size_160"
+                    android:layout_marginTop="@dimen/dp_size_3"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/person_photo"/>
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="5dp">
+
+                <ImageView
+                    android:id="@+id/verify_finger_img"
+                    android:layout_width="@dimen/dp_size_140"
+                    android:layout_height="@dimen/dp_size_160"
+                    android:layout_marginTop="@dimen/dp_size_3"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/fingerprint"/>
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_margin="15dp"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="3dp">
 
-            <include
-                android:id="@+id/verify_ID"
-                layout="@layout/information_item"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
 
-            <include
-                android:id="@+id/verify_name"
-                layout="@layout/information_item"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/verify_detail"
+                    android:textColor="@android:color/black"
+                    android:textSize="33sp"/>
 
-            <include
-                android:id="@+id/verify_gender"
-                layout="@layout/information_item"/>
+                <include
+                    android:id="@+id/verify_ID"
+                    layout="@layout/information_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="37dp"/>
 
-            <include
-                android:id="@+id/verify_birthday"
-                layout="@layout/information_item"/>
+                <include
+                    android:id="@+id/verify_name"
+                    layout="@layout/information_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/verify_item_gap"/>
 
-            <include
-                android:id="@+id/verify_address"
-                layout="@layout/information_item"/>
-        </LinearLayout>
+                <include
+                    android:id="@+id/verify_gender"
+                    layout="@layout/information_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/verify_item_gap"/>
+
+                <include
+                    android:id="@+id/verify_birthday"
+                    layout="@layout/information_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/verify_item_gap"/>
+
+                <include
+                    android:id="@+id/verify_address"
+                    layout="@layout/information_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/verify_item_gap"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
 
     <include

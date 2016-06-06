@@ -6,27 +6,29 @@
 
     <TextView
         android:id="@+id/verify_title_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_size_5"
         android:layout_marginStart="@dimen/dp_size_5"
+        android:background="@drawable/rectangle_gray"
+        android:gravity="end"
         android:minWidth="100dp"
+        android:padding="3dp"
+        android:text="@string/app_name"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/font_size_20"
-        android:text="@string/app_name"/>
+        android:textSize="@dimen/item_title_font_size"/>
 
     <TextView
         android:id="@+id/verify_content_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dp_size_5"
-        android:layout_marginLeft="@dimen/dp_size_5"
+        android:layout_marginLeft="@dimen/item_content_margin_left"
         android:layout_marginRight="@dimen/dp_size_5"
-        android:layout_marginStart="@dimen/dp_size_5"
-        android:layout_marginTop="@dimen/dp_size_3"
+        android:layout_marginStart="@dimen/item_content_margin_left"
         android:background="@drawable/rectangle_gray"
-        android:paddingLeft="@dimen/dp_size_5"
-        android:paddingRight="@dimen/dp_size_5"
+        android:padding="3dp"
+        android:text="@string/app_name"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/font_size_20"/>
+        android:textSize="@dimen/item_content_font_size"/>
 </LinearLayout>
