@@ -72,7 +72,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         ((TextView) findViewById(R.id.verify_birthday).findViewById(R.id.verify_title_tv)).setText(R.string.info_item_title_birthday);
         ((TextView) findViewById(R.id.verify_address).findViewById(R.id.verify_title_tv)).setText(R.string.info_item_title_address);
 
-        pictureIMG = (ImageView) findViewById(R.id.verify_img);
+        pictureIMG = (ImageView) findViewById(R.id.verify_photo_img);
         personIDTV = (TextView) findViewById(R.id.verify_ID).findViewById(R.id.verify_content_tv);
         personNameTV = (TextView) findViewById(R.id.verify_name).findViewById(R.id.verify_content_tv);
         personGenderTV = (TextView) findViewById(R.id.verify_gender).findViewById(R.id.verify_content_tv);
@@ -171,7 +171,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         if (bitmap != null) {
                             activity.pictureIMG.setImageBitmap(bitmap);
                         } else {
-                            activity.pictureIMG.setImageResource(R.mipmap.person_photo);
+                            activity.pictureIMG.setImageResource(R.drawable.person_photo);
                         }
                         if (!StringUtil.hasLength(cardData[1])) {
                             ToastUtil.getInstance().showToast(activity, activity.getString(R.string.common_no_data));
@@ -229,7 +229,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         personGenderTV.setText("");
         personBirthdayTV.setText("");
         personAddressTV.setText("");
-        pictureIMG.setImageResource(R.mipmap.person_photo);
+        pictureIMG.setImageResource(R.drawable.person_photo);
     }
 
     @Override

@@ -5,35 +5,62 @@
               android:gravity="center_horizontal"
               android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/verify_img"
-        android:layout_width="@dimen/dp_size_140"
-        android:layout_height="@dimen/dp_size_160"
-        android:layout_marginTop="@dimen/dp_size_3"
-        android:src="@mipmap/person_photo"/>
-
-    <include
-        android:id="@+id/verify_ID"
-        layout="@layout/information_item"/>
-
-    <include
-        android:id="@+id/verify_name"
-        layout="@layout/information_item"/>
-
-    <include
-        android:id="@+id/verify_gender"
-        layout="@layout/information_item"/>
-
-    <include
-        android:id="@+id/verify_birthday"
-        layout="@layout/information_item"/>
-
-    <include
-        android:id="@+id/verify_address"
-        layout="@layout/information_item"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/verify_photo_img"
+                android:layout_width="@dimen/dp_size_140"
+                android:layout_height="@dimen/dp_size_160"
+                android:layout_marginTop="@dimen/dp_size_3"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/person_photo"/>
+
+            <ImageView
+                android:id="@+id/verify_finger_img"
+                android:layout_width="@dimen/dp_size_140"
+                android:layout_height="@dimen/dp_size_160"
+                android:layout_marginTop="@dimen/dp_size_3"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/fingerprint"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/verify_ID"
+                layout="@layout/information_item"/>
+
+            <include
+                android:id="@+id/verify_name"
+                layout="@layout/information_item"/>
+
+            <include
+                android:id="@+id/verify_gender"
+                layout="@layout/information_item"/>
+
+            <include
+                android:id="@+id/verify_birthday"
+                layout="@layout/information_item"/>
+
+            <include
+                android:id="@+id/verify_address"
+                layout="@layout/information_item"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <include
         layout="@layout/bottom_bar"/>
