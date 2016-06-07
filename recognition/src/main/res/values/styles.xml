@@ -133,4 +133,8 @@
         <item name="android:drawableLeft">@drawable/crop__ic_done</item>
         <item name="android:text">@string/crop_done</item>
     </style>
+
+    <!--验证结果界面-->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 </resources>

@@ -32,7 +32,7 @@
 
     <dimen name="crop__bar_height">56dp</dimen>
 
-    <dimen name="bottom_bar_margin_left_right">10dp</dimen>
+    <dimen name="bottom_bar_margin_left_right">30dp</dimen>
     <dimen name="vf_take_photo_bt_margin_bottom">20dp</dimen>
     <dimen name="rectangle_corner">6dp</dimen>
     <dimen name="rectangle_stroke">2dp</dimen>
@@ -63,4 +63,6 @@
     <dimen name="item_content_font_size">27sp</dimen>
     <dimen name="item_content_margin_left">20dp</dimen>
     <dimen name="verify_item_gap">12dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
 </resources>

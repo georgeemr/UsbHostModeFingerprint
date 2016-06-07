@@ -8,6 +8,9 @@
     <string name="common_no_data">no data</string>
     <string name="web_url">http://www.xiongdi.cn/</string>
     <string name="common_date">2016-03-22</string>
+    <string name="common_navigation_drawer_open">Open navigation drawer</string>
+    <string name="common_navigation_drawer_close">Close navigation drawer</string>
+    <string name="common_exit_app">再按一次退出程序</string>
 
     <!--登录界面-->
     <string name="login">Login</string>

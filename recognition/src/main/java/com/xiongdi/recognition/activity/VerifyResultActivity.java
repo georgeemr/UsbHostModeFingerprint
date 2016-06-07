@@ -7,8 +7,14 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,12 +30,14 @@ import com.xiongdi.recognition.widget.ProgressDialogFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by moubiao on 2016/3/25.
  * 验证身份信息界面
  */
-public class VerifyResultActivity extends AppCompatActivity implements View.OnClickListener {
+public class VerifyResultActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = "moubiao";
     private final int VERIFY_ACTIVITY = 0;
     private final int KEY_CODE_SCAN_CARD_RIGHT = 249;
@@ -38,6 +46,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private final int KEY_CODE_VERIFY_FINGERPRINT_RIGHT = 252;
     private static final int READ_CARD_FLAG = 0;
 
+    DrawerLayout drawer;
     private ImageView pictureIMG;
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
@@ -47,6 +56,11 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private ReadCardThread mReadCardThread;
     private boolean mReadSuccess = false;
     ProgressDialogFragment progressDialog;
+
+    private boolean isExit = false;
+    private boolean hasTask = false;
+    private Timer tExit;
+    private TimerTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +77,27 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         mOperateCardHelper.openRFModel();
         mReadCardHandler = new ReadCardHandler(this);
         progressDialog = new ProgressDialogFragment();
+
+        tExit = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                isExit = false;
+                hasTask = true;
+            }
+        };
     }
 
     private void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.common_navigation_drawer_open, R.string.common_navigation_drawer_close);
+        if (drawer != null) {
+            drawer.addDrawerListener(toggle);
+        }
+        toggle.syncState();
+
         ((TextView) findViewById(R.id.verify_ID).findViewById(R.id.verify_title_tv)).setText(R.string.info_title_ID);
         ((TextView) findViewById(R.id.verify_name).findViewById(R.id.verify_title_tv)).setText(R.string.info_item_title_name);
         ((TextView) findViewById(R.id.verify_gender).findViewById(R.id.verify_title_tv)).setText(R.string.info_item_title_gender);
@@ -81,22 +113,39 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         backTB = (ImageButton) findViewById(R.id.bottom_left_bt);
         verifyBT = (ImageButton) findViewById(R.id.bottom_right_bt);
-        verifyBT.setBackgroundResource(R.drawable.common_gather_fingerprint);
+        if (verifyBT != null) {
+            verifyBT.setBackgroundResource(R.drawable.common_gather_fingerprint);
+        }
         readCardBT = (ImageButton) findViewById(R.id.bottom_middle_bt);
-        readCardBT.setBackgroundResource(R.drawable.common_read_card_bg);
+        if (readCardBT != null) {
+            readCardBT.setBackgroundResource(R.drawable.common_read_card_bg);
+        }
     }
 
     private void setListener() {
         backTB.setOnClickListener(this);
         verifyBT.setOnClickListener(this);
         readCardBT.setOnClickListener(this);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottom_left_bt:
-                finish();
+                if (!isExit) {
+                    isExit = true;
+                    ToastUtil.getInstance().showToast(this, getString(R.string.common_exit_app));
+                    if (!hasTask) {
+                        tExit.schedule(task, 2000);
+                    }
+                } else {
+                    finish();
+                }
                 break;
             case R.id.bottom_right_bt:
                 verifyFingerPrint();
@@ -129,6 +178,25 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         mReadCardThread = new ReadCardThread();
         mReadCardThread.start();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_camera:
+
+                break;
+            case R.id.nav_gallery:
+
+                break;
+
+            default:
+                break;
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+
+        return false;
     }
 
     /**
@@ -230,6 +298,23 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         personBirthdayTV.setText("");
         personAddressTV.setText("");
         pictureIMG.setImageResource(R.drawable.person_photo);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (!isExit) {
+                isExit = true;
+                ToastUtil.getInstance().showToast(this, getString(R.string.common_exit_app));
+                if (!hasTask) {
+                    tExit.schedule(task, 2000);
+                }
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 
     @Override
