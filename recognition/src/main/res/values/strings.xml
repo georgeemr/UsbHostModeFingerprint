@@ -62,5 +62,12 @@
     <string name="crop_saving">Saving picture…</string>
     <string name="crop_wait">Please wait…</string>
 
+    <!--验证指纹界面-->
     <string name="verify_detail">详细信息</string>
+    <string name="nav_communicate">Communicate</string>
+    <string name="nav_scan_barcode">扫描条形码</string>
+    <string name="nav_input_ID">验证CNIC</string>
+    <string name="nav_upload_data">上传数据</string>
+    <string name="nav_download_data">下载数据</string>
+    <string name="common_print">打印结果</string>
 </resources>
