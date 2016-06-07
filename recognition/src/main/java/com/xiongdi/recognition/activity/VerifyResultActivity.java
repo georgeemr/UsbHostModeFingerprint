@@ -196,7 +196,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         drawer.closeDrawer(GravityCompat.START);
 
-        return false;
+        return true;
     }
 
     /**
