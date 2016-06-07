@@ -67,7 +67,8 @@
         <!-- 验证结果界面-->
         <activity
             android:name=".activity.VerifyResultActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
