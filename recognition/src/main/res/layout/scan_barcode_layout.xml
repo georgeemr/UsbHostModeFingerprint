@@ -20,6 +20,7 @@
         app:qrcv_cornerSize="3dp"
         app:qrcv_customGridScanLineDrawable="@drawable/custom_grid_scan_line"
         app:qrcv_isBarcode="true"
+        app:qrcv_isCenterVertical="true"
         app:qrcv_isShowDefaultGridScanLineDrawable="true"
         app:qrcv_isShowDefaultScanLineDrawable="true"
         app:qrcv_isShowTipBackground="true"
@@ -28,7 +29,7 @@
         app:qrcv_maskColor="#33FFFFFF"
         app:qrcv_rectWidth="200dp"
         app:qrcv_scanLineColor="@color/colorPrimaryDark"
-        app:qrcv_toolbarHeight="70dp"
+        app:qrcv_toolbarHeight="-70dp"
         app:qrcv_topOffset="0dp"/>
 
     <include layout="@layout/bottom_bar"/>
