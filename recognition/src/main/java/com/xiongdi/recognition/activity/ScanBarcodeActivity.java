@@ -1,5 +1,7 @@
 package com.xiongdi.recognition.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -16,7 +18,7 @@ import cn.bingoogolapple.qrcode.core.QRCodeView;
  * Created by moubiao on 2016/6/8.
  * 扫描二维码的activity
  */
-public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView.Delegate {
+public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView.Delegate, View.OnClickListener {
     private final String TAG = "moubiao";
     private QRCodeView mQRCodeView;
 
@@ -26,6 +28,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView
         setContentView(R.layout.scan_barcode_layout);
 
         initView();
+        setInnerListener();
     }
 
     @Override
@@ -62,12 +65,21 @@ public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView
         }
     }
 
+    private void setInnerListener() {
+        View backView = findViewById(R.id.bottom_left_bt);
+        if (backView != null) {
+            backView.setOnClickListener(this);
+        }
+    }
+
     @Override
     public void onScanQRCodeSuccess(String result) {
-        Log.d(TAG, "onScanQRCodeSuccess: result = " + result);
         ToastUtil.getInstance().showToast(this, result);
         vibrate();
-        mQRCodeView.startSpot();
+        Intent data = new Intent();
+        data.putExtra("barcode", result);
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 
     private void vibrate() {
@@ -78,5 +90,16 @@ public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView
     @Override
     public void onScanQRCodeOpenCameraError() {
         ToastUtil.getInstance().showToast(this, getString(R.string.camera_open_failed));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bottom_left_bt:
+                finish();
+                break;
+            default:
+                break;
+        }
     }
 }

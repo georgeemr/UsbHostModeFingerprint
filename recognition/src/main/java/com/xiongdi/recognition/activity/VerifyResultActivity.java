@@ -40,11 +40,11 @@ import java.util.TimerTask;
 public class VerifyResultActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = "moubiao";
     private final int VERIFY_ACTIVITY = 0;
+    private final int SCAN_BARCODE_ACTIVITY = 1000;
     private final int KEY_CODE_SCAN_CARD_RIGHT = 249;
     private final int KEY_CODE_SCAN_CARD_LEFT = 250;
     private final int KEY_CODE_VERIFY_FINGERPRINT_LEFT = 251;
     private final int KEY_CODE_VERIFY_FINGERPRINT_RIGHT = 252;
-    private final int SCAN_BARCODE_CODE = 1000;
     private static final int READ_CARD_FLAG = 0;
 
     DrawerLayout drawer;
@@ -187,7 +187,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             case R.id.nav_scan_barcode:
                 Intent intent = new Intent();
                 intent.setClass(VerifyResultActivity.this, ScanBarcodeActivity.class);
-                startActivityForResult(intent, SCAN_BARCODE_CODE);
+                startActivityForResult(intent, SCAN_BARCODE_ACTIVITY);
                 break;
             case R.id.nav_input_CNID:
 
@@ -286,11 +286,20 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         }
                     }
                     break;
+                case SCAN_BARCODE_ACTIVITY:
+
+                    break;
                 default:
                     break;
             }
         } else {
-            refreshView();
+            switch (requestCode) {
+                case SCAN_BARCODE_ACTIVITY:
+                    refreshView();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
