@@ -44,6 +44,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private final int KEY_CODE_SCAN_CARD_LEFT = 250;
     private final int KEY_CODE_VERIFY_FINGERPRINT_LEFT = 251;
     private final int KEY_CODE_VERIFY_FINGERPRINT_RIGHT = 252;
+    private final int SCAN_BARCODE_CODE = 1000;
     private static final int READ_CARD_FLAG = 0;
 
     DrawerLayout drawer;
@@ -183,10 +184,12 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_camera:
-
+            case R.id.nav_scan_barcode:
+                Intent intent = new Intent();
+                intent.setClass(VerifyResultActivity.this, ScanBarcodeActivity.class);
+                startActivityForResult(intent, SCAN_BARCODE_CODE);
                 break;
-            case R.id.nav_gallery:
+            case R.id.nav_input_CNID:
 
                 break;
 
