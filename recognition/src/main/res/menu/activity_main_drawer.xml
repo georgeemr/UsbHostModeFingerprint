@@ -8,8 +8,8 @@
             android:title="@string/nav_scan_barcode"/>
         <item
             android:id="@+id/nav_input_CNID"
-            android:icon="@drawable/ic_keyboard"
-            android:title="@string/nav_input_ID"/>
+            android:icon="@drawable/ic_search"
+            android:title="@string/nav_search_ID"/>
     </group>
 
     <item android:title="@string/nav_communicate">
