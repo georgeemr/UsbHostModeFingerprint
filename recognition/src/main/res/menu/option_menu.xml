@@ -6,4 +6,10 @@
         android:icon="@drawable/ic_search"
         android:title="@string/common_search"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_scan_barcode"
+        android:icon="@drawable/ic_barcode"
+        android:title="@string/nav_scan_barcode"
+        app:showAsAction="ifRoom"/>
 </menu>

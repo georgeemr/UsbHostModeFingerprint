@@ -192,14 +192,15 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Intent intent = new Intent();
         switch (item.getItemId()) {
             case R.id.nav_scan_barcode:
-                Intent intent = new Intent();
                 intent.setClass(VerifyResultActivity.this, ScanBarcodeActivity.class);
                 startActivityForResult(intent, SCAN_BARCODE_REQUEST_CODE);
                 break;
             case R.id.nav_input_CNID:
-
+                intent.setClass(VerifyResultActivity.this, SearchActivity.class);
+                startActivityForResult(intent, SEARCH_REQUEST_CODE);
                 break;
 
             default:
@@ -208,7 +209,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         drawer.closeDrawer(GravityCompat.START);
 
-        return true;
+        return false;
     }
 
     @Override
@@ -219,11 +220,15 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent();
         switch (item.getItemId()) {
             case R.id.menu_search:
-                Intent intent = new Intent();
                 intent.setClass(VerifyResultActivity.this, SearchActivity.class);
                 startActivityForResult(intent, SEARCH_REQUEST_CODE);
+                break;
+            case R.id.menu_scan_barcode:
+                intent.setClass(VerifyResultActivity.this, ScanBarcodeActivity.class);
+                startActivityForResult(intent, SCAN_BARCODE_REQUEST_CODE);
                 break;
             default:
                 break;
