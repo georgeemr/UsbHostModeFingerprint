@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -71,6 +72,12 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         initData();
         initView();
         setListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mOperateCardHelper.closeRFModel();
     }
 
     private void initData() {
@@ -202,6 +209,23 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         return true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.option_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * 读卡的线程
      */
@@ -329,9 +353,4 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mOperateCardHelper.closeRFModel();
-    }
 }
