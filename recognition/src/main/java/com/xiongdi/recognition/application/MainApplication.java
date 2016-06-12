@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.xiongdi.recognition.bean.Account;
+import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.AccountDao;
 import com.xiongdi.recognition.util.CrashHandlerUtil;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class MainApplication extends Application {
     public static String fingerprintPath;
     private List<Activity> mActivityList;
+    private Person mPerson;
 
     @Override
     public void onCreate() {
@@ -57,5 +59,14 @@ public class MainApplication extends Application {
 
     public void addActivity(Activity activity) {
         mActivityList.add(activity);
+    }
+
+
+    public Person getPerson() {
+        return mPerson;
+    }
+
+    public void setPerson(Person person) {
+        mPerson = person;
     }
 }

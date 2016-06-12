@@ -90,5 +90,5 @@
     <dimen name="arrow_drawableSize">24dp</dimen>
 
     <!--search view-->
-    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="search_font_size">12sp</dimen>
 </resources>

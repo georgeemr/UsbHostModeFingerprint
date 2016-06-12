@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.xiongdi.recognition.R;
+import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.helper.OperateCardHelper;
@@ -41,14 +42,15 @@ import java.util.TimerTask;
 public class VerifyResultActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = "moubiao";
     private final int VERIFY_ACTIVITY = 0;
-    private final int SCAN_BARCODE_ACTIVITY = 1000;
+    private final int SCAN_BARCODE_REQUEST_CODE = 10000;
+    private final int SEARCH_REQUEST_CODE = 10001;
     private final int KEY_CODE_SCAN_CARD_RIGHT = 249;
     private final int KEY_CODE_SCAN_CARD_LEFT = 250;
     private final int KEY_CODE_VERIFY_FINGERPRINT_LEFT = 251;
     private final int KEY_CODE_VERIFY_FINGERPRINT_RIGHT = 252;
     private static final int READ_CARD_FLAG = 0;
 
-    DrawerLayout drawer;
+    private DrawerLayout drawer;
     private ImageView pictureIMG;
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
@@ -57,7 +59,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private ReadCardHandler mReadCardHandler;
     private ReadCardThread mReadCardThread;
     private boolean mReadSuccess = false;
-    ProgressDialogFragment progressDialog;
+    private ProgressDialogFragment progressDialog;
 
     private boolean isExit = false;
     private boolean hasTask = false;
@@ -194,7 +196,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             case R.id.nav_scan_barcode:
                 Intent intent = new Intent();
                 intent.setClass(VerifyResultActivity.this, ScanBarcodeActivity.class);
-                startActivityForResult(intent, SCAN_BARCODE_ACTIVITY);
+                startActivityForResult(intent, SCAN_BARCODE_REQUEST_CODE);
                 break;
             case R.id.nav_input_CNID:
 
@@ -219,6 +221,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_search:
+                Intent intent = new Intent();
+                intent.setClass(VerifyResultActivity.this, SearchActivity.class);
+                startActivityForResult(intent, SEARCH_REQUEST_CODE);
                 break;
             default:
                 break;
@@ -298,31 +303,39 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     PersonDao personDao = new PersonDao(getApplicationContext());
                     Long recordCount = personDao.getQuantity();
                     Person person = personDao.queryById(Integer.parseInt(String.valueOf(recordCount)));
-                    if (person != null) {
-                        personIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", person.getPersonID()));
-                        personNameTV.setText(person.getName());
-                        personGenderTV.setText(person.getGender());
-                        personBirthdayTV.setText(person.getBirthday());
-                        personAddressTV.setText(person.getAddress());
-                        Bitmap bitmap = BitmapFactory.decodeFile(person.getGatherPictureUrl());
-                        if (bitmap != null) {
-                            pictureIMG.setImageBitmap(bitmap);
-                        }
-                    }
+                    setResultDetail(person);
                     break;
-                case SCAN_BARCODE_ACTIVITY:
+                case SCAN_BARCODE_REQUEST_CODE:
 
+                    break;
+                case SEARCH_REQUEST_CODE:
+                    MainApplication mainApplication = (MainApplication) getApplication();
+                    setResultDetail(mainApplication.getPerson());
                     break;
                 default:
                     break;
             }
         } else {
             switch (requestCode) {
-                case SCAN_BARCODE_ACTIVITY:
+                case SCAN_BARCODE_REQUEST_CODE:
                     refreshView();
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    private void setResultDetail(Person person) {
+        if (person != null) {
+            personIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", person.getPersonID()));
+            personNameTV.setText(person.getName());
+            personGenderTV.setText(person.getGender());
+            personBirthdayTV.setText(person.getBirthday());
+            personAddressTV.setText(person.getAddress());
+            Bitmap bitmap = BitmapFactory.decodeFile(person.getGatherPictureUrl());
+            if (bitmap != null) {
+                pictureIMG.setImageBitmap(bitmap);
             }
         }
     }

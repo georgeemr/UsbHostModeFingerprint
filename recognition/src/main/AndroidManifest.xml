@@ -10,8 +10,8 @@
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
 
     <application
         android:name=".application.MainApplication"
@@ -91,8 +91,20 @@
         </activity>
 
         <!--扫描二维码界面-->
-        <activity android:name=".activity.ScanBarcodeActivity"
-                  android:screenOrientation="sensor">
+        <activity
+            android:name=".activity.ScanBarcodeActivity"
+            android:screenOrientation="sensor">
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN"/>-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <!--搜索界面-->
+        <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="sensor">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 

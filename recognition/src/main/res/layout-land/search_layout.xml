@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <com.xiongdi.recognition.widget.searchView.SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:search_divider="false"
+        app:search_hint="@string/common_search"
+        app:search_text_size="@dimen/search_font_size"
+        app:search_version="toolbar"
+        app:search_version_margins="toolbar_small"
+        app:search_voice="true"
+        app:search_voice_text="@string/search_voice_text"/>
+
+    <ListView
+        android:id="@+id/search_result_lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/search_no_data"
+        android:textSize="26sp"/>
+
+</LinearLayout>

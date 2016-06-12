@@ -3,9 +3,13 @@ package com.xiongdi.recognition.db;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.xiongdi.recognition.bean.Person;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by moubiao on 2016/3/25.
@@ -61,5 +65,19 @@ public class PersonDao {
         }
 
         return null;
+    }
+
+    public QueryBuilder<Person, Integer> getQueryBuilder() {
+        return personDao.queryBuilder();
+    }
+
+    public List<Person> query(PreparedQuery<Person> preparedQuery) {
+        List<Person> personList = new ArrayList<>();
+        try {
+            personList.addAll(personDao.query(preparedQuery));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return personList;
     }
 }

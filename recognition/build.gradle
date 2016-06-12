@@ -5,6 +5,14 @@ model {
         compileSdkVersion 23
         buildToolsVersion "23.0.2"
 
+        productFlavors {
+            create("arm") {
+                ndk {
+                    abiFilters.add("armeabi-v7a")
+                }
+            }
+        }
+
         defaultConfig {
             applicationId "com.xiongdi.recognition"
             minSdkVersion.apiLevel 15
