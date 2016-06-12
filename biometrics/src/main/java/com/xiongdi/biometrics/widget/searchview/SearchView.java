@@ -477,6 +477,9 @@ public class SearchView extends FrameLayout implements View.OnClickListener { //
     }
 
     public void removeFocus() {
+        if (isInEditMode()) {
+            return;
+        }
         mIsSearchOpen = false;
         if (mShadow) {
             fadeOut(mShadowView, mAnimationDuration);
