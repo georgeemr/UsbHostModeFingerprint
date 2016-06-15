@@ -13,8 +13,8 @@
         android:layout_marginLeft="194dip"
         android:layout_marginStart="194dp"
         android:layout_marginTop="112dip"
+        android:background="#cc99cc"
         android:rotation="45"/>
-    <!--android:background="#cc99cc"-->
 
     <Button
         android:id="@+id/left_index_finger_bt"
