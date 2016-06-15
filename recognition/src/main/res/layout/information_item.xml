@@ -15,7 +15,7 @@
         android:minWidth="100dp"
         android:padding="3dp"
         android:text="@string/app_name"
-        android:textColor="@android:color/black"
+        android:textColor="#cc222222"
         android:textSize="@dimen/item_title_font_size"/>
 
     <TextView
@@ -28,7 +28,6 @@
         android:layout_marginStart="@dimen/item_content_margin_left"
         android:background="@drawable/rectangle_gray"
         android:padding="3dp"
-        android:text="@string/app_name"
-        android:textColor="@android:color/black"
+        android:textColor="#cc222222"
         android:textSize="@dimen/item_content_font_size"/>
 </LinearLayout>
