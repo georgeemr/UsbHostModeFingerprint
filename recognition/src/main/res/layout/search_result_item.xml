@@ -2,42 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@color/colorWhite"
               android:orientation="horizontal">
 
     <TextView
         android:id="@+id/result_ID_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/info_title_ID"
-        android:textSize="24sp"/>
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_title_ID"/>
 
     <TextView
         android:id="@+id/result_name_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/info_item_title_name"
-        android:textSize="24sp"/>
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_item_title_name"/>
 
     <TextView
         android:id="@+id/result_gender_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/info_item_title_gender"
-        android:textSize="24sp"/>
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_item_title_gender"/>
 
     <TextView
         android:id="@+id/result_birthday_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/info_item_title_birthday"
-        android:textSize="24sp"/>
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_item_title_birthday"/>
 
 </LinearLayout>
