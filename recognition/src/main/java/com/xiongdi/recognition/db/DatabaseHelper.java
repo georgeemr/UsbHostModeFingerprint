@@ -26,7 +26,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Map<String, Dao> daoMap = new HashMap<>();
 
     private DatabaseHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION, R.raw.ormlite_config);
+        super(context, DB_NAME, null, DB_VERSION);
     }
 
     /**
