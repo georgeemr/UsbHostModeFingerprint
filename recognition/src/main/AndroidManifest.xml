@@ -23,7 +23,7 @@
         tools:replace="android:icon">
         <activity
             android:name=".activity.StartActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="sensorLandscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
@@ -34,17 +34,17 @@
         <!-- 登录界面 -->
         <activity
             android:name=".activity.LoginActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
 
         <!-- 填写录入信息界面-->
         <activity
             android:name=".activity.FillInfoActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
 
         <!-- 选择采集指纹还是照片的界面-->
         <activity
             android:name=".activity.GatherActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="sensorLandscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
@@ -55,22 +55,22 @@
         <!-- 采集指纹的界面-->
         <activity
             android:name=".activity.GatherFingerprintActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
 
         <!-- 采集照片的界面-->
         <activity
             android:name=".activity.GatherPictureActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
 
         <!-- 裁剪照片的界面-->
         <activity
             android:name=".widget.crop.CropImageActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
 
         <!-- 验证结果界面-->
         <activity
             android:name=".activity.VerifyResultActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -82,7 +82,7 @@
         <!-- 验证指纹界面-->
         <activity
             android:name=".activity.VerifyFingerprintActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="sensorLandscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
