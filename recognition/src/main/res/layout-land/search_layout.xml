@@ -30,6 +30,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/search_no_data"
-        android:textSize="26sp"/>
+        android:textSize="26sp"
+        android:textColor="#cc222222"/>
 
 </LinearLayout>
