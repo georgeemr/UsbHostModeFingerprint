@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.PreparedUpdate;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.xiongdi.recognition.bean.Person;
 
 import java.sql.SQLException;
@@ -79,5 +81,18 @@ public class PersonDao {
             e.printStackTrace();
         }
         return personList;
+    }
+
+    public UpdateBuilder<Person, Integer> getUpdateBuilder() {
+        return personDao.updateBuilder();
+    }
+
+    public boolean updatePerson(PreparedUpdate<Person> preparedUpdate) {
+        try {
+            personDao.update(preparedUpdate);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }
