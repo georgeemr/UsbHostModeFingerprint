@@ -23,10 +23,10 @@ import com.xiongdi.recognition.util.DateUtil;
 import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
-import com.xiongdi.recognition.widget.AskDialogFragment;
-import com.xiongdi.recognition.widget.DatePickerFragment;
-import com.xiongdi.recognition.widget.ProgressDialogFragment;
-import com.xiongdi.recognition.widget.SingleChoiceDialogFragment;
+import com.xiongdi.recognition.fragment.AskDialogFragment;
+import com.xiongdi.recognition.fragment.DatePickerFragment;
+import com.xiongdi.recognition.fragment.ProgressDialogFragment;
+import com.xiongdi.recognition.fragment.SingleChoiceDialogFragment;
 
 import java.io.File;
 import java.io.FileNotFoundException;

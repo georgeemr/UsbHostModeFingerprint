@@ -28,7 +28,7 @@ import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
-import com.xiongdi.recognition.widget.ProgressDialogFragment;
+import com.xiongdi.recognition.fragment.ProgressDialogFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;

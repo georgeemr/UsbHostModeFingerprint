@@ -1,4 +1,4 @@
-package com.xiongdi.recognition.widget;
+package com.xiongdi.recognition.fragment;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
