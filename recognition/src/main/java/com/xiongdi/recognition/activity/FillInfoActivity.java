@@ -364,6 +364,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mOperateCardHelper.closeRFModel();
+        if(false){
+            mOperateCardHelper.closeRFModel();
+        }
     }
 }
