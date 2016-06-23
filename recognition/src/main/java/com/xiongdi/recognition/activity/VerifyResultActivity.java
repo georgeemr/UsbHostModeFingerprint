@@ -2,9 +2,15 @@ package com.xiongdi.recognition.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
@@ -13,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +27,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.futronictech.AnsiSDKLib;
 import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.audio.AudioPlay;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
@@ -33,6 +42,9 @@ import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.util.UsbManagerUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 import java.util.Timer;
@@ -48,9 +60,12 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private final int SCAN_BARCODE_REQUEST_CODE = 10000;
     private final int SEARCH_REQUEST_CODE = 10001;
     private static final int READ_CARD_FLAG = 0;
+    private final float MATCH_SCORE = 93.0f;
+    private static final int MESSAGE_SHOW_IMAGE = 2;
+    private static final int MESSAGE_SHOW_ERROR_MSG = 3;
 
     private DrawerLayout drawer;
-    private ImageView pictureIMG;
+    private ImageView pictureIMG, fingerIMG;
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
 
@@ -67,6 +82,11 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     private UsbManagerUtil mUsbManagerUtil;
     GatherFingerDialogFragment mFingerDialogFG;
+    private VerifyThread mVerifyThread;
+    private VerifyHandler mHandler;
+    private UsbDeviceDataExchangeImpl usb_host_ctx;
+    private boolean verifyPass = false;
+    private Bitmap mFingerBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +104,11 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         if (false) {
             mOperateCardHelper.closeRFModel();
         }
+
+        usb_host_ctx.closeDevice();
+        usb_host_ctx.releaseResource();
+        EmpPad.FingerPrintPowerOff();
+        EmpPad.ClosePowerManager();
     }
 
     private void initData() {
@@ -97,6 +122,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         mReadCardHandler = new ReadCardHandler(this);
         progressDialog = new ProgressDialogFragment();
         mFingerDialogFG = new GatherFingerDialogFragment();
+        mHandler = new VerifyHandler(this);
+        usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
 
         tExit = new Timer();
         task = new TimerTask() {
@@ -125,6 +152,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         ((TextView) findViewById(R.id.verify_address).findViewById(R.id.verify_title_tv)).setText(R.string.info_item_title_address);
 
         pictureIMG = (ImageView) findViewById(R.id.verify_photo_img);
+        fingerIMG = (ImageView) findViewById(R.id.verify_finger_img);
         personIDTV = (TextView) findViewById(R.id.verify_ID).findViewById(R.id.verify_content_tv);
         personNameTV = (TextView) findViewById(R.id.verify_name).findViewById(R.id.verify_content_tv);
         personGenderTV = (TextView) findViewById(R.id.verify_gender).findViewById(R.id.verify_content_tv);
@@ -190,6 +218,214 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     private void verifyFinger() {
         showGatherFingerDialog();
+        verifyFingerprint();
+    }
+
+    /**
+     * 验证指纹
+     */
+    private void verifyFingerprint() {
+        if (MainApplication.fingerprintPath == null) {
+            Log.e(TAG, "verifyFingerprint: fingerprint file path is null");
+            ToastUtil.getInstance().showToast(this, "fingerprint file path is null");
+            return;
+        }
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            Log.e(TAG, "verifyFingerprint: external storage is not mounted");
+            ToastUtil.getInstance().showToast(this, "external storage is not mounted");
+            return;
+        }
+        if (usb_host_ctx.OpenDevice(0, true)) {
+            byte[] fingerprintContent = null;
+            File fingerprintFile;
+            FileInputStream fis = null;
+            try {
+                Log.d(TAG, "verifyFingerprint: fingerprint path " + MainApplication.fingerprintPath);
+                fingerprintFile = new File(MainApplication.fingerprintPath);
+                if (!fingerprintFile.exists() || !fingerprintFile.canRead()) {
+                    Log.e(TAG, "verifyFingerprint: fingerprint file no exist");
+                    return;
+                }
+                fingerprintContent = new byte[(int) fingerprintFile.length()];
+                fis = new FileInputStream(fingerprintFile);
+                if (-1 == fis.read(fingerprintContent)) {
+                    Log.e(TAG, "verifyFingerprint: fingerprint content is null");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (fis != null) {
+                        fis.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            mVerifyThread = new VerifyThread(0, fingerprintContent, MATCH_SCORE);
+            mVerifyThread.start();
+        } else {
+            ToastUtil.getInstance().showToast(this, "open usb host mode failed!");
+        }
+    }
+
+    /**
+     * 验证指纹的线程
+     */
+    private class VerifyThread extends Thread {
+        private AnsiSDKLib ansi_lib = null;
+        private int fingerIndex = 0;//手指的编号
+        private byte[] templeData = null;//从文件里读取到的指纹数据
+        private float matchScore = 0;//匹配的标准值
+        private boolean cancel = false;
+
+        public VerifyThread(int fingerIndex, byte[] templeData, float matchScore) {
+            ansi_lib = new AnsiSDKLib();
+            this.fingerIndex = fingerIndex;
+            this.templeData = templeData;
+            this.matchScore = matchScore;
+        }
+
+        public void cancel() {
+            cancel = true;
+            try {
+                this.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public boolean isCanceled() {
+            return cancel;
+        }
+
+        @Override
+        public void run() {
+            boolean dev_open = false;
+            try {
+                //打开设备
+                if (!ansi_lib.OpenDeviceCtx(usb_host_ctx)) {
+                    mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, ansi_lib.GetErrorMessage()).sendToTarget();
+                    Log.e(TAG, "run: open fingerprint device failed!");
+                    return;
+                }
+                dev_open = true;
+                //计算指纹图像的大小
+                if (!ansi_lib.FillImageSize()) {
+                    mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, ansi_lib.GetErrorMessage()).sendToTarget();
+                    Log.e(TAG, "run: get fingerprint image size failed!");
+                    return;
+                }
+                byte[] img_buffer = new byte[ansi_lib.GetImageSize()];
+                //验证指纹
+                while (true) {
+                    Log.d(TAG, "run: search fingerprint---->");
+                    if (isCanceled()) {
+                        break;
+                    }
+                    float[] matchResult = new float[1];
+                    if (ansi_lib.VerifyTemplate(fingerIndex, templeData, img_buffer, matchResult)) {
+                        mFingerBitmap = createFingerBitmap(ansi_lib.GetImageWidth(), ansi_lib.GetImageHeight(), img_buffer);
+                        verifyPass = matchResult[0] > matchScore;
+                        mHandler.obtainMessage(MESSAGE_SHOW_IMAGE).sendToTarget();
+                        Log.d(TAG, "run: verify passed match result = " + matchResult[0] + " success = " + verifyPass);
+                        if (verifyPass) {
+                            break;
+                        }
+                    } else {
+                        int lastError = ansi_lib.GetErrorCode();
+                        if (lastError == AnsiSDKLib.FTR_ERROR_EMPTY_FRAME
+                                || lastError == AnsiSDKLib.FTR_ERROR_NO_FRAME
+                                || lastError == AnsiSDKLib.FTR_ERROR_MOVABLE_FINGER) {
+                            Thread.sleep(100);
+                        } else {
+                            Log.e(TAG, "run: verify failed");
+                            String error = String.format("Verify failed. Error: %s.", ansi_lib.GetErrorMessage());
+                            mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, error).sendToTarget();
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, e.getMessage()).sendToTarget();
+            }
+
+            //关闭模块
+            if (dev_open) {
+                ansi_lib.CloseDevice();
+            }
+        }
+    }
+
+    /**
+     * 创建指纹的bitmap
+     *
+     * @param imgWidth  bitmap的宽
+     * @param imgHeight bitmap的高
+     * @param imgBytes  bitmap的数据
+     * @return
+     */
+    private Bitmap createFingerBitmap(int imgWidth, int imgHeight, byte[] imgBytes) {
+        int[] pixels = new int[imgWidth * imgHeight];
+        for (int i = 0; i < imgWidth * imgHeight; i++) {
+            pixels[i] = imgBytes[i];
+        }
+
+        Bitmap emptyBmp = Bitmap.createBitmap(pixels, imgWidth, imgHeight, Bitmap.Config.RGB_565);
+        int width, height;
+        height = emptyBmp.getHeight();
+        width = emptyBmp.getWidth();
+        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(result);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(emptyBmp, 0, 0, paint);
+
+        return result;
+    }
+
+    private static class VerifyHandler extends Handler {
+        private WeakReference<VerifyResultActivity> mWeakReference;
+        private int audioType;
+        private AudioPlay mAudioPlay;
+        AssetManager mAssetManager;
+
+
+        public VerifyHandler(VerifyResultActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+            mAudioPlay = new AudioPlay();
+            mAssetManager = activity.getAssets();
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final VerifyResultActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case MESSAGE_SHOW_ERROR_MSG:
+                    String showErr = (String) msg.obj;
+                    ToastUtil.getInstance().showToast(activity, showErr);
+                    break;
+                case MESSAGE_SHOW_IMAGE:
+                    activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
+                    if (activity.verifyPass) {
+                        mAudioPlay.resetMediaPlayer();
+                        audioType = AudioPlay.VERIFY_PASSED;
+                        mAudioPlay.playAsset(audioType, mAssetManager);
+                        activity.dismissGatherFingerDialog();
+                    } else {
+                        audioType = AudioPlay.VERIFY_FAILED;
+                        mAudioPlay.playAsset(audioType, mAssetManager);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /**
