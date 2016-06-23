@@ -13,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,14 +20,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.futronictech.UsbDeviceDataExchangeImpl;
+import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
+import com.xiongdi.recognition.fragment.ProgressDialogFragment;
 import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
-import com.xiongdi.recognition.fragment.ProgressDialogFragment;
+import com.xiongdi.recognition.util.UsbManagerUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;
@@ -66,6 +68,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private Timer tExit;
     private TimerTask task;
 
+    private UsbManagerUtil mUsbManagerUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +89,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initData() {
+        EmpPad.OpenPowerManager();
+        EmpPad.FingerPrintPowerOn();
+        mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
         if (false) {
             mOperateCardHelper.openRFModel();
@@ -100,6 +107,36 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 hasTask = true;
             }
         };
+    }
+
+    /**
+     * 处理请求USB设备权限的handler
+     */
+    private static class RequestPermissionHandler extends Handler {
+        private WeakReference<VerifyResultActivity> mWeakReference;
+
+        public RequestPermissionHandler(VerifyResultActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final VerifyResultActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
+                    if (activity != null) {
+//                        activity.startGatherFingerprintActivity();
+                    }
+                    break;
+                }
+                case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
     }
 
     private void initView() {
@@ -162,7 +199,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 }
                 break;
             case R.id.bottom_right_bt:
-                verifyFingerPrint();
+                mUsbManagerUtil.OpenDevice(0, true);
                 break;
             case R.id.bottom_middle_bt:
                 readCard();
@@ -170,17 +207,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             default:
                 break;
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (KEY_CODE_SCAN_CARD_LEFT == keyCode || KEY_CODE_SCAN_CARD_RIGHT == keyCode) {
-            readCard();
-        } else if (KEY_CODE_VERIFY_FINGERPRINT_LEFT == keyCode || KEY_CODE_VERIFY_FINGERPRINT_RIGHT == keyCode) {
-            verifyFingerPrint();
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -373,6 +399,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 super.onBackPressed();
             }
         }
+
+        EmpPad.FingerPrintPowerOff();
+        EmpPad.ClosePowerManager();
     }
 
 }
