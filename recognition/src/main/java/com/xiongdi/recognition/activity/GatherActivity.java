@@ -4,22 +4,32 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.futronictech.AnsiSDKLib;
+import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.OpenJpeg;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.adapter.GatherInfoVpAdapter;
 import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.fragment.GatherFingerprintDialogFragment;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
 import com.xiongdi.recognition.fragment.RightHandFragment;
@@ -30,18 +40,23 @@ import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.crop.Crop;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by moubiao on 2016/3/22.
  * 采集指纹和头像的activity
  */
 public class GatherActivity extends AppCompatActivity implements View.OnClickListener, GatherFingerprintResultInterface {
-    private int KEY_CODE_RIGHT_BOTTOM = 249;
-    private int KEY_CODE_LEFT_BOTTOM = 250;
-    private int KEY_CODE_LEFT_TOP = 251;
-    private int KEY_CODE_RIGHT_TOP = 252;
+    private final String TAG = "moubiao";
+    private static final int MESSAGE_SHOW_IMAGE = 2;
+    private static final int MESSAGE_SHOW_ERROR_MSG = 3;
+    private static final String kAnsiTemplatePostfix = "(ANSI)";
+    private static final String kIsoTemplatePostfix = "(ISO)";
 
     public final static int PICTURE_ACTIVITY = 0;//采集照片
     public final static int FINGERPRINT_ACTIVITY = 1;//采集指纹
@@ -65,6 +80,13 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     PictureFragment pictureFg;
 
     private boolean haveInformation = false;//判断是否有有效信息
+
+    private GatherFingerThread gatherThread;
+    private ShowFingerprintHandler mHandler;
+    private UsbDeviceDataExchangeImpl usb_host_ctx;
+    private StringBuilder templeName;
+    GatherFingerprintDialogFragment mFingerDialogFG;
+    private Bitmap mFingerBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +115,14 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent data = getIntent();
         gatherID = data.getStringExtra("gatherID");
+        templeName = new StringBuilder();
+        templeName.append(gatherID);
+        templeName.append("_");
+        templeName.append(fingerNUM);
+        templeName.append(kAnsiTemplatePostfix);
+        mFingerDialogFG = new GatherFingerprintDialogFragment();
+        mHandler = new ShowFingerprintHandler(this);
+        usb_host_ctx = new UsbDeviceDataExchangeImpl(getApplicationContext(), mHandler);
 
         fileUtil = new FileUtil();
     }
@@ -152,16 +182,6 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (KEY_CODE_LEFT_BOTTOM == keyCode || KEY_CODE_LEFT_TOP == keyCode
-                || KEY_CODE_RIGHT_BOTTOM == keyCode || KEY_CODE_RIGHT_TOP == keyCode) {
-            startGatherPictureActivity();
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 
     private void startGatherPictureActivity() {
@@ -264,6 +284,9 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         super.onBackPressed();
 
         deleteTemporaryFile();
+        if (gatherThread != null) {
+            gatherThread.cancel();
+        }
     }
 
     /**
@@ -272,5 +295,235 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     private void deleteTemporaryFile() {
         fileUtil.deleteFile(getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/"
                 + gatherID + "/" + gatherID + "_" + fingerNUM + ".bmp");
+    }
+
+    public void showGatherFingerDialog() {
+        mFingerDialogFG.show(getSupportFragmentManager(), "gather");
+    }
+
+    public void dismissGatherFingerDialog() {
+        mFingerDialogFG.dismiss();
+    }
+
+    /**
+     * 采集指纹
+     */
+    public void gatherFingerprint() {
+        showGatherFingerDialog();
+        if (usb_host_ctx.OpenDevice(0, true)) {
+            gatherThread = new GatherFingerThread(fingerNUM, true, false);
+            gatherThread.start();
+        } else {
+            ToastUtil.getInstance().showToast(this, "open usb host mode failed!");
+            dismissGatherFingerDialog();
+        }
+    }
+
+    /**
+     * 采集指纹的线程
+     */
+    private class GatherFingerThread extends Thread {
+        private AnsiSDKLib ansi_lib = null;
+        private int mFingerIndex = 0;
+        private boolean mSaveAnsi = true;
+        private boolean mSaveIso = false;
+        private boolean mCanceled = false;
+
+        public GatherFingerThread(int fingerIndex, boolean saveAnsi, boolean saveIso) {
+            ansi_lib = new AnsiSDKLib();
+            mFingerIndex = fingerIndex;
+            mSaveAnsi = saveAnsi;
+            mSaveIso = saveIso;
+        }
+
+        public void cancel() {
+            mCanceled = true;
+            try {
+                this.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public boolean isCanceled() {
+            return mCanceled;
+        }
+
+        @Override
+        public void run() {
+            boolean dev_open = false;
+            try {
+                //打开设备
+                if (!ansi_lib.OpenDeviceCtx(usb_host_ctx)) {
+                    mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, ansi_lib.GetErrorMessage()).sendToTarget();
+                    Log.e(TAG, "run: open fingerprint module failed " + ansi_lib.GetErrorMessage());
+                    return;
+                }
+                dev_open = true;
+                //计算指纹图像的大小
+                if (!ansi_lib.FillImageSize()) {
+                    mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, ansi_lib.GetErrorMessage()).sendToTarget();
+                    Log.e(TAG, "run: get image size failed " + ansi_lib.GetErrorMessage());
+                    return;
+                }
+                byte[] img_buffer = new byte[ansi_lib.GetImageSize()];
+                //采集指纹
+                while (true) {
+                    if (isCanceled()) {
+                        break;
+                    }
+
+                    int templeMaxSize = ansi_lib.GetMaxTemplateSize();
+                    byte[] template = new byte[templeMaxSize];
+                    byte[] templateIso = new byte[templeMaxSize];
+                    int[] realSize = new int[1];
+                    int[] realIsoSize = new int[1];
+                    if (ansi_lib.CreateTemplate(mFingerIndex, img_buffer, template, realSize)) {//采集指纹成功
+                        mFingerBitmap = createFingerBitmap(ansi_lib.GetImageWidth(), ansi_lib.GetImageHeight(), img_buffer);
+                        mHandler.obtainMessage(MESSAGE_SHOW_IMAGE).sendToTarget();
+                        //如果是ansi格式的直接保存
+                        if (mSaveAnsi) {
+                            saveTemplate(template, realSize[0]);
+                        }
+                        //ansi格式转换为iso格式再保存
+                        if (mSaveIso) {
+                            realIsoSize[0] = templeMaxSize;
+                            if (ansi_lib.ConvertAnsiTemplateToIso(template, templateIso, realIsoSize)) {
+                                saveTemplate(templateIso, realIsoSize[0]);
+                            } else {
+                                String error = String.format("iso Convert to ansi failed. Error: %s.", ansi_lib.GetErrorMessage());
+                                mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, error).sendToTarget();
+                                Log.e(TAG, "run: ansi convert to iso failed " + ansi_lib.GetErrorMessage());
+                            }
+                        }
+                        break;
+                    } else {//采集指纹失败
+                        int lastError = ansi_lib.GetErrorCode();
+                        if (lastError == AnsiSDKLib.FTR_ERROR_EMPTY_FRAME
+                                || lastError == AnsiSDKLib.FTR_ERROR_NO_FRAME
+                                || lastError == AnsiSDKLib.FTR_ERROR_MOVABLE_FINGER) {
+                            Thread.sleep(100);
+                        } else {
+                            String error = String.format("gather fingerprint failed. Error: %s.", ansi_lib.GetErrorMessage());
+                            mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, error).sendToTarget();
+                            Log.e(TAG, "run: gather fingerprint failed = " + ansi_lib.GetErrorMessage());
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                mHandler.obtainMessage(MESSAGE_SHOW_ERROR_MSG, -1, -1, e.getMessage()).sendToTarget();
+            }
+
+            //关闭设备
+            if (dev_open) {
+                ansi_lib.CloseDevice();
+            }
+
+        }
+    }
+
+    /**
+     * 创建指纹的bitmap
+     *
+     * @param imgWidth  bitmap的宽
+     * @param imgHeight bitmap的高
+     * @param imgBytes  bitmap的数据
+     * @return
+     */
+    private Bitmap createFingerBitmap(int imgWidth, int imgHeight, byte[] imgBytes) {
+        int[] pixels = new int[imgWidth * imgHeight];
+        for (int i = 0; i < imgWidth * imgHeight; i++) {
+            pixels[i] = imgBytes[i];
+        }
+
+        Bitmap emptyBmp = Bitmap.createBitmap(pixels, imgWidth, imgHeight, Bitmap.Config.RGB_565);
+        int width, height;
+        height = emptyBmp.getHeight();
+        width = emptyBmp.getWidth();
+        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(result);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(emptyBmp, 0, 0, paint);
+
+        return result;
+    }
+
+    /**
+     * 保存模板
+     *
+     * @param template 保存模板数据的数组（大于等于真实的模板数据）
+     * @param size     真实的模板数据的大小
+     */
+    private void saveTemplate(byte[] template, int size) {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Log.e(TAG, "saveTemplate: external storage not mounted!");
+            return;
+        }
+
+        MainApplication.fingerprintPath = getExternalFilesDir(null) + File.separator
+                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
+        FileUtil fileUtil = new FileUtil();
+        File saveFile;
+        FileOutputStream fos = null;
+        try {
+            saveFile = fileUtil.createFile(MainApplication.fingerprintPath);
+            if (saveFile == null) {
+                Log.e(TAG, "saveTemplate: template file create failed!");
+                return;
+            }
+            fos = new FileOutputStream(saveFile);
+            byte[] writeTemplate = new byte[size];
+            System.arraycopy(template, 0, writeTemplate, 0, size);
+            fos.write(writeTemplate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d(TAG, "saveTemplate: fingerprint path = " + MainApplication.fingerprintPath);
+    }
+
+    private static class ShowFingerprintHandler extends Handler {
+        private WeakReference<GatherActivity> mWeakReference;
+
+        public ShowFingerprintHandler(GatherActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final GatherActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case MESSAGE_SHOW_ERROR_MSG:
+                    String showErr = (String) msg.obj;
+                    if (activity != null) {
+                        ToastUtil.getInstance().showToast(activity, showErr);
+                        activity.haveInformation = false;
+                        activity.dismissGatherFingerDialog();
+                    }
+                    break;
+                case MESSAGE_SHOW_IMAGE:
+                    if (activity != null) {
+                        activity.haveInformation = true;
+                        activity.dismissGatherFingerDialog();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
