@@ -14,19 +14,22 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.futronictech.UsbDeviceDataExchangeImpl;
+import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
+import com.xiongdi.recognition.fragment.AskDialogFragment;
+import com.xiongdi.recognition.fragment.DatePickerFragment;
+import com.xiongdi.recognition.fragment.ProgressDialogFragment;
+import com.xiongdi.recognition.fragment.SingleChoiceDialogFragment;
 import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.interfaces.DatePickerInterface;
 import com.xiongdi.recognition.util.DateUtil;
 import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
-import com.xiongdi.recognition.fragment.AskDialogFragment;
-import com.xiongdi.recognition.fragment.DatePickerFragment;
-import com.xiongdi.recognition.fragment.ProgressDialogFragment;
-import com.xiongdi.recognition.fragment.SingleChoiceDialogFragment;
+import com.xiongdi.recognition.util.UsbManagerUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,6 +76,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     private OperateCardHelper mOperateCardHelper;
     private WriteCardHandler mWriteCardHandler;
     private boolean writeSuccess = true;
+    private UsbManagerUtil mUsbManagerUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +85,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
         initView();
         setListener();
-        iniData();
+        initData();
     }
 
     private void initView() {
@@ -107,9 +111,12 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
         askDialog.setData(getString(R.string.common_tips), getString(R.string.save_to_card_message));
     }
 
-    private void iniData() {
+    private void initData() {
+        EmpPad.OpenPowerManager();
+        EmpPad.FingerPrintPowerOn();
+        mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
-        if(false){
+        if (false) {
             mOperateCardHelper.openRFModel();
         }
         mWriteCardHandler = new WriteCardHandler(this);
@@ -156,14 +163,49 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.bottom_right_bt:
-                if (checkInformation()) {
-                    Intent intent = new Intent(FillInfoActivity.this, GatherActivity.class);
-                    intent.putExtra("gatherID", fill_ID_tx.getText().toString());
-                    startActivityForResult(intent, GATHER_ACTIVITY_CODE);
+                if (checkInformation() && mUsbManagerUtil.OpenDevice(0, true)) {
+                    startGatherFingerprintActivity();
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 跳转到采集指纹和照片的界面
+     */
+    private void startGatherFingerprintActivity() {
+        Intent intent = new Intent(this, GatherActivity.class);
+        intent.putExtra("gatherID", fill_ID_tx.getText().toString());
+        startActivityForResult(intent, GATHER_ACTIVITY_CODE);
+    }
+
+    /**
+     * 处理请求USB设备权限的handler
+     */
+    private static class RequestPermissionHandler extends Handler {
+        private WeakReference<FillInfoActivity> mWeakReference;
+
+        public RequestPermissionHandler(FillInfoActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final FillInfoActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
+                    activity.startGatherFingerprintActivity();
+                    break;
+                }
+                case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
+                    break;
+                }
+                default:
+                    break;
+            }
         }
     }
 
@@ -364,7 +406,10 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(false){
+
+        EmpPad.FingerPrintPowerOff();
+        EmpPad.ClosePowerManager();
+        if (false) {
             mOperateCardHelper.closeRFModel();
         }
     }
