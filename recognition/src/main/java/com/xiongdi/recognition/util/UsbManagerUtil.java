@@ -27,6 +27,7 @@ public class UsbManagerUtil {
     public static final int MESSAGE_DENY_DEVICE = 256;
     private static final String ACTION_USB_PERMISSION = "com.futronictech.FtrScanDemoActivity.USB_PERMISSION";
 
+    private Context mContext;
     private Handler mHandler = null;
     private UsbManager mUsbManager;
     private final PendingIntent mPermissionIntent;
@@ -34,8 +35,9 @@ public class UsbManagerUtil {
     private FTR_USB_DEVICE_INTERNAL usb_ctx = null;
 
     public UsbManagerUtil(Context context, Handler handler) {
-        mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        mContext = context;
         mHandler = handler;
+        mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
         mUsbReceiver = new BroadcastReceiver() {
             @Override
@@ -183,5 +185,22 @@ public class UsbManagerUtil {
             mUsbDeviceConnection = mDevConnetion;
             mHandleClaimed = false;
         }
+    }
+
+    public void closeDevice() {
+        synchronized (this) {
+            if (usb_ctx != null) {
+                if (usb_ctx.mUsbDeviceConnection != null) {
+                    usb_ctx.mUsbDeviceConnection.releaseInterface(usb_ctx.mUsbInterface);
+                    usb_ctx.mUsbDeviceConnection.close();
+                }
+            }
+
+            usb_ctx = null;
+        }
+    }
+
+    public void releaseResource() {
+        mContext.unregisterReceiver(mUsbReceiver);
     }
 }
