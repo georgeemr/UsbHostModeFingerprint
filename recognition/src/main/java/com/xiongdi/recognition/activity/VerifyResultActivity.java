@@ -84,7 +84,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     private void initData() {
         mOperateCardHelper = new OperateCardHelper(this);
-        mOperateCardHelper.openRFModel();
+        if (false) {
+            mOperateCardHelper.openRFModel();
+        }
         mReadCardHandler = new ReadCardHandler(this);
         progressDialog = new ProgressDialogFragment();
 

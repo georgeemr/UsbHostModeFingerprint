@@ -109,7 +109,9 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     private void iniData() {
         mOperateCardHelper = new OperateCardHelper(this);
-        mOperateCardHelper.openRFModel();
+        if(false){
+            mOperateCardHelper.openRFModel();
+        }
         mWriteCardHandler = new WriteCardHandler(this);
         personDao = new PersonDao(getApplicationContext());
         gatherID = Integer.parseInt(String.valueOf(personDao.getQuantity()));
