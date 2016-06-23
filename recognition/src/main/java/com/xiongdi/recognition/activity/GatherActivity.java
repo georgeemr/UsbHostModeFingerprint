@@ -29,7 +29,7 @@ import com.xiongdi.OpenJpeg;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.adapter.GatherInfoVpAdapter;
 import com.xiongdi.recognition.application.MainApplication;
-import com.xiongdi.recognition.fragment.GatherFingerprintDialogFragment;
+import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
 import com.xiongdi.recognition.fragment.RightHandFragment;
@@ -85,7 +85,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     private ShowFingerprintHandler mHandler;
     private UsbDeviceDataExchangeImpl usb_host_ctx;
     private StringBuilder templeName;
-    GatherFingerprintDialogFragment mFingerDialogFG;
+    GatherFingerDialogFragment mFingerDialogFG;
     private Bitmap mFingerBitmap;
 
     @Override
@@ -120,7 +120,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         templeName.append("_");
         templeName.append(fingerNUM);
         templeName.append(kAnsiTemplatePostfix);
-        mFingerDialogFG = new GatherFingerprintDialogFragment();
+        mFingerDialogFG = new GatherFingerDialogFragment();
         mHandler = new ShowFingerprintHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(getApplicationContext(), mHandler);
 

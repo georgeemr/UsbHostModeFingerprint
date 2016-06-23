@@ -63,35 +63,22 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.left_little_finger_bt:
                 gatherActivity.setFingerNUM(LEFT_LITTER_FINGER);
-                gatherFingerprint(LEFT_LITTER_FINGER);
                 break;
             case R.id.left_ring_finger_bt:
                 gatherActivity.setFingerNUM(LEFT_RING_FINGER);
-                gatherFingerprint(LEFT_RING_FINGER);
                 break;
             case R.id.left_middle_finger_bt:
                 gatherActivity.setFingerNUM(LEFT_MIDDLE_FINGER);
-                gatherFingerprint(LEFT_MIDDLE_FINGER);
                 break;
             case R.id.left_index_finger_bt:
                 gatherActivity.setFingerNUM(LEFT_INDEX_FINGER);
-                gatherFingerprint(LEFT_INDEX_FINGER);
                 break;
             case R.id.left_thumb_bt:
                 gatherActivity.setFingerNUM(LEFT_THUMB_FINGER);
-                gatherFingerprint(LEFT_THUMB_FINGER);
                 break;
             default:
                 break;
         }
-    }
-
-    private void gatherFingerprint(int fingerNUm) {
-        GatherFingerprintDialogFragment fragment = new GatherFingerprintDialogFragment();
-        Bundle data = new Bundle();
-        data.putString("gatherID", gatherActivity.getGatherID());
-        data.putInt("fingerNum", fingerNUm);
-        fragment.setArguments(data);
-        fragment.show(getFragmentManager(), "test");
+        gatherActivity.gatherFingerprint();
     }
 }
