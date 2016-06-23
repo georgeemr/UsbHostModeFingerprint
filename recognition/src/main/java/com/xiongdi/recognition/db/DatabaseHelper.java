@@ -7,7 +7,6 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Account;
 import com.xiongdi.recognition.bean.Person;
 
@@ -20,7 +19,7 @@ import java.util.Map;
  * 操作数据库的帮助类
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
-    private static String DB_NAME = "RecognitionDatabase";
+    private static String DB_NAME = "person.db";
     private static int DB_VERSION = 1;
     private static DatabaseHelper instance;
     private Map<String, Dao> daoMap = new HashMap<>();
