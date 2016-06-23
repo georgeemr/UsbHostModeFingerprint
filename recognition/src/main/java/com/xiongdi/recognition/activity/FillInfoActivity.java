@@ -197,7 +197,9 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
             final FillInfoActivity activity = mWeakReference.get();
             switch (msg.what) {
                 case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
-                    activity.startGatherFingerprintActivity();
+                    if (activity != null) {
+                        activity.startGatherFingerprintActivity();
+                    }
                     break;
                 }
                 case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
