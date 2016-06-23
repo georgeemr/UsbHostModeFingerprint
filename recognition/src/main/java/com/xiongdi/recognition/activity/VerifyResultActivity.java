@@ -26,6 +26,7 @@ import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
+import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.ProgressDialogFragment;
 import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.util.StringUtil;
@@ -46,10 +47,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private final int VERIFY_ACTIVITY = 0;
     private final int SCAN_BARCODE_REQUEST_CODE = 10000;
     private final int SEARCH_REQUEST_CODE = 10001;
-    private final int KEY_CODE_SCAN_CARD_RIGHT = 249;
-    private final int KEY_CODE_SCAN_CARD_LEFT = 250;
-    private final int KEY_CODE_VERIFY_FINGERPRINT_LEFT = 251;
-    private final int KEY_CODE_VERIFY_FINGERPRINT_RIGHT = 252;
     private static final int READ_CARD_FLAG = 0;
 
     private DrawerLayout drawer;
@@ -69,6 +66,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private TimerTask task;
 
     private UsbManagerUtil mUsbManagerUtil;
+    GatherFingerDialogFragment mFingerDialogFG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +96,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         }
         mReadCardHandler = new ReadCardHandler(this);
         progressDialog = new ProgressDialogFragment();
+        mFingerDialogFG = new GatherFingerDialogFragment();
 
         tExit = new Timer();
         task = new TimerTask() {
@@ -107,36 +106,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 hasTask = true;
             }
         };
-    }
-
-    /**
-     * 处理请求USB设备权限的handler
-     */
-    private static class RequestPermissionHandler extends Handler {
-        private WeakReference<VerifyResultActivity> mWeakReference;
-
-        public RequestPermissionHandler(VerifyResultActivity activity) {
-            mWeakReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            final VerifyResultActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
-                    if (activity != null) {
-//                        activity.startGatherFingerprintActivity();
-                    }
-                    break;
-                }
-                case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
     }
 
     private void initView() {
@@ -199,7 +168,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 }
                 break;
             case R.id.bottom_right_bt:
-                mUsbManagerUtil.OpenDevice(0, true);
+                if (mUsbManagerUtil.OpenDevice(0, true)) {
+                    verifyFinger();
+                }
                 break;
             case R.id.bottom_middle_bt:
                 readCard();
@@ -207,6 +178,18 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             default:
                 break;
         }
+    }
+
+    public void showGatherFingerDialog() {
+        mFingerDialogFG.show(getSupportFragmentManager(), "gather");
+    }
+
+    public void dismissGatherFingerDialog() {
+        mFingerDialogFG.dismiss();
+    }
+
+    private void verifyFinger() {
+        showGatherFingerDialog();
     }
 
     /**
@@ -404,4 +387,33 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         EmpPad.ClosePowerManager();
     }
 
+    /**
+     * 处理请求USB设备权限的handler
+     */
+    private static class RequestPermissionHandler extends Handler {
+        private WeakReference<VerifyResultActivity> mWeakReference;
+
+        public RequestPermissionHandler(VerifyResultActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final VerifyResultActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
+                    if (activity != null) {
+                        activity.verifyFinger();
+                    }
+                    break;
+                }
+                case UsbDeviceDataExchangeImpl.MESSAGE_DENY_DEVICE: {//拒绝使用usb设备的权限申请
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
 }
