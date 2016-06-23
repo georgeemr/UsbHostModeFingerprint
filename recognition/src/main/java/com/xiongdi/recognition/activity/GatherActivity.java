@@ -23,6 +23,7 @@ import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
 import com.xiongdi.recognition.fragment.RightHandFragment;
+import com.xiongdi.recognition.interfaces.GatherFingerprintResultInterface;
 import com.xiongdi.recognition.util.BmpUtil;
 import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.ToastUtil;
@@ -36,7 +37,7 @@ import java.util.List;
  * Created by moubiao on 2016/3/22.
  * 采集指纹和头像的activity
  */
-public class GatherActivity extends AppCompatActivity implements View.OnClickListener {
+public class GatherActivity extends AppCompatActivity implements View.OnClickListener, GatherFingerprintResultInterface {
     private int KEY_CODE_RIGHT_BOTTOM = 249;
     private int KEY_CODE_LEFT_BOTTOM = 250;
     private int KEY_CODE_LEFT_TOP = 251;
@@ -202,6 +203,11 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                     break;
             }
         }
+    }
+
+    @Override
+    public void gatherResultCallback(boolean success) {
+        haveInformation = success;
     }
 
     private class CompressTask extends AsyncTask<String, Integer, Boolean> {
