@@ -87,7 +87,7 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
     }
 
     private void gatherFingerprint(int fingerNUm) {
-        GatherFingerprintFragment fragment = new GatherFingerprintFragment();
+        GatherFingerprintDialogFragment fragment = new GatherFingerprintDialogFragment();
         Bundle data = new Bundle();
         data.putString("gatherID", gatherActivity.getGatherID());
         data.putInt("fingerNum", fingerNUm);
