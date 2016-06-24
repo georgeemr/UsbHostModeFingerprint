@@ -135,6 +135,9 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         backBT = (ImageButton) findViewById(R.id.bottom_left_bt);
         takePictureBT = (ImageButton) findViewById(R.id.bottom_middle_bt);
         saveBT = (ImageButton) findViewById(R.id.bottom_right_bt);
+        if (saveBT != null) {
+            saveBT.setBackgroundResource(R.drawable.common_save_bg);
+        }
 
         gatherTab = (TabLayout) findViewById(R.id.gather_tab);
         gatherVP = (ViewPager) findViewById(R.id.gather_viewpager);
