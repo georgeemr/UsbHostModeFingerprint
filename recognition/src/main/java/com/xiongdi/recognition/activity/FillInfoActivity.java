@@ -335,7 +335,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                     gatherFingerUrl = data.getStringExtra("fingerPrintUrl");
                     saveInformation();
                     refreshView();
-                    askDialog.show(fgManager, "saveDialog");
+//                    askDialog.show(fgManager, "saveDialog");
 
                     break;
                 default:
