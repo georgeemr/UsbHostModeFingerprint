@@ -39,6 +39,7 @@ import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.util.UsbManagerUtil;
+import com.xiongdi.recognition.widget.progressBar.ProgressBarView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,6 +65,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     private DrawerLayout drawer;
     private ImageView pictureIMG, fingerIMG;
+    private ProgressBarView mProgressBarView;
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
     private ImageButton backTB, readCardBT, verifyBT;
 
@@ -149,6 +151,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         pictureIMG = (ImageView) findViewById(R.id.verify_photo_img);
         fingerIMG = (ImageView) findViewById(R.id.verify_finger_img);
+        mProgressBarView = (ProgressBarView) findViewById(R.id.scan_finger_progress);
         personIDTV = (TextView) findViewById(R.id.verify_ID).findViewById(R.id.verify_content_tv);
         personNameTV = (TextView) findViewById(R.id.verify_name).findViewById(R.id.verify_content_tv);
         personGenderTV = (TextView) findViewById(R.id.verify_gender).findViewById(R.id.verify_content_tv);
@@ -209,6 +212,16 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         verifyFingerprint();
     }
 
+    private void showProgressBar(boolean show) {
+        if (show) {
+            fingerIMG.setVisibility(View.GONE);
+            mProgressBarView.setVisibility(View.VISIBLE);
+        } else {
+            fingerIMG.setVisibility(View.VISIBLE);
+            mProgressBarView.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * 验证指纹
      */
@@ -251,6 +264,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 }
             }
 
+            showProgressBar(true);
             mVerifyThread = new VerifyThread(0, fingerprintContent, MATCH_SCORE);
             mVerifyThread.start();
         } else {
@@ -400,6 +414,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     break;
                 case MESSAGE_SHOW_IMAGE:
                     activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
+                    activity.showProgressBar(false);
                     if (activity.verifyPass) {
                         mAudioPlay.resetMediaPlayer();
                         audioType = AudioPlay.VERIFY_PASSED;
@@ -419,6 +434,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
      * 读卡
      */
     private void readCard() {
+        showProgressBar(false);
         progressDialog.setData(getString(R.string.reading_from_card));
         progressDialog.show(getSupportFragmentManager(), "save");
 

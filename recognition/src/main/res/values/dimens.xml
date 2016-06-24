@@ -65,6 +65,8 @@
     <dimen name="verify_item_gap">12dp</dimen>
     <dimen name="nav_header_vertical_spacing">14dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="fingerprint_width">140dp</dimen>
+    <dimen name="fingerprint_height">160dp</dimen>
 
     <!--search view-->
     <dimen name="search_menu_item_margin">4dp</dimen>

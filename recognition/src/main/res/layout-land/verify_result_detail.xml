@@ -40,13 +40,30 @@
             app:cardCornerRadius="5dp"
             app:cardElevation="5dp">
 
-            <ImageView
-                android:id="@+id/verify_finger_img"
-                android:layout_width="@dimen/dp_size_140"
-                android:layout_height="@dimen/dp_size_160"
-                android:layout_margin="7dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/fingerprint"/>
+            <FrameLayout
+                android:layout_width="@dimen/fingerprint_width"
+                android:layout_height="@dimen/fingerprint_height"
+                android:layout_margin="7dp">
+
+                <com.xiongdi.recognition.widget.progressBar.ProgressBarView
+                    android:id="@+id/scan_finger_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    app:indicator="BallRotate"
+                    app:indicator_color="@color/colorPrimary"/>
+
+                <ImageView
+                    android:id="@+id/verify_finger_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/fingerprint"/>
+
+            </FrameLayout>
+
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
