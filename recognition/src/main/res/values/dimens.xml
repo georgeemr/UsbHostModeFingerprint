@@ -8,8 +8,10 @@
     <dimen name="bottom_bar_height">45dp</dimen>
 
     <!-- 填写登记信息界面-->
-    <dimen name="fill_information_title_font_size">25sp</dimen>
+    <dimen name="fill_information_title_font_size">40sp</dimen>
     <dimen name="fill_information_title_height">43dp</dimen>
+    <dimen name="information_item_title_size">30dp</dimen>
+    <dimen name="information_item_content_size">30dp</dimen>
     <dimen name="font_size_20">20sp</dimen>
 
     <dimen name="dp_size_220">220dp</dimen>
