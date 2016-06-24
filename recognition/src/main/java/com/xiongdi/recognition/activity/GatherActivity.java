@@ -32,7 +32,6 @@ import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
-import com.xiongdi.recognition.interfaces.GatherFingerprintResultInterface;
 import com.xiongdi.recognition.util.BmpUtil;
 import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.ToastUtil;
@@ -50,7 +49,7 @@ import java.util.Locale;
  * Created by moubiao on 2016/3/22.
  * 采集指纹和头像的activity
  */
-public class GatherActivity extends AppCompatActivity implements View.OnClickListener, GatherFingerprintResultInterface {
+public class GatherActivity extends AppCompatActivity implements View.OnClickListener, GatherFingerDialogFragment.GatherResultCallback {
     private final String TAG = "moubiao";
     private static final int MESSAGE_SHOW_IMAGE = 2;
     private static final int MESSAGE_SHOW_ERROR_MSG = 3;
@@ -97,17 +96,21 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         setListener();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        cancelGather();
+    }
+
     private void iniData() {
         LeftHandFragment leftFg = new LeftHandFragment();
-//        RightHandFragment rightFg = new RightHandFragment();
         pictureFg = new PictureFragment();
         gatherData = new ArrayList<>();
         gatherData.add(leftFg);
-//        gatherData.add(rightFg);
         gatherData.add(pictureFg);
         List<String> titleVp = new ArrayList<>();
         titleVp.add(getString(R.string.tab_indicator_title_finger));
-//        titleVp.add(getString(R.string.tab_indicator_title_right));
         titleVp.add(getString(R.string.tab_indicator_title_picture));
 
         gatherAdapter = new GatherInfoVpAdapter(getSupportFragmentManager(), gatherData, titleVp);
@@ -120,6 +123,8 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         templeName.append(fingerNUM);
         templeName.append(kAnsiTemplatePostfix);
         mFingerDialogFG = new GatherFingerDialogFragment();
+        mFingerDialogFG.setCancelable(false);
+        mFingerDialogFG.setResultCallback(this);
         mHandler = new ShowFingerprintHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(getApplicationContext(), mHandler);
 
@@ -225,8 +230,26 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void gatherResultCallback(boolean success) {
-        haveInformation = success;
+    public void gatherFailed() {
+        haveInformation = false;
+        cancelGather();
+    }
+
+    @Override
+    public void gatherSuccess() {
+        haveInformation = true;
+        cancelGather();
+    }
+
+    @Override
+    public void gatherAgain() {
+        gatherFingerprint();
+    }
+
+    private void cancelGather() {
+        if (gatherThread != null) {
+            gatherThread.cancel();
+        }
     }
 
     private class CompressTask extends AsyncTask<String, Integer, Boolean> {
@@ -283,9 +306,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         super.onBackPressed();
 
         deleteTemporaryFile();
-        if (gatherThread != null) {
-            gatherThread.cancel();
-        }
+        cancelGather();
     }
 
     /**
@@ -308,7 +329,6 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
      * 采集指纹
      */
     public void gatherFingerprint() {
-        showGatherFingerDialog();
         if (usb_host_ctx.OpenDevice(0, true)) {
             gatherThread = new GatherFingerThread(fingerNUM, true, false);
             gatherThread.start();
@@ -379,6 +399,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                     int[] realIsoSize = new int[1];
                     if (ansi_lib.CreateTemplate(mFingerIndex, img_buffer, template, realSize)) {//采集指纹成功
                         mFingerBitmap = createFingerBitmap(ansi_lib.GetImageWidth(), ansi_lib.GetImageHeight(), img_buffer);
+                        Log.d(TAG, "run: width = " + mFingerBitmap.getWidth() + " height = " + mFingerBitmap.getHeight());
                         mHandler.obtainMessage(MESSAGE_SHOW_IMAGE).sendToTarget();
                         //如果是ansi格式的直接保存
                         if (mSaveAnsi) {
@@ -516,8 +537,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                     break;
                 case MESSAGE_SHOW_IMAGE:
                     if (activity != null) {
-                        activity.haveInformation = true;
-                        activity.dismissGatherFingerDialog();
+                        activity.mFingerDialogFG.setFingerprint(activity.mFingerBitmap);
                     }
                     break;
                 default:

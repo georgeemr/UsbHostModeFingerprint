@@ -99,6 +99,7 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
             default:
                 break;
         }
+        gatherActivity.showGatherFingerDialog();
         gatherActivity.gatherFingerprint();
     }
 }

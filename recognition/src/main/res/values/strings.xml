@@ -4,6 +4,8 @@
     <!-- 通用字符串-->
     <string name="common_sure">sure</string>
     <string name="common_cancel">cancel</string>
+    <string name="common_save">save</string>
+    <string name="common_again">again</string>
     <string name="common_tips">tips</string>
     <string name="common_no_data">no data</string>
     <string name="web_url">http://www.xiongdi.cn/</string>

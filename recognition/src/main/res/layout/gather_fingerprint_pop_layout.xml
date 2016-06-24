@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_gravity="center"
+              android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/new_fingerprint_img"
-        android:layout_width="120dp"
-        android:layout_height="180dp"
+        android:id="@+id/gather_fingerprint_img"
+        android:layout_width="160dp"
+        android:layout_height="240dp"
         android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
         android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
         android:src="@drawable/fingerprint"/>
 
-    <ProgressBar
-        android:id="@+id/open_power_progress"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:padding="15dp">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/cancel_gather_bt"
+            style="@style/GatherFingerButtonStyle"
+            android:layout_marginEnd="7.5dp"
+            android:layout_marginRight="7.5dp"
+            android:text="@string/common_cancel"/>
+
+        <Button
+            android:id="@+id/save_gather_bt"
+            style="@style/GatherFingerButtonStyle"
+            android:layout_marginLeft="7.5dp"
+            android:layout_marginStart="7.5dp"
+            android:text="@string/common_save"/>
+
+        <Button
+            android:id="@+id/gather_again_bt"
+            style="@style/GatherFingerButtonStyle"
+            android:layout_marginLeft="7.5dp"
+            android:layout_marginStart="7.5dp"
+            android:text="@string/common_again"/>
+    </LinearLayout>
+
+</LinearLayout>
