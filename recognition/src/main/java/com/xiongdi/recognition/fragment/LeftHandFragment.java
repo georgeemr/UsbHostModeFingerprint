@@ -27,7 +27,8 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
     private final static int RIGHT_INDEX_FINGER = 9;
     private final static int RIGHT_THUMB_FINGER = 10;
 
-    private Button leftLittleBT, leftRingBT, leftMiddleBT, leftIndexBT, leftThumbBT;
+    private Button leftLittleBT, leftRingBT, leftMiddleBT, leftIndexBT, leftThumbBT,
+            rightLittleBT, rightRingBT, rightMiddleBT, rightIndexBT, rightThumbBT;
     private GatherActivity gatherActivity;
 
     @Override
@@ -53,6 +54,11 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
         leftMiddleBT = (Button) view.findViewById(R.id.left_middle_finger_bt);
         leftIndexBT = (Button) view.findViewById(R.id.left_index_finger_bt);
         leftThumbBT = (Button) view.findViewById(R.id.left_thumb_bt);
+        rightLittleBT = (Button) view.findViewById(R.id.right_little_finger_bt);
+        rightRingBT = (Button) view.findViewById(R.id.right_ring_finger_bt);
+        rightMiddleBT = (Button) view.findViewById(R.id.right_middle_finger_bt);
+        rightIndexBT = (Button) view.findViewById(R.id.right_index_finger_bt);
+        rightThumbBT = (Button) view.findViewById(R.id.right_thumb_bt);
     }
 
     private void setListener() {
@@ -61,6 +67,11 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
         leftMiddleBT.setOnClickListener(this);
         leftIndexBT.setOnClickListener(this);
         leftThumbBT.setOnClickListener(this);
+        rightLittleBT.setOnClickListener(this);
+        rightRingBT.setOnClickListener(this);
+        rightMiddleBT.setOnClickListener(this);
+        rightIndexBT.setOnClickListener(this);
+        rightThumbBT.setOnClickListener(this);
     }
 
     @Override
