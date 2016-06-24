@@ -55,7 +55,6 @@ import java.util.TimerTask;
  */
 public class VerifyResultActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = "moubiao";
-    private final int VERIFY_ACTIVITY = 0;
     private final int SCAN_BARCODE_REQUEST_CODE = 10000;
     private final int SEARCH_REQUEST_CODE = 10001;
     private static final int READ_CARD_FLAG = 0;
@@ -196,20 +195,15 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 break;
             case R.id.bottom_right_bt:
                 if (mUsbManagerUtil.OpenDevice(0, true)) {
-                    verifyFinger();
+                    verifyFingerprint();
                 }
                 break;
             case R.id.bottom_middle_bt:
-                readCard();
+//                readCard();
                 break;
             default:
                 break;
         }
-    }
-
-
-    private void verifyFinger() {
-        verifyFingerprint();
     }
 
     private void showProgressBar(boolean show) {
@@ -414,11 +408,15 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     break;
                 case MESSAGE_SHOW_IMAGE:
                     activity.fingerIMG.setImageBitmap(activity.mFingerBitmap);
-                    activity.showProgressBar(false);
                     if (activity.verifyPass) {
                         mAudioPlay.resetMediaPlayer();
                         audioType = AudioPlay.VERIFY_PASSED;
                         mAudioPlay.playAsset(audioType, mAssetManager);
+                        activity.showProgressBar(false);
+                        PersonDao personDao = new PersonDao(activity);
+                        Long recordCount = personDao.getQuantity();
+                        Person person = personDao.queryById(Integer.parseInt(String.valueOf(recordCount)));
+                        activity.setResultDetail(person);
                     } else {
                         audioType = AudioPlay.VERIFY_FAILED;
                         mAudioPlay.playAsset(audioType, mAssetManager);
@@ -533,7 +531,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         if (!StringUtil.hasLength(cardData[1])) {
                             ToastUtil.getInstance().showToast(activity, activity.getString(R.string.common_no_data));
                         }
-                        activity.verifyFingerPrint();
+                        activity.verifyFingerprint();
                         break;
                     }
                 default:
@@ -542,28 +540,13 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    /**
-     * 验证指纹
-     */
-    private void verifyFingerPrint() {
-        Intent intent = new Intent(VerifyResultActivity.this, VerifyFingerprintActivity.class);
-        startActivityForResult(intent, VERIFY_ACTIVITY);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
-                case VERIFY_ACTIVITY:
-                    PersonDao personDao = new PersonDao(getApplicationContext());
-                    Long recordCount = personDao.getQuantity();
-                    Person person = personDao.queryById(Integer.parseInt(String.valueOf(recordCount)));
-                    setResultDetail(person);
-                    break;
                 case SCAN_BARCODE_REQUEST_CODE:
-
                     break;
                 case SEARCH_REQUEST_CODE:
                     MainApplication mainApplication = (MainApplication) getApplication();
@@ -640,7 +623,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             switch (msg.what) {
                 case UsbDeviceDataExchangeImpl.MESSAGE_ALLOW_DEVICE: {//同意使用usb设备的权限申请
                     if (activity != null) {
-                        activity.verifyFinger();
+                        activity.verifyFingerprint();
                     }
                     break;
                 }
