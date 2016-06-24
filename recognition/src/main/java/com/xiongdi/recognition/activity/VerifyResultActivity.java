@@ -107,13 +107,13 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         usb_host_ctx.closeDevice();
         usb_host_ctx.releaseResource();
-        EmpPad.FingerPrintPowerOff();
-        EmpPad.ClosePowerManager();
+//        EmpPad.FingerPrintPowerOff();
+//        EmpPad.ClosePowerManager();
     }
 
     private void initData() {
-        EmpPad.OpenPowerManager();
-        EmpPad.FingerPrintPowerOn();
+//        EmpPad.OpenPowerManager();
+//        EmpPad.FingerPrintPowerOn();
         mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
         if (false) {

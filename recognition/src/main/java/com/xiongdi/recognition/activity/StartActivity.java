@@ -7,6 +7,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.R;
 
 /**
@@ -18,6 +19,8 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_layout);
 
+        EmpPad.OpenPowerManager();
+        EmpPad.FingerPrintPowerOn();
         ImageView logoIMG = (ImageView) this.findViewById(R.id.logo_img);
         AlphaAnimation logoAni = new AlphaAnimation(0.1f, 1.0f);
         logoAni.setDuration(2000);

@@ -112,8 +112,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initData() {
-        EmpPad.OpenPowerManager();
-        EmpPad.FingerPrintPowerOn();
+//        EmpPad.OpenPowerManager();
+//        EmpPad.FingerPrintPowerOn();
         mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
         if (false) {
@@ -409,8 +409,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     protected void onDestroy() {
         super.onDestroy();
 
-        EmpPad.FingerPrintPowerOff();
-        EmpPad.ClosePowerManager();
+//        EmpPad.FingerPrintPowerOff();
+//        EmpPad.ClosePowerManager();
         if (false) {
             mOperateCardHelper.closeRFModel();
         }
