@@ -409,8 +409,6 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     protected void onDestroy() {
         super.onDestroy();
 
-//        EmpPad.FingerPrintPowerOff();
-//        EmpPad.ClosePowerManager();
         if (false) {
             mOperateCardHelper.closeRFModel();
         }
