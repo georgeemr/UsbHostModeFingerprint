@@ -61,6 +61,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                     } else if ("userv".equals(nameET.getText().toString())) {
                         intent.setClass(LoginActivity.this, VerifyResultActivity.class);
                         intent.putExtra("haveData", false);
+                    } else {
+                        intent.setClass(LoginActivity.this, FillInfoActivity.class);
                     }
 
                     saveOrReadAccount(true);
