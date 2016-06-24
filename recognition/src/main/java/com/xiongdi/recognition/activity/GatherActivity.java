@@ -32,7 +32,6 @@ import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
-import com.xiongdi.recognition.fragment.RightHandFragment;
 import com.xiongdi.recognition.interfaces.GatherFingerprintResultInterface;
 import com.xiongdi.recognition.util.BmpUtil;
 import com.xiongdi.recognition.util.FileUtil;
@@ -100,15 +99,15 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
 
     private void iniData() {
         LeftHandFragment leftFg = new LeftHandFragment();
-        RightHandFragment rightFg = new RightHandFragment();
+//        RightHandFragment rightFg = new RightHandFragment();
         pictureFg = new PictureFragment();
         gatherData = new ArrayList<>();
         gatherData.add(leftFg);
-        gatherData.add(rightFg);
+//        gatherData.add(rightFg);
         gatherData.add(pictureFg);
         List<String> titleVp = new ArrayList<>();
-        titleVp.add(getString(R.string.tab_indicator_title_Left));
-        titleVp.add(getString(R.string.tab_indicator_title_right));
+        titleVp.add(getString(R.string.tab_indicator_title_finger));
+//        titleVp.add(getString(R.string.tab_indicator_title_right));
         titleVp.add(getString(R.string.tab_indicator_title_picture));
 
         gatherAdapter = new GatherInfoVpAdapter(getSupportFragmentManager(), gatherData, titleVp);

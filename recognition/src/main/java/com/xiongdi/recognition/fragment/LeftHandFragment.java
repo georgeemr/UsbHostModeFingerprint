@@ -21,6 +21,11 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
     private final static int LEFT_MIDDLE_FINGER = 3;
     private final static int LEFT_INDEX_FINGER = 4;
     private final static int LEFT_THUMB_FINGER = 5;
+    private final static int RIGHT_LITTER_FINGER = 6;
+    private final static int RIGHT_RING_FINGER = 7;
+    private final static int RIGHT_MIDDLE_FINGER = 8;
+    private final static int RIGHT_INDEX_FINGER = 9;
+    private final static int RIGHT_THUMB_FINGER = 10;
 
     private Button leftLittleBT, leftRingBT, leftMiddleBT, leftIndexBT, leftThumbBT;
     private GatherActivity gatherActivity;
@@ -75,6 +80,21 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.left_thumb_bt:
                 gatherActivity.setFingerNUM(LEFT_THUMB_FINGER);
+                break;
+            case R.id.right_little_finger_bt:
+                gatherActivity.setFingerNUM(RIGHT_LITTER_FINGER);
+                break;
+            case R.id.right_ring_finger_bt:
+                gatherActivity.setFingerNUM(RIGHT_RING_FINGER);
+                break;
+            case R.id.right_middle_finger_bt:
+                gatherActivity.setFingerNUM(RIGHT_MIDDLE_FINGER);
+                break;
+            case R.id.right_index_finger_bt:
+                gatherActivity.setFingerNUM(RIGHT_INDEX_FINGER);
+                break;
+            case R.id.right_thumb_bt:
+                gatherActivity.setFingerNUM(RIGHT_THUMB_FINGER);
                 break;
             default:
                 break;

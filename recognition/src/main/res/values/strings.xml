@@ -33,6 +33,7 @@
     <string name="bottom_take_picture">take picture</string>
     <string name="bottom_save">save</string>
     <string name="bottom_gather">gather</string>
+    <string name="tab_indicator_title_finger">Fingerprint</string>
     <string name="tab_indicator_title_Left">Left Hand</string>
     <string name="tab_indicator_title_right">Right Hand</string>
     <string name="tab_indicator_title_picture">Picture</string>
