@@ -29,13 +29,11 @@ import android.widget.TextView;
 
 import com.futronictech.AnsiSDKLib;
 import com.futronictech.UsbDeviceDataExchangeImpl;
-import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.audio.AudioPlay;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
-import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.ProgressDialogFragment;
 import com.xiongdi.recognition.helper.OperateCardHelper;
 import com.xiongdi.recognition.util.StringUtil;
@@ -81,7 +79,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private TimerTask task;
 
     private UsbManagerUtil mUsbManagerUtil;
-    GatherFingerDialogFragment mFingerDialogFG;
     private VerifyThread mVerifyThread;
     private VerifyHandler mHandler;
     private UsbDeviceDataExchangeImpl usb_host_ctx;
@@ -105,15 +102,15 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             mOperateCardHelper.closeRFModel();
         }
 
+        if (mVerifyThread != null) {
+            mVerifyThread.cancel();
+        }
+
         usb_host_ctx.closeDevice();
         usb_host_ctx.releaseResource();
-//        EmpPad.FingerPrintPowerOff();
-//        EmpPad.ClosePowerManager();
     }
 
     private void initData() {
-//        EmpPad.OpenPowerManager();
-//        EmpPad.FingerPrintPowerOn();
         mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
         if (false) {
@@ -121,7 +118,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         }
         mReadCardHandler = new ReadCardHandler(this);
         progressDialog = new ProgressDialogFragment();
-        mFingerDialogFG = new GatherFingerDialogFragment();
         mHandler = new VerifyHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
 
@@ -208,16 +204,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    public void showGatherFingerDialog() {
-        mFingerDialogFG.show(getSupportFragmentManager(), "gather");
-    }
-
-    public void dismissGatherFingerDialog() {
-        mFingerDialogFG.dismiss();
-    }
 
     private void verifyFinger() {
-        showGatherFingerDialog();
         verifyFingerprint();
     }
 
@@ -416,7 +404,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         mAudioPlay.resetMediaPlayer();
                         audioType = AudioPlay.VERIFY_PASSED;
                         mAudioPlay.playAsset(audioType, mAssetManager);
-                        activity.dismissGatherFingerDialog();
                     } else {
                         audioType = AudioPlay.VERIFY_FAILED;
                         mAudioPlay.playAsset(audioType, mAssetManager);
@@ -618,9 +605,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 super.onBackPressed();
             }
         }
-
-        EmpPad.FingerPrintPowerOff();
-        EmpPad.ClosePowerManager();
     }
 
     /**

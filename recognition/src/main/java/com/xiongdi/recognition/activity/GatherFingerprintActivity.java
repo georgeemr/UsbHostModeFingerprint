@@ -71,13 +71,9 @@ public class GatherFingerprintActivity extends AppCompatActivity implements View
         super.onDestroy();
         usb_host_ctx.closeDevice();
         usb_host_ctx.releaseResource();
-        EmpPad.FingerPrintPowerOff();
-        EmpPad.ClosePowerManager();
     }
 
     private void initData() {
-        EmpPad.OpenPowerManager();
-        EmpPad.FingerPrintPowerOn();
         mHandler = new FingerprintHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
 
