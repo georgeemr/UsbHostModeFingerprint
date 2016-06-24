@@ -21,7 +21,6 @@
             android:layout_marginLeft="85dp"
             android:layout_marginStart="85dp"
             android:layout_marginTop="215dip"
-            android:background="#cc99cc"
             android:rotation="-45"/>
 
         <Button
@@ -30,7 +29,6 @@
             android:layout_marginLeft="150dip"
             android:layout_marginStart="150dip"
             android:layout_marginTop="62dip"
-            android:background="#cc9933"
             android:rotation="-28"/>
         <!--android:background="#cc9933"-->
 
@@ -40,7 +38,6 @@
             android:layout_marginLeft="237dip"
             android:layout_marginStart="237dip"
             android:layout_marginTop="40dip"
-            android:background="#336699"
             android:rotation="0"/>
         <!--android:background="#336699"-->
 
@@ -50,7 +47,6 @@
             android:layout_marginLeft="320dip"
             android:layout_marginStart="320dip"
             android:layout_marginTop="70dip"
-            android:background="#ffff66"
             android:rotation="30"/>
         <!--android:background="#ffff66"-->
 
@@ -60,7 +56,6 @@
             android:layout_marginLeft="376dip"
             android:layout_marginStart="376dip"
             android:layout_marginTop="127dip"
-            android:background="#99ccff"
             android:rotation="40"/>
         <!--android:background="#99ccff"-->
 
@@ -80,7 +75,6 @@
             android:layout_marginLeft="77dp"
             android:layout_marginStart="77dp"
             android:layout_marginTop="135dp"
-            android:background="#99ccff"
             android:rotation="-35"/>
         <!--android:background="#99ccff"-->
 
@@ -90,7 +84,6 @@
             android:layout_marginLeft="125dip"
             android:layout_marginStart="125dp"
             android:layout_marginTop="70dip"
-            android:background="#ffff66"
             android:rotation="-20"/>
         <!--android:background="#ffff66"-->
 
@@ -100,7 +93,6 @@
             android:layout_marginLeft="210dip"
             android:layout_marginStart="210dp"
             android:layout_marginTop="40dip"
-            android:background="#336699"
             android:rotation="0"/>
         <!--android:background="#336699"-->
 
@@ -110,7 +102,6 @@
             android:layout_marginLeft="300dp"
             android:layout_marginStart="300dp"
             android:layout_marginTop="60dp"
-            android:background="#cc9933"
             android:rotation="30"/>
         <!--android:background="#cc9933"-->
 
@@ -120,7 +111,6 @@
             android:layout_marginLeft="365dp"
             android:layout_marginStart="365dp"
             android:layout_marginTop="215dp"
-            android:background="#cc99cc"
             android:rotation="45"/>
         <!--android:background="#cc99cc"-->
 
