@@ -13,7 +13,7 @@
 
     <color name="colorWhite">#ffffffff</color>
     <color name="colorGray">#22ffffff</color>
-    <color name="Gray">#f5f5f5</color>
+    <color name="commonBackgroundGray">#f5f5f5</color>
 
     <color name="deepBlue">#003366</color>
 
