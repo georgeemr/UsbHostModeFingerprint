@@ -222,7 +222,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private void verifyFingerprint() {
         if (MainApplication.fingerprintPath == null) {
             Log.e(TAG, "verifyFingerprint: fingerprint file path is null");
-            ToastUtil.getInstance().showToast(this, "fingerprint file path is null");
+            ToastUtil.getInstance().showToast(this, getString(R.string.no_fingerprint_template));
             return;
         }
         if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {

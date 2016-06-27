@@ -74,6 +74,7 @@
     <string name="nav_download_data">下载数据</string>
     <string name="common_print">打印结果</string>
     <string name="common_search">搜索</string>
+    <string name="no_fingerprint_template">no fingerprint comparison</string>
 
     <!--搜索界面-->
     <string name="search_voice_text">Set permission on Android 6+ !</string>
