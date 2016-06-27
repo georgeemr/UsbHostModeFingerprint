@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     private boolean isExit = false;
     private boolean hasTask = false;
     private Timer mTimer;
-    private TimerTask mTimerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,14 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             isExit = true;
             ToastUtil.getInstance().showToast(this, getString(R.string.common_exit_app));
             if (!hasTask) {
-                mTimer.schedule(mTimerTask, 2000);
+                mTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        isExit = false;
+                        hasTask = false;
+                        cancel();
+                    }
+                }, 2000);
             }
         } else {
             super.onBackPressed();
@@ -62,13 +68,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
     private void initData() {
         mTimer = new Timer();
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                isExit = false;
-                hasTask = true;
-            }
-        };
     }
 
     private void initView() {
