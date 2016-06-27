@@ -1,6 +1,5 @@
 package com.xiongdi.recognition.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +11,6 @@ import android.widget.Button;
 
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.activity.GatherActivity;
-import com.xiongdi.recognition.activity.GatherFingerprintActivity;
 
 /**
  * Created by moubiao on 2016/3/22.
@@ -91,9 +89,9 @@ public class RightHandFragment extends Fragment implements View.OnClickListener 
     }
 
     private void gatherFingerprint(Intent intent, int fingerNUm) {
-        intent.setClass(gatherActivity, GatherFingerprintActivity.class);
-        intent.putExtra("gatherID", gatherActivity.getGatherID());
-        intent.putExtra("fingerNum", fingerNUm);
-        getActivity().startActivityForResult(intent, GatherActivity.FINGERPRINT_ACTIVITY);
+//        intent.setClass(gatherActivity, GatherFingerprintActivity.class);
+//        intent.putExtra("gatherID", gatherActivity.getGatherID());
+//        intent.putExtra("fingerNum", fingerNUm);
+//        getActivity().startActivityForResult(intent, GatherActivity.FINGERPRINT_ACTIVITY);
     }
 }

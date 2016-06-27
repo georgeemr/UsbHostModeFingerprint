@@ -52,11 +52,6 @@
             <!--</intent-filter>-->
         </activity>
 
-        <!-- 采集指纹的界面-->
-        <activity
-            android:name=".activity.GatherFingerprintActivity"
-            android:screenOrientation="sensorLandscape"/>
-
         <!-- 采集照片的界面-->
         <activity
             android:name=".activity.GatherPictureActivity"
