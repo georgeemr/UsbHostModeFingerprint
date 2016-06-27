@@ -74,7 +74,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private boolean mReadSuccess = false;
     private ProgressDialogFragment progressDialog;
 
-    private boolean isExit = false;
+    private boolean isExit = true;
     private boolean hasTask = false;
     private Timer tExit;
     private TimerTask task;
