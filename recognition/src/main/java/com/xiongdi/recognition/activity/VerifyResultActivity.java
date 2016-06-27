@@ -46,8 +46,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by moubiao on 2016/3/25.
@@ -73,11 +71,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private ReadCardThread mReadCardThread;
     private boolean mReadSuccess = false;
     private ProgressDialogFragment progressDialog;
-
-    private boolean isExit = true;
-    private boolean hasTask = false;
-    private Timer tExit;
-    private TimerTask task;
 
     private UsbManagerUtil mUsbManagerUtil;
     private VerifyThread mVerifyThread;
@@ -121,15 +114,6 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         progressDialog = new ProgressDialogFragment();
         mHandler = new VerifyHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
-
-        tExit = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                isExit = false;
-                hasTask = true;
-            }
-        };
     }
 
     private void initView() {
@@ -183,15 +167,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottom_left_bt:
-                if (!isExit) {
-                    isExit = true;
-                    ToastUtil.getInstance().showToast(this, getString(R.string.common_exit_app));
-                    if (!hasTask) {
-                        tExit.schedule(task, 2000);
-                    }
-                } else {
-                    finish();
-                }
+                finish();
                 break;
             case R.id.bottom_right_bt:
                 if (mUsbManagerUtil.OpenDevice(0, true)) {
@@ -594,15 +570,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (!isExit) {
-                isExit = true;
-                ToastUtil.getInstance().showToast(this, getString(R.string.common_exit_app));
-                if (!hasTask) {
-                    tExit.schedule(task, 2000);
-                }
-            } else {
-                super.onBackPressed();
-            }
+            super.onBackPressed();
         }
     }
 
