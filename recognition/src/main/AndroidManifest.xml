@@ -73,17 +73,6 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.NoActionBar">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN"/>-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
-        </activity>
-
-        <!-- 验证指纹界面-->
-        <activity
-            android:name=".activity.VerifyFingerprintActivity"
-            android:screenOrientation="sensorLandscape">
-            <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
             <!--<category android:name="android.intent.category.LAUNCHER"/>-->
