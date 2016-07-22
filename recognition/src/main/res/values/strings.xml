@@ -79,4 +79,10 @@
     <!--搜索界面-->
     <string name="search_voice_text">Set permission on Android 6+ !</string>
     <string name="search_no_data">无数据</string>
+
+    <!--扫描护照-->
+    <string name="device_data">port content</string>
+    <color name="text_colour">#004680</color>
+    <string name="device_instruction_connect">Connect a device to continue</string>
+    <string name="sample_instruction">Sample Access Interfacing Solutions App</string>
 </resources>
