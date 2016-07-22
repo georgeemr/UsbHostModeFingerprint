@@ -5,6 +5,14 @@ model {
         compileSdkVersion 23
         buildToolsVersion "23.0.2"
 
+        productFlavors {
+            create("arm") {
+                ndk {
+                    abiFilters.add("armeabi-v7a")
+                }
+            }
+        }
+
         defaultConfig {
             applicationId "com.xiongdi.recognition"
             minSdkVersion.apiLevel 15
@@ -24,9 +32,13 @@ model {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:cardview-v7:23.4.0'
     compile files('src/main/lib/ormlite-android-4.48.jar')
     compile files('src/main/lib/ormlite-core-4.48.jar')
-    compile project(':androidHelper')
+    compile 'cn.bingoogolapple:bga-qrcodecore:1.0.9@aar'
+    compile 'cn.bingoogolapple:bga-zbar:1.0.9@aar'
+    compile files('src/main/lib/httpcore-4.4.4.jar')
+    //    compile project(':androidHelper')
 }

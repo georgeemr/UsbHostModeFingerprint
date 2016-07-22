@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_scan_barcode"
+            android:icon="@drawable/ic_barcode"
+            android:title="@string/nav_scan_barcode"/>
+        <item
+            android:id="@+id/nav_input_CNID"
+            android:icon="@drawable/ic_search"
+            android:title="@string/nav_search_ID"/>
+    </group>
+
+    <item android:title="@string/nav_communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_upload"
+                android:icon="@drawable/ic_upload"
+                android:title="@string/nav_upload_data"/>
+            <item
+                android:id="@+id/nav_download"
+                android:icon="@drawable/ic_download"
+                android:title="@string/nav_download_data"/>
+            <item
+                android:id="@+id/nav_print"
+                android:icon="@drawable/print_icon"
+                android:title="@string/common_print"/>
+        </menu>
+    </item>
+
+</menu>

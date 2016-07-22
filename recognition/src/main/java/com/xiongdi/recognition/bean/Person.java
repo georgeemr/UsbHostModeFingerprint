@@ -30,6 +30,9 @@ public class Person {
     @DatabaseField
     private String gatherPictureUrl;
 
+    @DatabaseField
+    private int checked;
+
     public Person() {
     }
 
@@ -83,5 +86,14 @@ public class Person {
 
     public void setGatherPictureUrl(String gatherPictureUrl) {
         this.gatherPictureUrl = gatherPictureUrl;
+    }
+
+
+    public int getChecked() {
+        return checked;
+    }
+
+    public void setChecked(int checked) {
+        this.checked = checked;
     }
 }

@@ -217,7 +217,7 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
     private void savePicture(byte[] data) {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             String pictureName = gatherID + ".png";
-            String savePath = getExternalFilesDir(null) + "/" + getResources().getString(R.string.app_name) + "/" + gatherID + "/";
+            String savePath = getExternalFilesDir(null) + "/" + gatherID + "/";
             pictureUrl = savePath + pictureName;
             File saveFolder = new File(savePath);
             if (!saveFolder.exists()) {

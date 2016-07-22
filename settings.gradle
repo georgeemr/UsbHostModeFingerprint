@@ -1,5 +1,3 @@
-
-include ':androidHelper'
-include ':ftrAnsiSDKDemo'
+include ':ftrAnsiSDKDemo', ':biometrics', ':test'
 include ':ftrScanDemoUsbHost'
 include ':recognition'

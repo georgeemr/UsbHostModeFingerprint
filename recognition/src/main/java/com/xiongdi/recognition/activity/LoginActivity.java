@@ -19,22 +19,55 @@ import com.j256.ormlite.stmt.Where;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Account;
 import com.xiongdi.recognition.db.AccountDao;
+import com.xiongdi.recognition.util.ToastUtil;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
     private Button loginBT;
     private EditText nameET, passwordET;
+
+    //连续按两次返回键后退出应用
+    private boolean isExit = false;
+    private boolean hasTask = false;
+    private Timer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
 
+        initData();
         initView();
         saveOrReadAccount(false);
         setListener();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isExit) {
+            isExit = true;
+            ToastUtil.getInstance().showToast(this, getString(R.string.common_exit_app));
+            if (!hasTask) {
+                mTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        isExit = false;
+                        hasTask = false;
+                        cancel();
+                    }
+                }, 2000);
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void initData() {
+        mTimer = new Timer();
     }
 
     private void initView() {
@@ -54,13 +87,15 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_bt:
-                if (verifyAccount()) {
+                if (true) {
                     Intent intent = new Intent();
                     if ("userc".equals(nameET.getText().toString())) {
                         intent.setClass(LoginActivity.this, FillInfoActivity.class);
                     } else if ("userv".equals(nameET.getText().toString())) {
                         intent.setClass(LoginActivity.this, VerifyResultActivity.class);
                         intent.putExtra("haveData", false);
+                    } else {
+                        intent.setClass(LoginActivity.this, FillInfoActivity.class);
                     }
 
                     saveOrReadAccount(true);

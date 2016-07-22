@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="common_blue">#0092da</color>
+    <color name="common_blue">#4CAF50</color>
     <color name="common_title_gray">#333333</color>
+    <color name="primary_light">#C8E6C9</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
 
     <color name="colorWhite">#ffffffff</color>
     <color name="colorGray">#22ffffff</color>
-    <color name="Gray">#f5f5f5</color>
+    <color name="commonBackgroundGray">#f5f5f5</color>
 
     <color name="deepBlue">#003366</color>
 
@@ -20,4 +25,22 @@
     <!--登录框-->
     <color name="login_box_color">#cccccc</color>
     <color name="web_url_color">#666666</color>
+
+    <!--search view-->
+    <color name="search_shadow_layout">#50000000</color>
+
+    <!-- Light Theme -->
+    <color name="search_light_background">#fffafafa</color>
+    <color name="search_light_background2">@android:color/transparent</color>
+    <color name="search_light_icon">#8a000000</color>
+    <color name="search_light_text">#de000000</color>
+    <color name="search_light_hint">#80000000</color>
+    <color name="search_light_text_highlight">#62000000</color>
+
+    <!-- Dark Theme -->
+    <color name="search_dark_background">#ff303030</color>
+    <color name="search_dark_icon">#b3ffffff</color>
+    <color name="search_dark_text">#ffffffff</color>
+    <color name="search_dark_hint">#80ffffff</color>
+    <color name="search_dark_text_highlight">#62ffffff</color>
 </resources>

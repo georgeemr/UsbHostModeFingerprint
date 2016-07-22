@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/colorWhite"
+              android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/result_ID_tv"
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_title_ID"/>
+
+    <TextView
+        android:id="@+id/result_name_tv"
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_item_title_name"/>
+
+    <TextView
+        android:id="@+id/result_gender_tv"
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_item_title_gender"/>
+
+    <TextView
+        android:id="@+id/result_birthday_tv"
+        style="@style/SearchResultItemStyle"
+        android:text="@string/info_item_title_birthday"/>
+
+</LinearLayout>

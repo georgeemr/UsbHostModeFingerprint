@@ -1,5 +1,7 @@
 package com.xiongdi.recognition.util;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +13,8 @@ import java.io.InputStream;
  * 文件工具类
  */
 public class FileUtil {
+    private final String TAG = "moubiao";
+
     /**
      * 判断目录是否存在，不存在则创建
      */
@@ -98,5 +102,31 @@ public class FileUtil {
         }
 
         return false;
+    }
+
+    public File createFile(String filePath) {
+        if (filePath == null) {
+            Log.e(TAG, "createFile: file path is null");
+            return null;
+        }
+        File file = new File(filePath);
+        if (!file.exists()) {
+            File dir = new File(file.getParent());
+            if (!dir.exists()) {
+                if (dir.mkdirs()) {
+                    try {
+                        if (!file.createNewFile()) {
+                            return null;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        return file;
     }
 }

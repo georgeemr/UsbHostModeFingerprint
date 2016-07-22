@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_gravity="center"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="160dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/gather_fingerprint_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            android:src="@drawable/fingerprint"
+            android:visibility="gone"/>
+
+        <com.xiongdi.recognition.widget.progressBar.ProgressBarView
+            android:id="@+id/gather_finger_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:indicator="BallRotate"
+            app:indicator_color="@color/colorPrimary"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <Button
+            android:id="@+id/cancel_gather_bt"
+            style="@style/GatherFingerButtonStyle"
+            android:layout_marginEnd="7.5dp"
+            android:layout_marginRight="7.5dp"
+            android:text="@string/common_cancel"/>
+
+        <Button
+            android:id="@+id/save_gather_bt"
+            style="@style/GatherFingerButtonStyle"
+            android:layout_marginLeft="7.5dp"
+            android:layout_marginStart="7.5dp"
+            android:text="@string/common_save"/>
+
+        <Button
+            android:id="@+id/gather_again_bt"
+            style="@style/GatherFingerButtonStyle"
+            android:layout_marginLeft="7.5dp"
+            android:layout_marginStart="7.5dp"
+            android:text="@string/common_again"/>
+    </LinearLayout>
+
+</LinearLayout>
