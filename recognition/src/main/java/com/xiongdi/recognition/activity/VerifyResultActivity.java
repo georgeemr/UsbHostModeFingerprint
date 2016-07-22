@@ -64,7 +64,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private ImageView pictureIMG, fingerIMG;
     private ProgressBarView mProgressBarView;
     private TextView personIDTV, personNameTV, personGenderTV, personBirthdayTV, personAddressTV;
-    private ImageButton backTB, readCardBT, verifyBT;
+    private ImageButton backTB, readCardBT, passportBT, verifyBT;
 
     private OperateCardHelper mOperateCardHelper;
     private ReadCardHandler mReadCardHandler;
@@ -146,7 +146,14 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         if (verifyBT != null) {
             verifyBT.setBackgroundResource(R.drawable.common_gather_fingerprint);
         }
-        readCardBT = (ImageButton) findViewById(R.id.bottom_middle_bt);
+
+        passportBT = (ImageButton) findViewById(R.id.bottom_second_bt);
+        if (passportBT != null) {
+            passportBT.setVisibility(View.VISIBLE);
+            passportBT.setBackgroundResource(R.drawable.common_passport_bg);
+        }
+
+        readCardBT = (ImageButton) findViewById(R.id.bottom_first_bt);
         if (readCardBT != null) {
             readCardBT.setBackgroundResource(R.drawable.common_read_card_bg);
         }
@@ -155,6 +162,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private void setListener() {
         backTB.setOnClickListener(this);
         verifyBT.setOnClickListener(this);
+        passportBT.setOnClickListener(this);
         readCardBT.setOnClickListener(this);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
@@ -174,8 +182,11 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     verifyFingerprint();
                 }
                 break;
-            case R.id.bottom_middle_bt:
+            case R.id.bottom_first_bt:
 //                readCard();
+                break;
+            case R.id.bottom_second_bt:
+
                 break;
             default:
                 break;

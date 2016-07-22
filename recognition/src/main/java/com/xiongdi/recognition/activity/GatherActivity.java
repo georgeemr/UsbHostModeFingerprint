@@ -133,7 +133,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
         backBT = (ImageButton) findViewById(R.id.bottom_left_bt);
-        takePictureBT = (ImageButton) findViewById(R.id.bottom_middle_bt);
+        takePictureBT = (ImageButton) findViewById(R.id.bottom_first_bt);
         saveBT = (ImageButton) findViewById(R.id.bottom_right_bt);
         if (saveBT != null) {
             saveBT.setBackgroundResource(R.drawable.common_save_bg);
@@ -166,7 +166,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 deleteTemporaryFile();
                 finish();
                 break;
-            case R.id.bottom_middle_bt:
+            case R.id.bottom_first_bt:
                 startGatherPictureActivity();
                 break;
             case R.id.bottom_right_bt:

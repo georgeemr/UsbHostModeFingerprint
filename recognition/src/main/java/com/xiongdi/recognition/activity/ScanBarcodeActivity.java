@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.xiongdi.recognition.R;
@@ -55,7 +54,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView
         if (mQRCodeView != null) {
             mQRCodeView.setDelegate(this);
         }
-        View middleView = findViewById(R.id.bottom_middle_bt);
+        View middleView = findViewById(R.id.bottom_first_bt);
         if (middleView != null) {
             middleView.setVisibility(View.GONE);
         }

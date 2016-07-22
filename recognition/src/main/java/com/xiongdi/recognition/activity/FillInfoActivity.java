@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.futronictech.UsbDeviceDataExchangeImpl;
-import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
@@ -99,7 +98,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
         backBT = (ImageButton) findViewById(R.id.bottom_left_bt);
         entryBT = (ImageButton) findViewById(R.id.bottom_right_bt);
-        View view = findViewById(R.id.bottom_middle_bt);
+        View view = findViewById(R.id.bottom_first_bt);
         if (view != null) {
             view.setVisibility(View.GONE);
         }
