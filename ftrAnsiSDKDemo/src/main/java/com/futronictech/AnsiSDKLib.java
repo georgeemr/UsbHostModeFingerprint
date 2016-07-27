@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 public class AnsiSDKLib {
     /**
      * usb accessory模式调用该方法
+     * open device on accessory mode
      *
      * @param instance
      * @return
@@ -13,6 +14,7 @@ public class AnsiSDKLib {
 
     /**
      * usb host模式调用该方法
+     * open device on hos mode
      *
      * @param io_ctx
      * @return
@@ -21,61 +23,69 @@ public class AnsiSDKLib {
 
     /**
      * 关闭模块
+     * close device
      */
     public native boolean CloseDevice();
 
     /**
      * 设置指纹图片的大小
+     * set fingerprint Image size
      */
     public native boolean FillImageSize();
 
     /**
      * 采集指纹
+     * gather fingerprint
      *
-     * @param pImage 保存指纹图片数据的数组
+     * @param pImage 保存指纹图片数据的数组    the array of save data
      */
     public native boolean CaptureImage(byte[] pImage);
 
     /**
      * 创建模板
+     * create template
      *
-     * @param finger        手指编号
-     * @param pImage        保存指纹数据的数组
-     * @param pTemplate     保存模板数据的数据（比实际值大）
-     * @param pTemplateSize 保存模板数据的实际大小
+     * @param finger        手指编号    fingerprint index
+     * @param pImage        保存指纹数据的数组   the array of save fingerprint
+     * @param pTemplate     保存模板数据的数据（比实际值大）    the array of save template
+     * @param pTemplateSize 保存模板数据的实际大小     the template actual size
      */
     public native boolean CreateTemplate(int finger, byte[] pImage, byte[] pTemplate, int[] pTemplateSize);
 
     /**
      * 验证指纹
+     * verify fingerprint
      *
-     * @param finger        手指编号
-     * @param pImage        要验证的模板的内容
-     * @param pTemplate     接收图片数据的数组
-     * @param pVerifyResult 验证结果
+     * @param finger        手指编号    fingerprint index
+     * @param pImage        要验证的模板的内容   template data
+     * @param pTemplate     接收图片数据的数组   fingerprint data
+     * @param pVerifyResult 验证结果    verify result
      */
     public native boolean VerifyTemplate(int finger, byte[] pImage, byte[] pTemplate, float[] pVerifyResult);
 
     /**
      * 匹配模板
+     * match template
      *
-     * @param pProbeTemplate  要验证是否存在的模板
-     * @param pGaleryTemplate 用来对比的模板
-     * @param pMatchResult    匹配结果
+     * @param pProbeTemplate  要验证是否存在的模板    first template
+     * @param pGaleryTemplate 用来对比的模板   second template
+     * @param pMatchResult    匹配结果  verify result
      */
     public native boolean MatchTemplates(byte[] pProbeTemplate, byte[] pGaleryTemplate, float[] pMatchResult);
 
     /**
      * 将ansi的模板转换成iso的模板
+     * transform ansi to iso
      *
-     * @param pAnsiTemplate    ansi格式的模板数据
-     * @param pIsoTemplate     保存iso格式的模板数据的数据
-     * @param pIsoTemplateSize iso格式数据的大小
+     * @param pAnsiTemplate    ansi格式的模板数据      ansi data
+     * @param pIsoTemplate     保存iso格式的模板数据的数据      array of save iso
+     * @param pIsoTemplateSize iso格式数据的大小       size of iso
      */
     public native boolean ConvertAnsiTemplateToIso(byte[] pAnsiTemplate, byte[] pIsoTemplate, int[] pIsoTemplateSize);
 
     /**
      * 获取模板数据的最大值
+     * get template max size
      */
     public native int GetMaxTemplateSize();
 
