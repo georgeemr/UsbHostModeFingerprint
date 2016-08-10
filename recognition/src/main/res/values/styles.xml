@@ -27,6 +27,12 @@
         <item name="android:textSize">@dimen/input_font_size</item>
     </style>
 
+    <style name="ChooseUserTypeTextViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <!-- 填写录入信息界面-->
     <style name="WriteInfoItemTitleStyle">
         <item name="android:textSize">@dimen/font_size_20</item>

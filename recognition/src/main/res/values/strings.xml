@@ -19,6 +19,8 @@
     <string name="login_failed_tips">username or password incorrect</string>
     <string name="login_default_user">userc</string>
     <string name="login_default_password">123</string>
+    <string name="general_user">general user</string>
+    <string name="administrator">administrator</string>
 
     <!-- 填写登记信息界面-->
     <string name="write_info_title">Information</string>
@@ -85,4 +87,7 @@
     <color name="text_colour">#004680</color>
     <string name="device_instruction_connect">Connect a device to continue</string>
     <string name="sample_instruction">Sample Access Interfacing Solutions App</string>
+
+    <!--管理员界面-->
+    <string name="count_result">统计结果</string>
 </resources>

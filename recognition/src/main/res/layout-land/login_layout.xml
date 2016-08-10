@@ -4,11 +4,34 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/login_bg">
 
+    <RadioGroup
+        android:id="@+id/choose_type_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:checkedButton="@+id/general_rb"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/general_rb"
+            style="@style/ChooseUserTypeTextViewStyle"
+            android:text="@string/general_user"/>
+
+        <RadioButton
+            android:id="@+id/administrator_rb"
+            style="@style/ChooseUserTypeTextViewStyle"
+            android:layout_marginLeft="90dp"
+            android:text="@string/administrator"/>
+    </RadioGroup>
+
     <RelativeLayout
-        android:layout_centerInParent="true"
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/radio_group"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
         android:gravity="center_horizontal">
 
         <EditText
@@ -27,7 +50,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/password"
+        android:id="@+id/first_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login"
@@ -35,7 +58,29 @@
         android:gravity="center_horizontal">
 
         <EditText
-            android:id="@+id/editText_psw"
+            android:id="@+id/first_psw_editText"
+            style="@style/LoginBoxStyle"
+            android:drawableLeft="@mipmap/password_icon"
+            android:drawablePadding="@dimen/icon_padding"
+            android:drawableStart="@mipmap/password_icon"
+            android:imeOptions="actionDone|flagNoFullscreen"
+            android:inputType="textPassword"
+            android:padding="@dimen/input_padding"
+            android:singleLine="true"
+            android:text="@string/login_default_password"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/second_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/first_password"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/second_psw_editText"
             style="@style/LoginBoxStyle"
             android:drawableLeft="@mipmap/password_icon"
             android:drawablePadding="@dimen/icon_padding"
@@ -52,7 +97,7 @@
         style="@style/CommonTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/password"
+        android:layout_below="@+id/first_password"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/login_bt_margin_side"

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -27,12 +28,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
+    private RadioGroup mChooseTypeRG;
     private Button loginBT;
     private EditText nameET, passwordET;
+    private View mSecondPasswordView;
 
     //连续按两次返回键后退出应用
     private boolean isExit = false;
     private boolean hasTask = false;
+    private boolean isAdmin = false;
     private Timer mTimer;
 
     @Override
@@ -71,15 +75,34 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     }
 
     private void initView() {
-        nameET = (EditText) this.findViewById(R.id.editText_name);
+        mChooseTypeRG = (RadioGroup) findViewById(R.id.choose_type_rg);
+        nameET = (EditText) findViewById(R.id.editText_name);
         nameET.setSelection(nameET.getText().length());
-        passwordET = (EditText) this.findViewById(R.id.editText_psw);
+        passwordET = (EditText) findViewById(R.id.first_psw_editText);
         passwordET.setSelection(passwordET.getText().length());
         nameET.requestFocus();
-        loginBT = (Button) this.findViewById(R.id.login_bt);
+        loginBT = (Button) findViewById(R.id.login_bt);
+        mSecondPasswordView = findViewById(R.id.second_password);
     }
 
     private void setListener() {
+        mChooseTypeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.general_rb:
+                        isAdmin = false;
+                        mSecondPasswordView.setVisibility(View.GONE);
+                        break;
+                    case R.id.administrator_rb:
+                        isAdmin = true;
+                        mSecondPasswordView.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         loginBT.setOnClickListener(this);
     }
 
@@ -89,13 +112,17 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             case R.id.login_bt:
                 if (true) {
                     Intent intent = new Intent();
-                    if ("userc".equals(nameET.getText().toString())) {
-                        intent.setClass(LoginActivity.this, FillInfoActivity.class);
-                    } else if ("userv".equals(nameET.getText().toString())) {
-                        intent.setClass(LoginActivity.this, VerifyResultActivity.class);
-                        intent.putExtra("haveData", false);
+                    if (isAdmin) {
+                        intent.setClass(LoginActivity.this, AdminActivity.class);
                     } else {
-                        intent.setClass(LoginActivity.this, FillInfoActivity.class);
+                        if ("userc".equals(nameET.getText().toString())) {
+                            intent.setClass(LoginActivity.this, FillInfoActivity.class);
+                        } else if ("userv".equals(nameET.getText().toString())) {
+                            intent.setClass(LoginActivity.this, VerifyResultActivity.class);
+                            intent.putExtra("haveData", false);
+                        } else {
+                            intent.setClass(LoginActivity.this, FillInfoActivity.class);
+                        }
                     }
 
                     saveOrReadAccount(true);

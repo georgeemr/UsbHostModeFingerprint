@@ -29,7 +29,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/password"
+        android:id="@+id/first_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login"
@@ -37,7 +37,7 @@
         android:gravity="center_horizontal">
 
         <EditText
-            android:id="@+id/editText_psw"
+            android:id="@+id/first_psw_editText"
             style="@style/LoginBoxStyle"
             android:drawableLeft="@mipmap/password_icon"
             android:drawablePadding="@dimen/icon_padding"
@@ -54,7 +54,7 @@
         style="@style/CommonTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/password"
+        android:layout_below="@+id/first_password"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/login_bt_margin_side"
