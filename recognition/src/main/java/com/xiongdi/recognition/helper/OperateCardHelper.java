@@ -7,8 +7,8 @@ import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
 
-import com.xiongdi.EmpPad;
 import com.xiongdi.OpenJpeg;
+import com.xiongdi.natives.EmpPad;
 import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.constant.PictureConstant;
 import com.xiongdi.recognition.util.Converter;
@@ -32,6 +32,7 @@ import java.util.Arrays;
  */
 public class OperateCardHelper {
     private static String TAG = "moubiao";
+    private static boolean hasOutAerial = false;
     private static int BLOCK_LENGTH = 16;
 
     private Context mContext;
@@ -77,11 +78,14 @@ public class OperateCardHelper {
      * @param aerialIndex 天线编号
      */
     public boolean chooseAerial(int aerialIndex) {
-        if (0 != EmpPad.SelectRFIDSlot(aerialIndex)) {
-            Log.e(TAG, "choose aerial failed!");
-
-            return false;
+        if (!hasOutAerial) {
+            return true;
         }
+//        if (0 != EmpPad.SelectRFIDSlot(aerialIndex)) {
+//            Log.e(TAG, "choose aerial failed!");
+//
+//            return false;
+//        }
         return true;
     }
 
@@ -91,10 +95,13 @@ public class OperateCardHelper {
      * @param aerialIndex 天线编号
      */
     public boolean initRFModel(int aerialIndex) {
-        if (0 != EmpPad.Rf_Init(aerialIndex)) {
-            Log.e(TAG, "init RFModel failed!");
-            return false;
+        if (!hasOutAerial) {
+            return true;
         }
+//        if (0 != EmpPad.Rf_Init(aerialIndex)) {
+//            Log.e(TAG, "init RFModel failed!");
+//            return false;
+//        }
         return true;
     }
 
@@ -132,8 +139,8 @@ public class OperateCardHelper {
     /**
      * 复位Cpu卡
      */
-    public boolean resetCpuCard(byte[] resp) {
-        if (0 != EmpPad.Rfa_RATS(resp)) {
+    public boolean resetCpuCard(byte[] resp, byte[] length) {
+        if (0 != EmpPad.Rfa_RATS(resp, length)) {
             Log.e(TAG, "resetCpuCard: failed!");
             return false;
         }

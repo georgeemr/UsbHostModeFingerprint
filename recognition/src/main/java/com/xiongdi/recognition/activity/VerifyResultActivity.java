@@ -107,9 +107,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private void initData() {
         mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
-        if (false) {
-            mOperateCardHelper.openRFModel();
-        }
+        mOperateCardHelper.openRFModel();
         mReadCardHandler = new ReadCardHandler(this);
         progressDialog = new ProgressDialogFragment();
         mHandler = new VerifyHandler(this);
@@ -183,7 +181,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 }
                 break;
             case R.id.bottom_first_bt:
-//                readCard();
+                readCard();
                 break;
             case R.id.bottom_second_bt:
 
