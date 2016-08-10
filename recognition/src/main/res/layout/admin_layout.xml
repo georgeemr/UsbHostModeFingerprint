@@ -8,13 +8,13 @@
     <TableRow android:gravity="center">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/download_tv"
+            style="@style/AdminOperateStyle"
             android:text="@string/nav_download_data"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/upload_tv"
+            style="@style/AdminOperateStyle"
             android:text="@string/nav_upload_data"/>
     </TableRow>
 
@@ -22,13 +22,13 @@
     <TableRow android:gravity="center">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/count_result_tv"
+            style="@style/AdminOperateStyle"
             android:text="@string/count_result"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/print_result_tv"
+            style="@style/AdminOperateStyle"
             android:text="@string/common_print"/>
     </TableRow>
 
