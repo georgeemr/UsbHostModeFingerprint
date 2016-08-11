@@ -90,4 +90,5 @@
 
     <!--管理员界面-->
     <string name="count_result">统计结果</string>
+    <string name="input_station_id">请输入站点ID</string>
 </resources>
