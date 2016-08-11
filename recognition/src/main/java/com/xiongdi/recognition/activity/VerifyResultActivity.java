@@ -92,9 +92,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (false) {
-            mOperateCardHelper.closeRFModel();
-        }
+        mOperateCardHelper.closeRFModel();
 
         if (mVerifyThread != null) {
             mVerifyThread.cancel();
