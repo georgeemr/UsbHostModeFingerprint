@@ -145,7 +145,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
         passportBT = (ImageButton) findViewById(R.id.bottom_second_bt);
         if (passportBT != null) {
-            passportBT.setVisibility(View.VISIBLE);
+            passportBT.setVisibility(View.GONE);
             passportBT.setBackgroundResource(R.drawable.common_passport_bg);
         }
 
