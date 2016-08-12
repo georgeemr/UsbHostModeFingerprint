@@ -115,9 +115,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 //        EmpPad.FingerPrintPowerOn();
         mUsbManagerUtil = new UsbManagerUtil(getApplicationContext(), new RequestPermissionHandler(this));
         mOperateCardHelper = new OperateCardHelper(this);
-        if (false) {
-            mOperateCardHelper.openRFModel();
-        }
+        mOperateCardHelper.openRFModel();
         mWriteCardHandler = new WriteCardHandler(this);
         personDao = new PersonDao(getApplicationContext());
         gatherID = Integer.parseInt(String.valueOf(personDao.getQuantity()));
@@ -334,7 +332,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                     gatherFingerUrl = data.getStringExtra("fingerPrintUrl");
                     saveInformation();
                     refreshView();
-//                    askDialog.show(fgManager, "saveDialog");
+                    askDialog.show(fgManager, "saveDialog");
 
                     break;
                 default:
