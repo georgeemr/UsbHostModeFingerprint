@@ -369,7 +369,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
         person.setAddress(gatherAddress);
         person.setID_NO(gatherIDNO);
         if (gatherPicUrl != null) {
-            person.setGatherPictureUrl(gatherPicUrl);
+            person.setPicture(gatherPicUrl);
         }
         personDao.add(person);
     }

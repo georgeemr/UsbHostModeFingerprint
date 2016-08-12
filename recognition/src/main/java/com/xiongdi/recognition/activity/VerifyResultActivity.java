@@ -551,12 +551,12 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     private void setResultDetail(Person person) {
         if (person != null) {
-            personIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", person.getPersonID()));
+            personIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", person.getID()));
             personNameTV.setText(person.getName());
             personGenderTV.setText(person.getGender());
             personBirthdayTV.setText(person.getBirthday());
             personAddressTV.setText(person.getAddress());
-            Bitmap bitmap = BitmapFactory.decodeFile(person.getGatherPictureUrl());
+            Bitmap bitmap = BitmapFactory.decodeFile(person.getPicture());
             if (bitmap != null) {
                 pictureIMG.setImageBitmap(bitmap);
             }

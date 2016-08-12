@@ -10,66 +10,80 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "person")
 public class Person {
     @DatabaseField(generatedId = true)
-    private int personID;
+    private int ID;
 
     @DatabaseField(canBeNull = false)
-    private String name;
+    private String mName;
 
     @DatabaseField(canBeNull = false)
-    private String gender;
+    private String mGender;
 
     @DatabaseField(canBeNull = false)
-    private String birthday;
+    private String mAge;
 
     @DatabaseField(canBeNull = false)
-    private String address;
+    private String mBirthday;
+
+    @DatabaseField(canBeNull = false)
+    private String mAddress;
 
     @DatabaseField(canBeNull = false)
     private String ID_NO;
 
-    @DatabaseField
-    private String gatherPictureUrl;
+    @DatabaseField(canBeNull = false)
+    private String mFingerprint;
 
     @DatabaseField
-    private int checked;
+    private String mPicture;
+
+    @DatabaseField
+    private int mChecked;
 
     public Person() {
     }
 
-    public int getPersonID() {
-        return personID;
+    public int getID() {
+        return ID;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public String getGender() {
-        return gender;
+        return mGender;
     }
 
     public void setGender(String gender) {
-        this.gender = gender;
+        this.mGender = gender;
+    }
+
+    public String getAge() {
+        return mAge;
+    }
+
+    public void setAge(String age) {
+        mAge = age;
     }
 
     public String getBirthday() {
-        return birthday;
+        return mBirthday;
     }
 
     public void setBirthday(String birthday) {
-        this.birthday = birthday;
+        this.mBirthday = birthday;
     }
 
     public String getAddress() {
-        return address;
+        return mAddress;
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        this.mAddress = address;
     }
 
     public String getID_NO() {
@@ -80,20 +94,28 @@ public class Person {
         this.ID_NO = ID_NO;
     }
 
-    public String getGatherPictureUrl() {
-        return gatherPictureUrl;
+    public String getFingerprint() {
+        return mFingerprint;
     }
 
-    public void setGatherPictureUrl(String gatherPictureUrl) {
-        this.gatherPictureUrl = gatherPictureUrl;
+    public void setFingerprint(String fingerprint) {
+        mFingerprint = fingerprint;
+    }
+
+    public String getPicture() {
+        return mPicture;
+    }
+
+    public void setPicture(String picture) {
+        this.mPicture = picture;
     }
 
 
     public int getChecked() {
-        return checked;
+        return mChecked;
     }
 
     public void setChecked(int checked) {
-        this.checked = checked;
+        this.mChecked = checked;
     }
 }
