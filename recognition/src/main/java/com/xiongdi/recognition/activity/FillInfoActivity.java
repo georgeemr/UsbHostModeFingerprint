@@ -51,8 +51,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     private static final String TXT_NAME = "BASIC INFO";
     private static final int WRITE_CARD_FLAG = 0;
 
-    private EditText nameET, addressET, ID_NO_ET;
-    private TextView fill_ID_tx, genderTX, birthdayTX;
+    private EditText nameET, mAgeET, addressET, ID_NO_ET;
+    private TextView mIDTV, mGenderTX, mBirthdayTX;
     private ImageButton backBT, entryBT;
     private PersonDao personDao;
 
@@ -63,6 +63,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     private int gatherID;
     private String gatherName;
     private String gatherGender;
+    private int mAge = 20;
     private String gatherBirthday;
     private String gatherAddress;
     private String gatherIDNO;
@@ -89,13 +90,14 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initView() {
-        fill_ID_tx = (TextView) findViewById(R.id.fill_ID_tx);
+        mIDTV = (TextView) findViewById(R.id.fill_ID_tx);
         nameET = (EditText) findViewById(R.id.fill_name_text);
+        mAgeET = (EditText) findViewById(R.id.fill_age_tx);
         addressET = (EditText) findViewById(R.id.address_ET);
         ID_NO_ET = (EditText) findViewById(R.id.ID_NO_et);
 
-        genderTX = (TextView) findViewById(R.id.gender_tv);
-        birthdayTX = (TextView) findViewById(R.id.birthday_tv);
+        mGenderTX = (TextView) findViewById(R.id.gender_tv);
+        mBirthdayTX = (TextView) findViewById(R.id.birthday_tv);
 
         backBT = (ImageButton) findViewById(R.id.bottom_left_bt);
         entryBT = (ImageButton) findViewById(R.id.bottom_right_bt);
@@ -125,7 +127,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     private void refreshView() {
         ++gatherID;
-        fill_ID_tx.setText(String.format(Locale.getDefault(), "%1$,05d", gatherID));
+        mIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", gatherID));
 //        nameET.setText("");
 //        addressET.setText("");
         ID_NO_ET.setText(String.format(Locale.getDefault(), "%1$,05d", gatherID));
@@ -135,8 +137,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
         nameET.setOnClickListener(this);
         addressET.setOnClickListener(this);
         ID_NO_ET.setOnClickListener(this);
-        genderTX.setOnClickListener(this);
-        birthdayTX.setOnClickListener(this);
+        mGenderTX.setOnClickListener(this);
+        mBirthdayTX.setOnClickListener(this);
 
         backBT.setOnClickListener(this);
         entryBT.setOnClickListener(this);
@@ -154,7 +156,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.birthday_tv:
                 DatePickerFragment datePickerFragment = new DatePickerFragment();
-                datePickerFragment.setData(birthdayTX.getText().toString(), this);
+                datePickerFragment.setData(mBirthdayTX.getText().toString(), this);
                 datePickerFragment.show(fgManager, "date");
                 break;
             case R.id.bottom_left_bt:
@@ -175,7 +177,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
      */
     private void startGatherFingerprintActivity() {
         Intent intent = new Intent(this, GatherActivity.class);
-        intent.putExtra("gatherID", fill_ID_tx.getText().toString());
+        intent.putExtra("gatherID", mIDTV.getText().toString());
         startActivityForResult(intent, GATHER_ACTIVITY_CODE);
     }
 
@@ -211,7 +213,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void setDate(String date) {
-        birthdayTX.setText(date);
+        mBirthdayTX.setText(date);
     }
 
     @Override
@@ -224,11 +226,11 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case MALE:
                 selectedID = 0;
-                genderTX.setText("Male");
+                mGenderTX.setText("Male");
                 break;
             case FEMALE:
                 selectedID = 1;
-                genderTX.setText("Female");
+                mGenderTX.setText("Female");
                 break;
             default:
                 break;
@@ -300,11 +302,12 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private boolean checkInformation() {
-        gatherID = Integer.valueOf(fill_ID_tx.getText().toString());
+        gatherID = Integer.valueOf(mIDTV.getText().toString());
         gatherName = nameET.getText().toString();
+        mAge = Integer.parseInt(String.valueOf(mAgeET.getText()));
         gatherAddress = addressET.getText().toString();
-        gatherGender = genderTX.getText().toString();
-        gatherBirthday = birthdayTX.getText().toString();
+        gatherGender = mGenderTX.getText().toString();
+        gatherBirthday = mBirthdayTX.getText().toString();
         gatherIDNO = ID_NO_ET.getText().toString();
         if (!StringUtil.hasLength(gatherName)) {
             showToast(getString(R.string.information_incomplete));
@@ -364,6 +367,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
         Person person = new Person();
         person.setName(gatherName);
         person.setGender(gatherGender);
+        person.setAge(mAge);
         person.setBirthday(gatherBirthday);
         person.setAddress(gatherAddress);
         person.setID_NO(gatherIDNO);

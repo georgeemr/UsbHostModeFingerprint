@@ -33,7 +33,8 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:paddingLeft="@dimen/fill_information_row_margin_left"
-            android:paddingRight="@dimen/fill_information_row_margin_right">
+            android:paddingRight="@dimen/fill_information_row_margin_right"
+            android:visibility="gone">
 
             <TextView
                 style="@style/WriteInfoItemTitleStyleLand"
@@ -64,6 +65,25 @@
                 android:maxLength="15"
                 android:text="curry Steve"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/fill_information_row_margin_left"
+            android:paddingRight="@dimen/fill_information_row_margin_right">
+
+            <TextView
+                style="@style/WriteInfoItemTitleStyleLand"
+                android:text="@string/info_item_age"/>
+
+            <EditText
+                android:id="@+id/fill_age_tx"
+                style="@style/WriteInfoItemContentStyleLand"
+                android:inputType="number"
+                android:text="20"/>
         </LinearLayout>
     </LinearLayout>
 

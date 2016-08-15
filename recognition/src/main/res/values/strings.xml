@@ -27,6 +27,7 @@
     <string name="info_title_ID">ID</string>
     <string name="info_item_title_name">NAME</string>
     <string name="info_item_title_gender">GENDER</string>
+    <string name="info_item_age">AGE</string>
     <string name="info_item_title_birthday">BIRTHDAY</string>
     <string name="info_item_title_address">ADDRESS</string>
     <string name="info_item_title_ID_NO">ID_NO</string>
