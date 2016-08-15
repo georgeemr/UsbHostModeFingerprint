@@ -635,7 +635,7 @@ public class OperateCardHelper {
                     mContext.getExternalFilesDir("card") + File.separator + "cardFingerprint"
             };
             MediaScannerConnection.scanFile(mContext, scanFile, null, null);
-            MainApplication.fingerprintPath = fingerFile.getPath();
+            MainApplication.FINGERPRINT_PATH = fingerFile.getPath();
         }
 
         Log.d(TAG, "read fingerprint information success!");

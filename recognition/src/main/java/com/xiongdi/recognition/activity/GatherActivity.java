@@ -176,8 +176,8 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                         data.putExtra("pictureUrl", pictureUrl);
                         data.putExtra("compressPicUrl", compressPicUrl);
                     }
-                    if (MainApplication.fingerprintPath != null) {
-                        data.putExtra("fingerPrintUrl", MainApplication.fingerprintPath);
+                    if (MainApplication.FINGERPRINT_PATH != null) {
+                        data.putExtra("fingerPrintUrl", MainApplication.FINGERPRINT_PATH);
                     }
                     setResult(Activity.RESULT_OK, data);
                     finish();
@@ -489,13 +489,15 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        MainApplication.fingerprintPath = getExternalFilesDir(null) + File.separator
+//        MainApplication.FINGERPRINT_PATH = getExternalFilesDir(null) + File.separator
+//                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
+        MainApplication.FINGERPRINT_PATH = MainApplication.EXTERNAL_SD_PATH + File.separator
                 + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
         FileUtil fileUtil = new FileUtil();
         File saveFile;
         FileOutputStream fos = null;
         try {
-            saveFile = fileUtil.createFile(MainApplication.fingerprintPath);
+            saveFile = fileUtil.createFile(MainApplication.FINGERPRINT_PATH);
             if (saveFile == null) {
                 Log.e(TAG, "saveTemplate: template file create failed!");
                 return;
@@ -515,7 +517,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 e.printStackTrace();
             }
         }
-        Log.d(TAG, "saveTemplate: fingerprint path = " + MainApplication.fingerprintPath);
+        Log.d(TAG, "saveTemplate: fingerprint path = " + MainApplication.FINGERPRINT_PATH);
     }
 
     private static class ShowFingerprintHandler extends Handler {

@@ -7,9 +7,11 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.xiongdi.recognition.application.MainApplication;
 import com.xiongdi.recognition.bean.Account;
 import com.xiongdi.recognition.bean.Person;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,7 @@ import java.util.Map;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     //    private static String DB_NAME = "person.db";
-    private static String DB_NAME = "/storage/sdcard1/EmpDatabase/person.db";
+    private static String DB_NAME = MainApplication.EXTERNAL_SD_PATH + File.separator + "database" + File.separator + "person.db";
     private static int DB_VERSION = 1;
     private static DatabaseHelper instance;
     private Map<String, Dao> daoMap = new HashMap<>();

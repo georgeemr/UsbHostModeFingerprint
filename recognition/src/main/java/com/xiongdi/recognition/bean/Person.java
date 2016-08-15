@@ -18,8 +18,8 @@ public class Person {
     @DatabaseField(canBeNull = false)
     private String mGender;
 
-    @DatabaseField(canBeNull = false)
-    private String mAge;
+    @DatabaseField(canBeNull = false, defaultValue = "18")
+    private int mAge;
 
     @DatabaseField(canBeNull = false)
     private String mBirthday;
@@ -30,7 +30,7 @@ public class Person {
     @DatabaseField(canBeNull = false)
     private String ID_NO;
 
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, defaultValue = "/sdcard1/EmpDatabase/")
     private String mFingerprint;
 
     @DatabaseField
@@ -62,11 +62,11 @@ public class Person {
         this.mGender = gender;
     }
 
-    public String getAge() {
+    public int getAge() {
         return mAge;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         mAge = age;
     }
 

@@ -203,7 +203,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
      * 验证指纹
      */
     private void verifyFingerprint() {
-        if (MainApplication.fingerprintPath == null) {
+        if (MainApplication.FINGERPRINT_PATH == null) {
             Log.e(TAG, "verifyFingerprint: fingerprint file path is null");
             ToastUtil.getInstance().showToast(this, getString(R.string.no_fingerprint_template));
             return;
@@ -218,8 +218,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             File fingerprintFile;
             FileInputStream fis = null;
             try {
-                Log.d(TAG, "verifyFingerprint: fingerprint path " + MainApplication.fingerprintPath);
-                fingerprintFile = new File(MainApplication.fingerprintPath);
+                Log.d(TAG, "verifyFingerprint: fingerprint path " + MainApplication.FINGERPRINT_PATH);
+                fingerprintFile = new File(MainApplication.FINGERPRINT_PATH);
                 if (!fingerprintFile.exists() || !fingerprintFile.canRead()) {
                     Log.e(TAG, "verifyFingerprint: fingerprint file no exist");
                     return;

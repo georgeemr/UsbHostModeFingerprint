@@ -9,6 +9,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -19,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.xiongdi.recognition.R;
+import com.xiongdi.recognition.application.MainApplication;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +31,7 @@ import java.io.IOException;
  * 拍照的activity
  */
 public class GatherPictureActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
+    private final String TAG = "moubiao";
     private int KEY_CODE_RIGHT_BOTTOM = 249;
     private int KEY_CODE_LEFT_BOTTOM = 250;
     private int KEY_CODE_LEFT_TOP = 251;
@@ -217,11 +220,14 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
     private void savePicture(byte[] data) {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             String pictureName = gatherID + ".png";
-            String savePath = getExternalFilesDir(null) + "/" + gatherID + "/";
-            pictureUrl = savePath + pictureName;
+//            String savePath = getExternalFilesDir(null) + "/" + gatherID + "/";
+            String savePath = MainApplication.EXTERNAL_SD_PATH + File.separator + gatherID;
+            pictureUrl = savePath + File.separator + pictureName;
             File saveFolder = new File(savePath);
             if (!saveFolder.exists()) {
-                saveFolder.mkdirs();
+                if (saveFolder.mkdirs()) {
+                    Log.e(TAG, "savePicture: create picture directory failed!");
+                }
             }
             File pictureFile = new File(saveFolder, pictureName);
             try {
