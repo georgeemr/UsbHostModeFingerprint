@@ -19,7 +19,8 @@ import java.util.Map;
  * 操作数据库的帮助类
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
-    private static String DB_NAME = "person.db";
+    //    private static String DB_NAME = "person.db";
+    private static String DB_NAME = "/storage/sdcard1/EmpDatabase/person.db";
     private static int DB_VERSION = 1;
     private static DatabaseHelper instance;
     private Map<String, Dao> daoMap = new HashMap<>();
