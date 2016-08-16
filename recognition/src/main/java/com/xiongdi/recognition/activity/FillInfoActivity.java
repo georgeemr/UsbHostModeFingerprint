@@ -371,6 +371,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
         person.setBirthday(gatherBirthday);
         person.setAddress(gatherAddress);
         person.setID_NO(gatherIDNO);
+        person.setFingerprint(gatherFingerUrl);
         if (gatherPicUrl != null) {
             person.setPicture(gatherPicUrl);
         }

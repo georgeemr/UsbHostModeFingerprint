@@ -34,6 +34,7 @@ import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
 import com.xiongdi.recognition.util.BmpUtil;
 import com.xiongdi.recognition.util.FileUtil;
+import com.xiongdi.recognition.util.MD5Util;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.crop.Crop;
 
@@ -118,10 +119,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
         Intent data = getIntent();
         gatherID = data.getStringExtra("gatherID");
         templeName = new StringBuilder();
-        templeName.append(gatherID);
-        templeName.append("_");
-        templeName.append(fingerNUM);
-        templeName.append(kAnsiTemplatePostfix);
+        templeName.append(MD5Util.hashKeyForDisk(gatherID));
         mFingerDialogFG = new GatherFingerDialogFragment();
         mFingerDialogFG.setCancelable(false);
         mFingerDialogFG.setResultCallback(this);
@@ -489,10 +487,8 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-//        MainApplication.FINGERPRINT_PATH = getExternalFilesDir(null) + File.separator
-//                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
         MainApplication.FINGERPRINT_PATH = MainApplication.EXTERNAL_SD_PATH + File.separator
-                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + templeName;
+                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + "fingerprint" + File.separator + templeName;
         FileUtil fileUtil = new FileUtil();
         File saveFile;
         FileOutputStream fos = null;
