@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by moubiao on 2016/3/22.
@@ -487,8 +486,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        MainApplication.FINGERPRINT_PATH = MainApplication.EXTERNAL_SD_PATH + File.separator
-                + String.format(Locale.getDefault(), "%1$,05d", Integer.parseInt(gatherID)) + File.separator + "fingerprint" + File.separator + templeName;
+        MainApplication.FINGERPRINT_PATH = MainApplication.EXTERNAL_SD_PATH + File.separator + "fingerprint" + File.separator + templeName;
         FileUtil fileUtil = new FileUtil();
         File saveFile;
         FileOutputStream fos = null;

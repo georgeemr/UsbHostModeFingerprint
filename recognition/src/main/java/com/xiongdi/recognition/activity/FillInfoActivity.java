@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -349,7 +348,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
      * 保存新信息到数据库和本地文件
      */
     private void saveInformation() {
-        StringBuffer Buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         String data = DateUtil.getCurrentTime();
         String txt = "[BasicInfo]" + "\r\n"
                 + "NAME: " + gatherName + "\r\n"
@@ -358,11 +357,8 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                 + "ADDRESS: " + gatherAddress + "\r\n"
                 + "ISSUEDATE: " + data + "\r\n"
                 + "ID NO.: " + gatherIDNO;
-        Buffer = Buffer.append(txt);
-
-        Log.d("moubiao", "Buffer.toString() = " + Buffer.toString());
-
-        saveFileToDevice(Buffer.toString());
+        buffer = buffer.append(txt);
+//        saveFileToDevice(buffer.toString());
 
         Person person = new Person();
         person.setName(gatherName);
