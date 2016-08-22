@@ -1,20 +1,18 @@
-apply plugin: 'com.android.model.application'
-model {
-    android {
-        compileSdkVersion 23
-        buildToolsVersion "23.0.2"
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
-        defaultConfig {
-            applicationId "com.example.ftransisdkdemo_android"
-            minSdkVersion.apiLevel 15
-            targetSdkVersion.apiLevel 23
-        }
+    defaultConfig {
+        applicationId "com.example.ftransisdkdemo_android"
+        minSdkVersion 15
+        targetSdkVersion 23
+    }
 
-        buildTypes {
-            release {
-                minifyEnabled false
-                proguardFiles.add(file("proguard-rules.pro"))
-            }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 }

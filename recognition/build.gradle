@@ -1,30 +1,28 @@
-apply plugin: 'com.android.model.application'
+apply plugin: 'com.android.application'
 
-model {
-    android {
-        compileSdkVersion 23
-        buildToolsVersion "23.0.2"
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
-        productFlavors {
-            create("arm") {
-                ndk {
-                    abiFilters.add("armeabi-v7a")
-                }
+    productFlavors {
+        armv7 {
+            ndk {
+                abiFilter "armeabi-v7a"
             }
         }
+    }
 
-        defaultConfig {
-            applicationId "com.xiongdi.recognition"
-            minSdkVersion.apiLevel 15
-            targetSdkVersion.apiLevel 23
-            versionCode 1
-            versionName "1.0"
-        }
-        buildTypes {
-            release {
-                minifyEnabled false
-                proguardFiles.add(file("proguard-rules.pro"))
-            }
+    defaultConfig {
+        applicationId "com.xiongdi.recognition"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 }
