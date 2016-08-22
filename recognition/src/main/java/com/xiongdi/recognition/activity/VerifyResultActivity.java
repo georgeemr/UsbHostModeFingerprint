@@ -399,6 +399,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         PersonDao personDao = new PersonDao(activity);
                         Long recordCount = personDao.getQuantity();
                         Person person = personDao.queryById(Integer.parseInt(String.valueOf(recordCount)));
+                        personDao.updateColumn("UPDATE person SET mChecked = 1 WHERE ID = " + person.getID());
                         activity.setResultDetail(person);
                     } else {
                         audioType = AudioPlay.VERIFY_FAILED;
@@ -500,6 +501,13 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     activity.progressDialog.dismiss();
                     if (activity.mReadSuccess) {
                         String[] cardData = activity.mOperateCardHelper.getBaseData();
+                        PersonDao personDao = new PersonDao(activity);
+                        Person person = personDao.queryById(Integer.parseInt(cardData[0]));
+                        if (person.getChecked() == 1) {
+                            ToastUtil.getInstance().showToast(activity, "has checked!");
+                            activity.refreshView();
+                            return;
+                        }
                         activity.personIDTV.setText(String.valueOf(cardData[0]));
                         activity.personNameTV.setText(cardData[1]);
                         activity.personGenderTV.setText(cardData[2]);

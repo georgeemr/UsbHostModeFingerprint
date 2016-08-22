@@ -95,4 +95,12 @@ public class PersonDao {
         }
         return true;
     }
+
+    public void updateColumn(String statement, String... arguments) {
+        try {
+            personDao.updateRaw(statement, arguments);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
