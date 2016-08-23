@@ -39,4 +39,5 @@ dependencies {
     compile 'cn.bingoogolapple:bga-zbar:1.0.9@aar'
     compile files('src/main/lib/httpcore-4.4.4.jar')
     //    compile project(':androidHelper')
+    compile files('src/main/lib/PrinterM200.jar')
 }
