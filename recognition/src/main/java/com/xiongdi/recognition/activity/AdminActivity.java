@@ -202,7 +202,6 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
                     deviceList.add(device);
                     String name = device.getName();
                     String address = device.getAddress();
-                    Log.d(TAG, "onCreate: bundle device name = " + name + " address = " + address);
                 }
 
                 ListDialogFragment dialog = new ListDialogFragment();
@@ -245,8 +244,9 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
                 return;
             }
         }
-        Printer.pText("===== 打印测试程序 =====");
-        Printer.pLF();
+        Printer.pText("     选举结果");
+        Printer.pText("     总人数 ：500");
+        Printer.pText("     核验人数 ：410");
         Printer.pLF();
         Printer.pLF();
     }
