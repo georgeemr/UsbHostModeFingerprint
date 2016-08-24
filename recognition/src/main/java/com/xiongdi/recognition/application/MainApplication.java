@@ -22,7 +22,7 @@ import java.util.List;
 public class MainApplication extends Application {
     private final String TAG = "moubiao";
     public static String FINGERPRINT_PATH;
-    public static final String EXTERNAL_SD_PATH = "/storage/sdcard1/EmpDatabase";
+    public static final String EXTERNAL_SD_PATH = "/storage/sdcard0/EmpDatabase";
     private List<Activity> mActivityList;
     private Person mPerson;
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        style="@style/CountTitleStyle"
+        android:text="@string/count_proportion_type"/>
+
+    <TextView
+        android:id="@+id/voted_tv"
+        style="@style/CountContentStyle"
+        android:text="@string/voted_number"/>
+
+    <TextView
+        android:id="@+id/not_vote_tv"
+        style="@style/CountContentStyle"
+        android:text="@string/not_vote_number"/>
+
+    <TextView
+        style="@style/CountTitleStyle"
+        android:text="@string/count_proportion_type"/>
+
+    <TextView
+        android:id="@+id/men_tv"
+        style="@style/CountContentStyle"
+        android:text="@string/man_quantity"/>
+
+    <TextView
+        android:id="@+id/women_tv"
+        style="@style/CountContentStyle"
+        android:text="@string/women_quantity"/>
+
+</LinearLayout>
