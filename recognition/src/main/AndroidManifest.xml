@@ -11,8 +11,8 @@
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:name=".application.MainApplication"
@@ -117,8 +117,14 @@
                 android:resource="@xml/device_filter"/>
         </activity>
 
+        <!--管理员界面-->
         <activity
             android:name=".activity.AdminActivity"
+            android:screenOrientation="sensor"/>
+
+        <!--统计结果界面-->
+        <activity
+            android:name=".activity.CountActivity"
             android:screenOrientation="sensor"/>
 
     </application>

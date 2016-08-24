@@ -133,7 +133,8 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void countResult() {
-
+        Intent intent = new Intent(AdminActivity.this, CountActivity.class);
+        startActivity(intent);
     }
 
     private void printResult() {
@@ -200,8 +201,6 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
             if (devices.size() > 0) {
                 for (BluetoothDevice device : devices) {
                     deviceList.add(device);
-                    String name = device.getName();
-                    String address = device.getAddress();
                 }
 
                 ListDialogFragment dialog = new ListDialogFragment();

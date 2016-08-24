@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@color/commonBackgroundGray"
+              android:gravity="center"
               android:orientation="vertical">
 
     <TextView
@@ -20,7 +22,7 @@
 
     <TextView
         style="@style/CountTitleStyle"
-        android:text="@string/count_proportion_type"/>
+        android:text="@string/count_gender_type"/>
 
     <TextView
         android:id="@+id/men_tv"
