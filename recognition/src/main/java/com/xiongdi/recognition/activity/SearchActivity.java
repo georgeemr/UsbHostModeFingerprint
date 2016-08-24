@@ -17,7 +17,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.adapter.SearchResultAdapter;
-import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.widget.searchView.SearchAdapter;
@@ -127,8 +127,8 @@ public class SearchActivity extends AppCompatActivity {
         searchResultLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MainApplication mainApplication = (MainApplication) getApplication();
-                mainApplication.setPerson(mPersonList.get(position - 1));
+                App app = (App) getApplication();
+                app.setPerson(mPersonList.get(position - 1));
                 setResult(Activity.RESULT_OK);
                 finish();
             }

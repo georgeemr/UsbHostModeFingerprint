@@ -100,4 +100,10 @@
     <string name="count_gender_type">男女比例</string>
     <string name="man_quantity">男选民人数: %1$d</string>
     <string name="women_quantity">女选民人数: %1$d</string>
+
+    <!--打印结果-->
+    <string name="vote_result">选举结果</string>
+    <string name="total_voter_quantity">选民总人数：%1$d</string>
+    <string name="has_voted_quantity">已投票人数：%1$d</string>
+    <string name="not_voted_quantity">未投票人数：%1$d</string>
 </resources>

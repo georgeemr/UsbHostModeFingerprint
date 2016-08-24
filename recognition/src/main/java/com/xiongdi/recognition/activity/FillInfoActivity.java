@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.recognition.R;
-import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.fragment.AskDialogFragment;
@@ -376,7 +376,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
 
     private void saveFileToDevice(String toSaveString) {
         try {
-            String filePath = MainApplication.EXTERNAL_SD_PATH + File.separator +
+            String filePath = App.EXTERNAL_SD_PATH + File.separator +
                     String.format(Locale.getDefault(), "%1$,05d", gatherID) + File.separator + TXT_NAME + ".ini";
 
             File saveFile = new File(filePath);

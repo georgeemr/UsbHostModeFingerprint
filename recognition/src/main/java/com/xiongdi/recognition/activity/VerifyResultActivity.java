@@ -30,7 +30,7 @@ import android.widget.TextView;
 import com.futronictech.AnsiSDKLib;
 import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.recognition.R;
-import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.audio.AudioPlay;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
@@ -203,7 +203,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
      * 验证指纹
      */
     private void verifyFingerprint() {
-        if (MainApplication.FINGERPRINT_PATH == null) {
+        if (App.FINGERPRINT_PATH == null) {
             Log.e(TAG, "verifyFingerprint: fingerprint file path is null");
             ToastUtil.getInstance().showToast(this, getString(R.string.no_fingerprint_template));
             return;
@@ -218,8 +218,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             File fingerprintFile;
             FileInputStream fis = null;
             try {
-                Log.d(TAG, "verifyFingerprint: fingerprint path " + MainApplication.FINGERPRINT_PATH);
-                fingerprintFile = new File(MainApplication.FINGERPRINT_PATH);
+                Log.d(TAG, "verifyFingerprint: fingerprint path " + App.FINGERPRINT_PATH);
+                fingerprintFile = new File(App.FINGERPRINT_PATH);
                 if (!fingerprintFile.exists() || !fingerprintFile.canRead()) {
                     Log.e(TAG, "verifyFingerprint: fingerprint file no exist");
                     return;
@@ -540,8 +540,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 case SCAN_BARCODE_REQUEST_CODE:
                     break;
                 case SEARCH_REQUEST_CODE:
-                    MainApplication mainApplication = (MainApplication) getApplication();
-                    setResultDetail(mainApplication.getPerson());
+                    App app = (App) getApplication();
+                    setResultDetail(app.getPerson());
                     break;
                 default:
                     break;

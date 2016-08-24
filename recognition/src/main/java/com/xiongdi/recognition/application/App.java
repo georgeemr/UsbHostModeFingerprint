@@ -14,17 +14,22 @@ import com.xiongdi.recognition.util.CrashHandlerUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by moubiao on 2016/3/22.
  * 自定义的application
  */
-public class MainApplication extends Application {
+public class App extends Application {
     private final String TAG = "moubiao";
     public static String FINGERPRINT_PATH;
     public static final String EXTERNAL_SD_PATH = "/storage/sdcard0/EmpDatabase";
     private List<Activity> mActivityList;
     private Person mPerson;
+
+    private volatile static ThreadPoolExecutor mPoolExecutor;
 
     @Override
     public void onCreate() {
@@ -79,5 +84,16 @@ public class MainApplication extends Application {
 
     public void setPerson(Person person) {
         mPerson = person;
+    }
+
+    public static ThreadPoolExecutor getThreadPoolExecutor() {
+        if (mPoolExecutor == null) {
+            synchronized (ThreadPoolExecutor.class) {
+                mPoolExecutor = new ThreadPoolExecutor(5, 7, 100, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(5),
+                        new ThreadPoolExecutor.CallerRunsPolicy());
+            }
+        }
+
+        return mPoolExecutor;
     }
 }

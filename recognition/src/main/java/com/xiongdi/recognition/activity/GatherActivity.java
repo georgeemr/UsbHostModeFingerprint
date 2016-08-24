@@ -28,7 +28,7 @@ import com.futronictech.UsbDeviceDataExchangeImpl;
 import com.xiongdi.OpenJpeg;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.adapter.GatherInfoVpAdapter;
-import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
@@ -173,8 +173,8 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                         data.putExtra("pictureUrl", pictureUrl);
                         data.putExtra("compressPicUrl", compressPicUrl);
                     }
-                    if (MainApplication.FINGERPRINT_PATH != null) {
-                        data.putExtra("fingerPrintUrl", MainApplication.FINGERPRINT_PATH);
+                    if (App.FINGERPRINT_PATH != null) {
+                        data.putExtra("fingerPrintUrl", App.FINGERPRINT_PATH);
                     }
                     setResult(Activity.RESULT_OK, data);
                     finish();
@@ -486,12 +486,12 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        MainApplication.FINGERPRINT_PATH = MainApplication.EXTERNAL_SD_PATH + File.separator + "fingerprint" + File.separator + templeName;
+        App.FINGERPRINT_PATH = App.EXTERNAL_SD_PATH + File.separator + "fingerprint" + File.separator + templeName;
         FileUtil fileUtil = new FileUtil();
         File saveFile;
         FileOutputStream fos = null;
         try {
-            saveFile = fileUtil.createFile(MainApplication.FINGERPRINT_PATH);
+            saveFile = fileUtil.createFile(App.FINGERPRINT_PATH);
             if (saveFile == null) {
                 Log.e(TAG, "saveTemplate: template file create failed!");
                 return;
@@ -511,7 +511,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 e.printStackTrace();
             }
         }
-        Log.d(TAG, "saveTemplate: fingerprint path = " + MainApplication.FINGERPRINT_PATH);
+        Log.d(TAG, "saveTemplate: fingerprint path = " + App.FINGERPRINT_PATH);
     }
 
     private static class ShowFingerprintHandler extends Handler {

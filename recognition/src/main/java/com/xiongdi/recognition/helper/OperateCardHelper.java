@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.xiongdi.OpenJpeg;
 import com.xiongdi.natives.EmpPad;
-import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.constant.PictureConstant;
 import com.xiongdi.recognition.util.Converter;
 import com.xiongdi.recognition.util.FileUtil;
@@ -635,7 +635,7 @@ public class OperateCardHelper {
                     mContext.getExternalFilesDir("card") + File.separator + "cardFingerprint"
             };
             MediaScannerConnection.scanFile(mContext, scanFile, null, null);
-            MainApplication.FINGERPRINT_PATH = fingerFile.getPath();
+            App.FINGERPRINT_PATH = fingerFile.getPath();
         }
 
         Log.d(TAG, "read fingerprint information success!");

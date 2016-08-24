@@ -20,7 +20,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.xiongdi.recognition.R;
-import com.xiongdi.recognition.application.MainApplication;
+import com.xiongdi.recognition.application.App;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -221,7 +221,7 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             String pictureName = gatherID + ".png";
 //            String savePath = getExternalFilesDir(null) + "/" + gatherID + "/";
-            String savePath = MainApplication.EXTERNAL_SD_PATH + File.separator + gatherID;
+            String savePath = App.EXTERNAL_SD_PATH + File.separator + gatherID;
             pictureUrl = savePath + File.separator + pictureName;
             File saveFolder = new File(savePath);
             if (!saveFolder.exists()) {

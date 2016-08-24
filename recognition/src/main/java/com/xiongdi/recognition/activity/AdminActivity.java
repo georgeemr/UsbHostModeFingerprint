@@ -14,12 +14,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.emptech.Printer;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.xiongdi.recognition.R;
+import com.xiongdi.recognition.application.App;
+import com.xiongdi.recognition.bean.Person;
+import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.fragment.ListDialogFragment;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.numberProgressBar.NumberProgressBar;
 import com.xiongdi.recognition.widget.numberProgressBar.OnProgressBarListener;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -243,11 +248,28 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
                 return;
             }
         }
-        Printer.pText("     选举结果");
-        Printer.pText("     总人数 ：500");
-        Printer.pText("     核验人数 ：410");
-        Printer.pLF();
-        Printer.pLF();
+
+        App.getThreadPoolExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PersonDao personDao = new PersonDao(AdminActivity.this);
+                    QueryBuilder<Person, Integer> queryBuilder = personDao.getQueryBuilder();
+                    long totalQuantity = personDao.getQuantity();
+                    long votedQuantity = queryBuilder.where().eq("mChecked", 1).countOf();
+                    Printer.xCenter();
+                    Printer.setRowSpacing(10);
+                    Printer.pText(getString(R.string.vote_result));
+                    Printer.pText(String.format(getString(R.string.total_voter_quantity), totalQuantity));
+                    Printer.pText(String.format(getString(R.string.has_voted_quantity), votedQuantity));
+                    Printer.pText(String.format(getString(R.string.not_voted_quantity), totalQuantity - votedQuantity));
+                    Printer.pLF();
+                    Printer.pLF();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void displayInitProgress(boolean state) {
