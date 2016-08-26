@@ -24,10 +24,15 @@ import com.j256.ormlite.stmt.Where;
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Account;
 import com.xiongdi.recognition.db.AccountDao;
+import com.xiongdi.recognition.util.Converter;
 import com.xiongdi.recognition.util.ToastUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -141,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener,
                 }
                 break;
             case R.id.app_setting_bt:
-                setLanguage();
+                showPopWindow();
                 break;
             default:
                 break;
@@ -199,7 +204,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener,
         return false;
     }
 
-    private void setLanguage() {
+    private void showPopWindow() {
         if (mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         } else {
@@ -225,15 +230,50 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener,
         } else if (group.getId() == R.id.language_rg) {
             switch (checkedId) {
                 case R.id.chinese_rb:
-
+                    setLanguage(Locale.CHINESE);
                     break;
                 case R.id.english_rb:
-
+                    setLanguage(Locale.ENGLISH);
                     break;
                 default:
                     break;
             }
-            mPopupWindow.dismiss();
+
+        }
+    }
+
+    /**
+     * 设置应用语言
+     */
+    private void setLanguage(final Locale locale) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                saveAppLanguage(locale);
+                Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                // 杀掉进程
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(0);
+            }
+        }).start();
+    }
+
+    /**
+     * 保存选择的语言
+     */
+    private void saveAppLanguage(Locale locale) {
+        try {
+            SharedPreferences.Editor editor = getSharedPreferences("language", 0).edit();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream os = new ObjectOutputStream(bos);
+            os.writeObject(locale);
+            String bytesToHexString = Converter.hex2String(bos.toByteArray(), bos.toByteArray().length);
+            editor.putString("language", bytesToHexString);
+            editor.apply();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

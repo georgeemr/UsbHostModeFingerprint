@@ -4,16 +4,25 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.xiongdi.recognition.bean.Account;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.AccountDao;
+import com.xiongdi.recognition.util.Converter;
 import com.xiongdi.recognition.util.CrashHandlerUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +49,7 @@ public class App extends Application {
     }
 
     private void initData() {
+        setAppLanguage();
         mActivityList = new ArrayList<>();
         CrashHandlerUtil.getInstance().initCrashHandlerUtil(this);
 
@@ -49,6 +59,43 @@ public class App extends Application {
                 Log.e(TAG, "initData: create save data directory failed!");
             }
         }
+    }
+
+    /**
+     * 设置应用语言
+     */
+    private void setAppLanguage() {
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        config.locale = getSetLocale();
+        resources.updateConfiguration(config, dm);
+    }
+
+    /**
+     * 获取本地保存的应用语言
+     */
+    private Locale getSetLocale() {
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("language", Context.MODE_PRIVATE);
+            if (sharedPreferences.contains("language")) {
+                String string = sharedPreferences.getString("language", "");
+                if (TextUtils.isEmpty(string)) {
+                    return null;
+                } else {
+                    //将16进制的数据转为数组，准备反序列化
+                    byte[] stringToBytes = Converter.string2Hex(string);
+                    ByteArrayInputStream bis = new ByteArrayInputStream(stringToBytes);
+                    ObjectInputStream is = new ObjectInputStream(bis);
+                    //返回反序列化得到的对象
+                    return (Locale) is.readObject();
+                }
+            }
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private void initDatabase() {
