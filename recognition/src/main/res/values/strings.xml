@@ -23,6 +23,9 @@
     <string name="login_default_password">123</string>
     <string name="general_user">普通用户</string>
     <string name="administrator">管理员</string>
+    <string name="userc_account">userc</string>
+    <string name="userv_account">userv</string>
+    <string name="admin_account">administrator</string>
 
     <!-- 填写登记信息界面-->
     <string name="write_info_title">填写信息</string>

@@ -127,9 +127,9 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener,
                     if (isAdmin) {
                         intent.setClass(LoginActivity.this, AdminActivity.class);
                     } else {
-                        if ("userc".equals(nameET.getText().toString())) {
+                        if (getString(R.string.userc_account).equals(nameET.getText().toString())) {
                             intent.setClass(LoginActivity.this, FillInfoActivity.class);
-                        } else if ("userv".equals(nameET.getText().toString())) {
+                        } else if (getString(R.string.userv_account).equals(nameET.getText().toString())) {
                             intent.setClass(LoginActivity.this, VerifyResultActivity.class);
                             intent.putExtra("haveData", false);
                         } else {
@@ -218,10 +218,12 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener,
             switch (checkedId) {
                 case R.id.general_rb:
                     isAdmin = false;
+                    nameET.setText(getString(R.string.userv_account));
                     mSecondPasswordView.setVisibility(View.GONE);
                     break;
                 case R.id.administrator_rb:
                     isAdmin = true;
+                    nameET.setText(getString(R.string.admin_account));
                     mSecondPasswordView.setVisibility(View.VISIBLE);
                     break;
                 default:

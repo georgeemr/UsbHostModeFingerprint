@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.bean.Account;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.AccountDao;
@@ -104,12 +105,12 @@ public class App extends Application {
             AccountDao accountDao = new AccountDao(this);
             Account collectionUser = new Account();
             //采集指纹的账号
-            collectionUser.setName("userc");
+            collectionUser.setName(getString(R.string.userc_account));
             collectionUser.setPassword("123");
             accountDao.add(collectionUser);
             //验证指纹的账号
             Account verifyUser = new Account();
-            verifyUser.setName("userv");
+            verifyUser.setName(getString(R.string.userv_account));
             verifyUser.setPassword("123");
             accountDao.add(verifyUser);
         }
