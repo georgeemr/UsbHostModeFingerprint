@@ -20,6 +20,7 @@ import com.xiongdi.recognition.adapter.SearchResultAdapter;
 import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
+import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.widget.searchView.SearchAdapter;
 import com.xiongdi.recognition.widget.searchView.SearchHistoryTable;
 import com.xiongdi.recognition.widget.searchView.SearchItem;
@@ -128,9 +129,14 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 App app = (App) getApplication();
-                app.setPerson(mPersonList.get(position - 1));
-                setResult(Activity.RESULT_OK);
-                finish();
+                Person person = mPersonList.get(position - 1);
+                if (person.getChecked() == 0) {
+                    app.setPerson(person);
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                } else {
+                    ToastUtil.getInstance().showToast(SearchActivity.this, "has checked!");
+                }
             }
         });
     }
