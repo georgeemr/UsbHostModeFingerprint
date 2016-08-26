@@ -97,13 +97,13 @@
     <string name="count_proportion_type">投票比例</string>
     <string name="voted_person">已投票</string>
     <string name="not_voted_person">未投票</string>
-    <string name="voted_number">已投票人数: %1$d</string>
-    <string name="not_vote_number">未投票人数: %1$d</string>
+    <string name="voted_number">已投票人数：%1$d</string>
+    <string name="not_vote_number">未投票人数：%1$d</string>
     <string name="count_gender_type">男女比例</string>
     <string name="men_person">男</string>
     <string name="women_person">女</string>
-    <string name="man_quantity">男选民人数: %1$d</string>
-    <string name="women_quantity">女选民人数: %1$d</string>
+    <string name="man_quantity">男选民人数：%1$d</string>
+    <string name="women_quantity">女选民人数：%1$d</string>
 
     <!--打印结果-->
     <string name="vote_result">选举结果</string>

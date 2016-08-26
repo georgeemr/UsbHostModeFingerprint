@@ -121,8 +121,8 @@ public class CountActivity extends AppCompatActivity {
                         genderPro.add(((mMenCount / (float) mTotalCount) * 100));
                         genderPro.add(((mWomenCount / (float) mTotalCount) * 100));
                         List<String> genderSource = new ArrayList<>();
-                        genderSource.add(getString(R.string.voted_person));
-                        genderSource.add(getString(R.string.not_voted_person));
+                        genderSource.add(getString(R.string.men_person));
+                        genderSource.add(getString(R.string.women_person));
                         PieData genderData = setPieChartData(genderPro, genderSource);
                         mGenderChart.setData(genderData);
                         mGenderTotalTV.setText(String.format(getString(R.string.total_voter_quantity), mTotalCount));
