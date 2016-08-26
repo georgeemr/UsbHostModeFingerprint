@@ -2,73 +2,73 @@
     <string name="app_name">Verification</string>
 
     <!-- 通用字符串-->
-    <string name="common_sure">sure</string>
-    <string name="common_cancel">cancel</string>
-    <string name="common_save">save</string>
-    <string name="common_again">again</string>
-    <string name="common_tips">tips</string>
-    <string name="common_no_data">no data</string>
+    <string name="common_sure">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_save">保存</string>
+    <string name="common_again">刷新</string>
+    <string name="common_tips">提示</string>
+    <string name="common_no_data">无数据</string>
     <string name="web_url">http://www.xiongdi.cn/</string>
-    <string name="common_date">2016-03-22</string>
-    <string name="common_navigation_drawer_open">Open navigation drawer</string>
-    <string name="common_navigation_drawer_close">Close navigation drawer</string>
+    <string name="common_date">2016\-03\-22</string>
+    <string name="common_navigation_drawer_open">打开抽屉</string>
+    <string name="common_navigation_drawer_close">关闭抽屉</string>
     <string name="common_exit_app">再按一次退出程序</string>
     <string name="simple_chinese">简体中文</string>
     <string name="english_United_States">English</string>
 
     <!--登录界面-->
-    <string name="login">Login</string>
-    <string name="login_failed_tips">username or password incorrect</string>
+    <string name="login">登录</string>
+    <string name="login_failed_tips">用户名或密码不正确</string>
     <string name="login_default_user">userc</string>
     <string name="login_default_password">123</string>
-    <string name="general_user">general user</string>
-    <string name="administrator">administrator</string>
+    <string name="general_user">普通用户</string>
+    <string name="administrator">管理员</string>
 
     <!-- 填写登记信息界面-->
-    <string name="write_info_title">Information</string>
+    <string name="write_info_title">填写信息</string>
     <string name="info_title_ID">ID</string>
-    <string name="info_item_title_name">NAME</string>
-    <string name="info_item_title_gender">GENDER</string>
-    <string name="info_item_age">AGE</string>
-    <string name="info_item_title_birthday">BIRTHDAY</string>
-    <string name="info_item_title_address">ADDRESS</string>
-    <string name="info_item_title_ID_NO">ID_NO</string>
+    <string name="info_item_title_name">姓名</string>
+    <string name="info_item_title_gender">性别</string>
+    <string name="info_item_age">年龄</string>
+    <string name="info_item_title_birthday">出生日期</string>
+    <string name="info_item_title_address">住址</string>
+    <string name="info_item_title_ID_NO">编号</string>
     <string name="info_item_ID_constant">00000</string>
-    <string name="info_item_gender_constant">male</string>
+    <string name="info_item_gender_constant">男</string>
 
-    <string name="bottom_back">back</string>
-    <string name="bottom_take_picture">take picture</string>
-    <string name="bottom_save">save</string>
-    <string name="bottom_gather">gather</string>
-    <string name="tab_indicator_title_finger">Fingerprint</string>
-    <string name="tab_indicator_title_Left">Left Hand</string>
-    <string name="tab_indicator_title_right">Right Hand</string>
-    <string name="tab_indicator_title_picture">Picture</string>
+    <string name="bottom_back">返回</string>
+    <string name="bottom_take_picture">拍照</string>
+    <string name="bottom_save">保存</string>
+    <string name="bottom_gather">采集</string>
+    <string name="tab_indicator_title_finger">指纹</string>
+    <string name="tab_indicator_title_Left">左手</string>
+    <string name="tab_indicator_title_right">右手</string>
+    <string name="tab_indicator_title_picture">照片</string>
 
-    <string name="information_incomplete">Incomplete information</string>
+    <string name="information_incomplete">信息不完整</string>
 
-    <string name="save_success">save successfully</string>
-    <string name="file_no_exit">file does not exist</string>
-    <string name="save_failed">save failed</string>
-    <string name="no_fingerprint">please input the fingerprint</string>
-    <string name="verify">verify</string>
+    <string name="save_success">保存成功</string>
+    <string name="file_no_exit">文件不存在</string>
+    <string name="save_failed">保存失败</string>
+    <string name="no_fingerprint">请录入指纹</string>
+    <string name="verify">核验</string>
 
-    <string name="camera_open_failed">camera open failed!</string>
+    <string name="camera_open_failed">相加打开失败</string>
 
     <!-- 关于卡的字符串-->
-    <string name="read_card">read card</string>
-    <string name="save_to_card_message">save this information to card?</string>
-    <string name="saving_to_card">saving…</string>
-    <string name="reading_from_card">reading…</string>
-    <string name="save_failed_message">save failed, try again?</string>
-    <string name="read_failed_message">read failed</string>
+    <string name="read_card">写卡</string>
+    <string name="save_to_card_message">将信息保存到卡片?</string>
+    <string name="saving_to_card">保存中。。。</string>
+    <string name="reading_from_card">读卡中。。。</string>
+    <string name="save_failed_message">保存失败，是否重试？</string>
+    <string name="read_failed_message">读卡失败</string>
 
     <!--裁剪图片界面-->
-    <string name="crop_cancel" tools:ignore="ButtonCase">CANCEL</string>
-    <string name="crop_done">DONE</string>
-    <string name="crop_pick_error">No image sources available</string>
-    <string name="crop_saving">Saving picture…</string>
-    <string name="crop_wait">Please wait…</string>
+    <string name="crop_cancel" tools:ignore="ButtonCase">取消</string>
+    <string name="crop_done">完成</string>
+    <string name="crop_pick_error">无可用图片</string>
+    <string name="crop_saving">保存图片中</string>
+    <string name="crop_wait">请耐心等待。。。</string>
 
     <!--验证指纹界面-->
     <string name="verify_detail">详细信息</string>
@@ -79,16 +79,16 @@
     <string name="nav_download_data">下载数据</string>
     <string name="common_print">打印结果</string>
     <string name="common_search">搜索</string>
-    <string name="no_fingerprint_template">no fingerprint comparison</string>
+    <string name="no_fingerprint_template">无对比指纹</string>
 
     <!--搜索界面-->
     <string name="search_voice_text">Set permission on Android 6+ !</string>
     <string name="search_no_data">无数据</string>
 
     <!--扫描护照-->
-    <string name="device_data">port content</string>
+    <string name="device_data">护照信息</string>
     <color name="text_colour">#004680</color>
-    <string name="device_instruction_connect">Connect a device to continue</string>
+    <string name="device_instruction_connect">连接到设备</string>
     <string name="sample_instruction">Sample Access Interfacing Solutions App</string>
 
     <!--管理员界面-->
