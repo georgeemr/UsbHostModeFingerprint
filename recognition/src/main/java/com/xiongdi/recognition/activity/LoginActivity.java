@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -27,11 +31,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoginActivity extends AppCompatActivity implements OnClickListener {
+public class LoginActivity extends AppCompatActivity implements OnClickListener, RadioGroup.OnCheckedChangeListener {
+    private final String TAG = "moubiao";
+
     private RadioGroup mChooseTypeRG;
     private Button loginBT;
+    private TextView mSettingBT;
     private EditText nameET, passwordET;
     private View mSecondPasswordView;
+    private PopupWindow mPopupWindow;
 
     //连续按两次返回键后退出应用
     private boolean isExit = false;
@@ -77,33 +85,32 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     private void initView() {
         mChooseTypeRG = (RadioGroup) findViewById(R.id.choose_type_rg);
         nameET = (EditText) findViewById(R.id.editText_name);
-        nameET.setSelection(nameET.getText().length());
+        if (nameET != null) {
+            nameET.setSelection(nameET.getText().length());
+        }
         passwordET = (EditText) findViewById(R.id.first_psw_editText);
-        passwordET.setSelection(passwordET.getText().length());
+        if (passwordET != null) {
+            passwordET.setSelection(passwordET.getText().length());
+        }
         nameET.requestFocus();
         loginBT = (Button) findViewById(R.id.login_bt);
+        mSettingBT = (TextView) findViewById(R.id.app_setting_bt);
         mSecondPasswordView = findViewById(R.id.second_password);
+
+        mPopupWindow = new PopupWindow(this);
+        RadioGroup view = (RadioGroup) LayoutInflater.from(this).inflate(R.layout.language_options, null);
+        view.setOnCheckedChangeListener(this);
+        mPopupWindow.setContentView(view);
+        mPopupWindow.setWidth(RadioGroup.LayoutParams.WRAP_CONTENT);
+        mPopupWindow.setHeight(RadioGroup.LayoutParams.WRAP_CONTENT);
+        mPopupWindow.setFocusable(true);
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
     }
 
     private void setListener() {
-        mChooseTypeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.general_rb:
-                        isAdmin = false;
-                        mSecondPasswordView.setVisibility(View.GONE);
-                        break;
-                    case R.id.administrator_rb:
-                        isAdmin = true;
-                        mSecondPasswordView.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        mChooseTypeRG.setOnCheckedChangeListener(this);
         loginBT.setOnClickListener(this);
+        mSettingBT.setOnClickListener(this);
     }
 
     @Override
@@ -132,7 +139,10 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                     toast.setGravity(Gravity.BOTTOM, 0, 0);
                     toast.show();
                 }
-
+                break;
+            case R.id.app_setting_bt:
+                setLanguage();
+                break;
             default:
                 break;
         }
@@ -153,7 +163,6 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 nameET.setText(userName);
             }
         }
-
     }
 
     /**
@@ -188,5 +197,43 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         }
 
         return false;
+    }
+
+    private void setLanguage() {
+        if (mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        } else {
+            mPopupWindow.showAsDropDown(mSettingBT, 100, 20);
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        if (group.getId() == R.id.choose_type_rg) {
+            switch (checkedId) {
+                case R.id.general_rb:
+                    isAdmin = false;
+                    mSecondPasswordView.setVisibility(View.GONE);
+                    break;
+                case R.id.administrator_rb:
+                    isAdmin = true;
+                    mSecondPasswordView.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    break;
+            }
+        } else if (group.getId() == R.id.language_rg) {
+            switch (checkedId) {
+                case R.id.chinese_rb:
+
+                    break;
+                case R.id.english_rb:
+
+                    break;
+                default:
+                    break;
+            }
+            mPopupWindow.dismiss();
+        }
     }
 }

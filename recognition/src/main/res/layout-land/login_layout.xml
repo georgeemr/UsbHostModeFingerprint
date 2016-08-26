@@ -108,14 +108,30 @@
         android:textColor="@android:color/white"
         android:textSize="@dimen/login_font_size"/>
 
-    <TextView
-        style="@style/CommonTextStyle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/web_url_margin_bottom_land"
         android:gravity="center"
-        android:text="@string/web_url"
-        android:textColor="@color/web_url_color"/>
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/CommonTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="63dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/web_url"
+            android:textColor="@color/web_url_color"/>
+
+        <TextView
+            android:id="@+id/app_setting_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/setting_ic"/>
+    </LinearLayout>
 
 </RelativeLayout>

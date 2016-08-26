@@ -52,7 +52,7 @@
     <dimen name="user_padding_top_bottom">6.5dp</dimen>
     <dimen name="user_padding_left">7dp</dimen>
     <dimen name="web_url_margin_bottom">20dp</dimen>
-    <dimen name="web_url_margin_bottom_land">10dp</dimen>
+    <dimen name="web_url_margin_bottom_land">5dp</dimen>
 
     <!--填写基本信息界面-->
     <dimen name="fill_information_row_margin_top">15dp</dimen>
