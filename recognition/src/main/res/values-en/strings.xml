@@ -90,7 +90,7 @@
     <string name="sample_instruction">Sample Access Interfacing Solutions App</string>
 
     <!--管理员界面-->
-    <string name="count_result">statistical results</string>
+    <string name="count_result">Statistical Results</string>
     <string name="input_station_id">Please enter the site ID</string>
 
     <!--统计结果界面-->
