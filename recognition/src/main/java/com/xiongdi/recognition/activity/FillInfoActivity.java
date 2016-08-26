@@ -222,6 +222,7 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                 saveData2Card();
                 break;
             case DIALOG_CANCEL:
+                new FileUtil().deleteFile(compressPicUrl);
                 break;
             case MALE:
                 selectedID = 0;

@@ -32,6 +32,7 @@ import com.xiongdi.recognition.application.App;
 import com.xiongdi.recognition.fragment.GatherFingerDialogFragment;
 import com.xiongdi.recognition.fragment.LeftHandFragment;
 import com.xiongdi.recognition.fragment.PictureFragment;
+import com.xiongdi.recognition.util.AESUtil;
 import com.xiongdi.recognition.util.BmpUtil;
 import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.MD5Util;
@@ -45,6 +46,14 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by moubiao on 2016/3/22.
  * 采集指纹和头像的activity
@@ -55,6 +64,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
     private static final int MESSAGE_SHOW_ERROR_MSG = 3;
     private static final String kAnsiTemplatePostfix = "(ANSI)";
     private static final String kIsoTemplatePostfix = "(ISO)";
+    private final String KEY = "0123456789abcdef";
 
     public final static int PICTURE_ACTIVITY = 0;//采集照片
     public final static int FINGERPRINT_ACTIVITY = 1;//采集指纹
@@ -168,16 +178,43 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.bottom_right_bt:
                 if (haveInformation) {
-                    Intent data = new Intent();
-                    if (pictureUrl != null) {
-                        data.putExtra("pictureUrl", pictureUrl);
-                        data.putExtra("compressPicUrl", compressPicUrl);
-                    }
-                    if (App.FINGERPRINT_PATH != null) {
-                        data.putExtra("fingerPrintUrl", App.FINGERPRINT_PATH);
-                    }
-                    setResult(Activity.RESULT_OK, data);
-                    finish();
+                    Observable.create(new Observable.OnSubscribe<Object>() {
+                        @Override
+                        public void call(Subscriber<? super Object> subscriber) {
+                            String encryptPath = pictureUrl + ".png";
+                            encryptFile(pictureUrl, encryptPath);
+                            new FileUtil().deleteFile(pictureUrl);
+                            pictureUrl = encryptPath;
+                            subscriber.onCompleted();
+                        }
+                    })
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Object>() {
+                                @Override
+                                public void onCompleted() {
+                                    Intent data = new Intent();
+                                    if (pictureUrl != null) {
+                                        data.putExtra("pictureUrl", pictureUrl);
+                                        data.putExtra("compressPicUrl", compressPicUrl);
+                                    }
+                                    if (App.FINGERPRINT_PATH != null) {
+                                        data.putExtra("fingerPrintUrl", App.FINGERPRINT_PATH);
+                                    }
+                                    setResult(Activity.RESULT_OK, data);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onNext(Object o) {
+
+                                }
+                            });
                 } else {
                     Toast.makeText(GatherActivity.this, getString(R.string.no_fingerprint), Toast.LENGTH_SHORT).show();
                 }
@@ -186,6 +223,20 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
+    }
+
+    /**
+     * 加密照片
+     */
+    private void encryptFile(String filePath, String encryptPath) {
+        AESUtil aesUtil1 = new AESUtil.Builder()
+                .key(KEY)
+                .keySize(256)
+                .mode(Cipher.ENCRYPT_MODE)
+                .transformation("AES/CFB/PKCS5Padding")
+                .ivParameter(new IvParameterSpec(new byte[16]))
+                .builder();
+        aesUtil1.encryptFile(filePath, encryptPath);
     }
 
     private void startGatherPictureActivity() {

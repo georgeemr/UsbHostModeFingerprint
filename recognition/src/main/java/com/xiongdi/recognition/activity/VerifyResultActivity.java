@@ -36,6 +36,8 @@ import com.xiongdi.recognition.bean.Person;
 import com.xiongdi.recognition.db.PersonDao;
 import com.xiongdi.recognition.fragment.ProgressDialogFragment;
 import com.xiongdi.recognition.helper.OperateCardHelper;
+import com.xiongdi.recognition.util.AESUtil;
+import com.xiongdi.recognition.util.FileUtil;
 import com.xiongdi.recognition.util.StringUtil;
 import com.xiongdi.recognition.util.ToastUtil;
 import com.xiongdi.recognition.util.UsbManagerUtil;
@@ -47,12 +49,21 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by moubiao on 2016/3/25.
  * 验证身份信息界面
  */
 public class VerifyResultActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private final String TAG = "moubiao";
+    private final String KEY = "0123456789abcdef";
     private final int SCAN_BARCODE_REQUEST_CODE = 10000;
     private final int SEARCH_REQUEST_CODE = 10001;
     private static final int READ_CARD_FLAG = 0;
@@ -557,18 +568,59 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private void setResultDetail(Person person) {
+    private void setResultDetail(final Person person) {
         if (person != null) {
-            personIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", person.getID()));
-            personNameTV.setText(person.getName());
-            personGenderTV.setText(person.getGender());
-            personBirthdayTV.setText(person.getBirthday());
-            personAddressTV.setText(person.getAddress());
-            Bitmap bitmap = BitmapFactory.decodeFile(person.getPicture());
-            if (bitmap != null) {
-                pictureIMG.setImageBitmap(bitmap);
-            }
+            final String picPath = person.getPicture();
+            final String decryptPath = picPath + ".png";
+            Observable.create(new Observable.OnSubscribe<Object>() {
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+                    decryptFile(picPath, decryptPath);
+                    subscriber.onCompleted();
+                }
+            })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Object>() {
+                        @Override
+                        public void onCompleted() {
+                            personIDTV.setText(String.format(Locale.getDefault(), "%1$,05d", person.getID()));
+                            personNameTV.setText(person.getName());
+                            personGenderTV.setText(person.getGender());
+                            personBirthdayTV.setText(person.getBirthday());
+                            personAddressTV.setText(person.getAddress());
+                            Bitmap bitmap = BitmapFactory.decodeFile(decryptPath);
+                            if (bitmap != null) {
+                                pictureIMG.setImageBitmap(bitmap);
+                            }
+                            new FileUtil().deleteFile(decryptPath);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+
+                        }
+                    });
         }
+    }
+
+    /**
+     * 解密照片
+     */
+    private void decryptFile(String filePath, String decryptPath) {
+        AESUtil aesUtil2 = new AESUtil.Builder()
+                .key(KEY)
+                .keySize(256)
+                .mode(Cipher.DECRYPT_MODE)
+                .transformation("AES/CFB/PKCS5Padding")
+                .ivParameter(new IvParameterSpec(new byte[16]))
+                .builder();
+        aesUtil2.decryptFile(filePath, decryptPath);
     }
 
     private void refreshView() {

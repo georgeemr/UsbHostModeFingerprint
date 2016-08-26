@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.application.App;
+import com.xiongdi.recognition.util.MD5Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -219,9 +220,8 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
 
     private void savePicture(byte[] data) {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            String pictureName = gatherID + ".png";
-//            String savePath = getExternalFilesDir(null) + "/" + gatherID + "/";
-            String savePath = App.EXTERNAL_SD_PATH + File.separator + gatherID;
+            String pictureName = MD5Util.hashKeyForDisk(gatherID);
+            String savePath = App.EXTERNAL_SD_PATH + File.separator + "picture";
             pictureUrl = savePath + File.separator + pictureName;
             File saveFolder = new File(savePath);
             if (!saveFolder.exists()) {
@@ -241,7 +241,6 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
             }
         }
     }
-
 
     /**
      * 用来监测左横屏和右横屏切换时旋转摄像头的角度
