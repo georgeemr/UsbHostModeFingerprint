@@ -382,7 +382,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         private WeakReference<VerifyResultActivity> mWeakReference;
         private int audioType;
         private AudioPlay mAudioPlay;
-        AssetManager mAssetManager;
+        private AssetManager mAssetManager;
 
 
         public VerifyHandler(VerifyResultActivity activity) {

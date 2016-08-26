@@ -13,6 +13,7 @@ public class AudioPlay {
     private static final String TAG = "moubiao";
     public static final int VERIFY_PASSED = 0;
     public static final int VERIFY_FAILED = 1;
+    public static final int PUT_FINGER = 2;
 
     private static ToneGenerator mToneGenerator;
     private static MediaPlayer sMediaPlayer;
@@ -72,8 +73,11 @@ public class AudioPlay {
                 case VERIFY_FAILED:
                     assetFile = am.openFd("verification_fail.wav");
                     break;
+                case PUT_FINGER:
+                    assetFile = am.openFd("put_finger.wav");
+                    break;
                 default:
-                    assetFile = am.openFd("verification_fail.wav");
+                    assetFile = am.openFd("put_finger.wav");
                     break;
             }
 

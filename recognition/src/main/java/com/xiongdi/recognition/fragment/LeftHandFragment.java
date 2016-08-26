@@ -1,5 +1,6 @@
 package com.xiongdi.recognition.fragment;
 
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.widget.Button;
 
 import com.xiongdi.recognition.R;
 import com.xiongdi.recognition.activity.GatherActivity;
+import com.xiongdi.recognition.audio.AudioPlay;
 
 /**
  * Created by moubiao on 2016/3/22.
@@ -31,10 +33,15 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
             rightLittleBT, rightRingBT, rightMiddleBT, rightIndexBT, rightThumbBT;
     private GatherActivity gatherActivity;
 
+    private AudioPlay mAudioPlay;
+    private AssetManager mAssetManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gatherActivity = (GatherActivity) getActivity();
+        mAudioPlay = new AudioPlay();
+        mAssetManager = gatherActivity.getAssets();
     }
 
     @Nullable
@@ -110,6 +117,9 @@ public class LeftHandFragment extends Fragment implements View.OnClickListener {
             default:
                 break;
         }
+
+        mAudioPlay.resetMediaPlayer();
+        mAudioPlay.playAsset(AudioPlay.PUT_FINGER, mAssetManager);
         gatherActivity.showGatherFingerDialog();
         gatherActivity.gatherFingerprint();
     }
