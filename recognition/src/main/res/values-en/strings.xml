@@ -1,0 +1,113 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Verification</string>
+
+    <!-- 通用字符串-->
+    <string name="common_sure">sure</string>
+    <string name="common_cancel">cancel</string>
+    <string name="common_save">save</string>
+    <string name="common_again">again</string>
+    <string name="common_tips">tips</string>
+    <string name="common_no_data">no data</string>
+    <string name="web_url">http://www.xiongdi.cn/</string>
+    <string name="common_date">2016\-03\-22</string>
+    <string name="common_navigation_drawer_open">Open navigation drawer</string>
+    <string name="common_navigation_drawer_close">Close navigation drawer</string>
+    <string name="common_exit_app">Press again to exit the program</string>
+
+    <!--登录界面-->
+    <string name="login">Login</string>
+    <string name="login_failed_tips">username or password incorrect</string>
+    <string name="login_default_user">userc</string>
+    <string name="login_default_password">123</string>
+    <string name="general_user">general user</string>
+    <string name="administrator">administrator</string>
+
+    <!-- 填写登记信息界面-->
+    <string name="write_info_title">Information</string>
+    <string name="info_title_ID">ID</string>
+    <string name="info_item_title_name">NAME</string>
+    <string name="info_item_title_gender">GENDER</string>
+    <string name="info_item_age">AGE</string>
+    <string name="info_item_title_birthday">BIRTHDAY</string>
+    <string name="info_item_title_address">ADDRESS</string>
+    <string name="info_item_title_ID_NO">ID_NO</string>
+    <string name="info_item_ID_constant">00000</string>
+    <string name="info_item_gender_constant">male</string>
+
+    <string name="bottom_back">back</string>
+    <string name="bottom_take_picture">take picture</string>
+    <string name="bottom_save">save</string>
+    <string name="bottom_gather">gather</string>
+    <string name="tab_indicator_title_finger">Fingerprint</string>
+    <string name="tab_indicator_title_Left">Left Hand</string>
+    <string name="tab_indicator_title_right">Right Hand</string>
+    <string name="tab_indicator_title_picture">Picture</string>
+
+    <string name="information_incomplete">Incomplete information</string>
+
+    <string name="save_success">save successfully</string>
+    <string name="file_no_exit">file does not exist</string>
+    <string name="save_failed">save failed</string>
+    <string name="no_fingerprint">please input the fingerprint</string>
+    <string name="verify">verify</string>
+
+    <string name="camera_open_failed">camera open failed!</string>
+
+    <!-- 关于卡的字符串-->
+    <string name="read_card">read card</string>
+    <string name="save_to_card_message">save this information to card?</string>
+    <string name="saving_to_card">saving…</string>
+    <string name="reading_from_card">reading…</string>
+    <string name="save_failed_message">save failed, try again?</string>
+    <string name="read_failed_message">read failed</string>
+
+    <!--裁剪图片界面-->
+    <string name="crop_cancel" tools:ignore="ButtonCase">CANCEL</string>
+    <string name="crop_done">DONE</string>
+    <string name="crop_pick_error">No image sources available</string>
+    <string name="crop_saving">Saving picture…</string>
+    <string name="crop_wait">Please wait…</string>
+
+    <!--验证指纹界面-->
+    <string name="verify_detail">Voter Details</string>
+    <string name="nav_communicate">Other</string>
+    <string name="nav_scan_barcode">Scan a barcode</string>
+    <string name="nav_search_ID">Search CNIC</string>
+    <string name="nav_upload_data">Upload Data</string>
+    <string name="nav_download_data">Download Data</string>
+    <string name="common_print">Print Results</string>
+    <string name="common_search">search</string>
+    <string name="no_fingerprint_template">no fingerprint comparison</string>
+
+    <!--搜索界面-->
+    <string name="search_voice_text">Set permission on Android 6+ !</string>
+    <string name="search_no_data">No data</string>
+
+    <!--扫描护照-->
+    <string name="device_data">port content</string>
+    <color name="text_colour">#004680</color>
+    <string name="device_instruction_connect">Connect a device to continue</string>
+    <string name="sample_instruction">Sample Access Interfacing Solutions App</string>
+
+    <!--管理员界面-->
+    <string name="count_result">statistical results</string>
+    <string name="input_station_id">Please enter the site ID</string>
+
+    <!--统计结果界面-->
+    <string name="count_proportion_type">Votes ratio</string>
+    <string name="voted_person">Voted</string>
+    <string name="not_voted_person">Not Vote</string>
+    <string name="voted_number">Voted number：%1$d</string>
+    <string name="not_vote_number">Not turnout：%1$d</string>
+    <string name="count_gender_type">Sex ratio</string>
+    <string name="men_person">Male</string>
+    <string name="women_person">Female</string>
+    <string name="man_quantity">The number of male voters：%1$d</string>
+    <string name="women_quantity">The number of women voters：%1$d</string>
+
+    <!--打印结果-->
+    <string name="vote_result">Election results</string>
+    <string name="total_voter_quantity">The total number of voters：%1$d</string>
+    <string name="has_voted_quantity">Voted number：%1$d</string>
+    <string name="not_voted_quantity">Not turnout：%1$d</string>
+</resources>
