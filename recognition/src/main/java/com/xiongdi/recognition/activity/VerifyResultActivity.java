@@ -201,13 +201,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void showProgressBar(boolean show) {
-        if (show) {
-            fingerIMG.setVisibility(View.GONE);
-            mProgressBarView.setVisibility(View.VISIBLE);
-        } else {
-            fingerIMG.setVisibility(View.VISIBLE);
-            mProgressBarView.setVisibility(View.GONE);
-        }
+        mProgressBarView.setVisibility(show ? View.VISIBLE : View.GONE);
+        fingerIMG.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     /**
@@ -437,6 +432,10 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        if (mVerifyThread != null) {
+            showProgressBar(false);
+            mVerifyThread.cancel();
+        }
         Intent intent = new Intent();
         switch (item.getItemId()) {
             case R.id.nav_scan_barcode:
@@ -465,6 +464,10 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (mVerifyThread != null) {
+            showProgressBar(false);
+            mVerifyThread.cancel();
+        }
         Intent intent = new Intent();
         switch (item.getItemId()) {
             case R.id.menu_search:
