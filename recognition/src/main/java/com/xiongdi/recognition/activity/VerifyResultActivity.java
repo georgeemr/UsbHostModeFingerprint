@@ -612,6 +612,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
 
     private void setResultDetail(final Person person) {
         if (person != null) {
+            App.FINGERPRINT_PATH = person.getFingerprint();
             final String picPath = person.getPicture();
             final String decryptPath = picPath + ".png";
             Observable.create(new Observable.OnSubscribe<Object>() {
