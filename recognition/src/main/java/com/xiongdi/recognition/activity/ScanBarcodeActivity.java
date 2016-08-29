@@ -73,11 +73,10 @@ public class ScanBarcodeActivity extends AppCompatActivity implements QRCodeView
 
     @Override
     public void onScanQRCodeSuccess(String result) {
-        ToastUtil.getInstance().showToast(this, result);
         vibrate();
         Intent data = new Intent();
-        data.putExtra("barcode", result);
-        setResult(Activity.RESULT_OK);
+        data.putExtra("scan_id", result);
+        setResult(Activity.RESULT_OK, data);
         finish();
     }
 

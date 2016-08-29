@@ -55,6 +55,8 @@ import javax.crypto.spec.IvParameterSpec;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -546,12 +548,21 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case SCAN_BARCODE_REQUEST_CODE:
+                    if (data != null) {
+                        try {
+                            int id = Integer.parseInt(data.getStringExtra("scan_id"));
+                            showBarcodeData(id);
+                        } catch (java.lang.NumberFormatException e) {
+                            ToastUtil.getInstance().showToast(this, getString(R.string.common_invalid_data));
+                            e.printStackTrace();
+                        }
+                    }
                     break;
                 case SEARCH_REQUEST_CODE:
                     App app = (App) getApplication();
@@ -569,6 +580,34 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                     break;
             }
         }
+    }
+
+    /**
+     * 显示扫描二维码得到的数据
+     */
+    private void showBarcodeData(int id) {
+        Observable.just(id)
+                .map(new Func1<Integer, Person>() {
+                    @Override
+                    public Person call(Integer ID) {
+                        PersonDao personDao = new PersonDao(getApplicationContext());
+                        return personDao.queryById(ID);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Person>() {
+                    @Override
+                    public void call(Person person) {
+                        if (person == null) {
+                            ToastUtil.getInstance().showToast(VerifyResultActivity.this, getString(R.string.common_no_data));
+                        } else if (person.getChecked() == 0) {
+                            setResultDetail(person);
+                        } else {
+                            ToastUtil.getInstance().showToast(VerifyResultActivity.this, "has checked!");
+                        }
+                    }
+                });
     }
 
     private void setResultDetail(final Person person) {
