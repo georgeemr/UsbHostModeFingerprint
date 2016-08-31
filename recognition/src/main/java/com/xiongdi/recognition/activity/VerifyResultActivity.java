@@ -194,7 +194,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 finish();
                 break;
             case R.id.bottom_right_bt:
-                if (mUsbManagerUtil.OpenDevice(0, true)) {
+                if (mUsbManagerUtil.OpenDevice(0, true) && (mVerifyThread == null || mVerifyThread.isCanceled())) {
                     verifyFingerprint();
                 }
                 break;
