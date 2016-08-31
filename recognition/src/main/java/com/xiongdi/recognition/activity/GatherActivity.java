@@ -181,10 +181,12 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                     Observable.create(new Observable.OnSubscribe<Object>() {
                         @Override
                         public void call(Subscriber<? super Object> subscriber) {
-                            String encryptPath = pictureUrl + ".png";
-                            encryptFile(pictureUrl, encryptPath);
-                            new FileUtil().deleteFile(pictureUrl);
-                            pictureUrl = encryptPath;
+                            if (pictureUrl != null) {
+                                String encryptPath = pictureUrl + ".png";
+                                encryptFile(pictureUrl, encryptPath);
+                                new FileUtil().deleteFile(pictureUrl);
+                                pictureUrl = encryptPath;
+                            }
                             subscriber.onCompleted();
                         }
                     })
