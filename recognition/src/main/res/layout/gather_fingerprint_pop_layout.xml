@@ -55,7 +55,8 @@
             style="@style/GatherFingerButtonStyle"
             android:layout_marginLeft="7.5dp"
             android:layout_marginStart="7.5dp"
-            android:text="@string/common_again"/>
+            android:text="@string/common_again"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </LinearLayout>

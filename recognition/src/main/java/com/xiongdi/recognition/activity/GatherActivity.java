@@ -467,7 +467,7 @@ public class GatherActivity extends AppCompatActivity implements View.OnClickLis
                                 Log.e(TAG, "run: ansi convert to iso failed " + ansi_lib.GetErrorMessage());
                             }
                         }
-                        break;
+//                        break;
                     } else {//采集指纹失败
                         int lastError = ansi_lib.GetErrorCode();
                         if (lastError == AnsiSDKLib.FTR_ERROR_EMPTY_FRAME
