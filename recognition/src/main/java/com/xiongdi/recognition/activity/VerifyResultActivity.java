@@ -618,7 +618,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
             Observable.create(new Observable.OnSubscribe<Object>() {
                 @Override
                 public void call(Subscriber<? super Object> subscriber) {
-                    decryptFile(picPath, decryptPath);
+                    if (picPath != null) {
+                        decryptFile(picPath, decryptPath);
+                    }
                     subscriber.onCompleted();
                 }
             })
