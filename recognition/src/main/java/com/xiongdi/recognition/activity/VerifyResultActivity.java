@@ -92,6 +92,10 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private boolean verifyPass = false;
     private Bitmap mFingerBitmap;
 
+    //语音提示
+    private AudioPlay mAudioPlay;
+    private AssetManager mAssetManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +127,9 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
         progressDialog = new ProgressDialogFragment();
         mHandler = new VerifyHandler(this);
         usb_host_ctx = new UsbDeviceDataExchangeImpl(this, mHandler);
+
+        mAudioPlay = new AudioPlay();
+        mAssetManager = getAssets();
     }
 
     private void initView() {
@@ -249,6 +256,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                 }
             }
 
+            mAudioPlay.resetMediaPlayer();
+            mAudioPlay.playAsset(AudioPlay.PUT_FINGER, mAssetManager);
             showProgressBar(true);
             mVerifyThread = new VerifyThread(0, fingerprintContent, MATCH_SCORE);
             mVerifyThread.start();
