@@ -96,6 +96,8 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private AudioPlay mAudioPlay;
     private AssetManager mAssetManager;
 
+    private Person mCurPerson;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -414,8 +416,13 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         mAudioPlay.playAsset(audioType, mAssetManager);
                         activity.showProgressBar(false);
                         PersonDao personDao = new PersonDao(activity);
-                        Long recordCount = personDao.getQuantity();
-                        Person person = personDao.queryById(Integer.parseInt(String.valueOf(recordCount)));
+                        Person person;
+                        if (activity.mCurPerson != null) {
+                            person = activity.mCurPerson;
+                        } else {
+                            Long recordCount = personDao.getQuantity();
+                            person = personDao.queryById(Integer.parseInt(String.valueOf(recordCount)));
+                        }
                         personDao.updateColumn("UPDATE person SET mChecked = 1 WHERE ID = " + person.getID());
                         activity.setResultDetail(person);
                     } else {
@@ -528,6 +535,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
                         String[] cardData = activity.mOperateCardHelper.getBaseData();
                         PersonDao personDao = new PersonDao(activity);
                         Person person = personDao.queryById(Integer.parseInt(cardData[0]));
+                        activity.mCurPerson = person;
                         if (person.getChecked() == 1) {
                             ToastUtil.getInstance().showToast(activity, "has checked!");
                             activity.refreshView();
@@ -622,6 +630,7 @@ public class VerifyResultActivity extends AppCompatActivity implements View.OnCl
     private void setResultDetail(final Person person) {
         if (person != null) {
             App.FINGERPRINT_PATH = person.getFingerprint();
+            mCurPerson = person;
             final String picPath = person.getPicture();
             final String decryptPath = picPath + ".png";
             Observable.create(new Observable.OnSubscribe<Object>() {
