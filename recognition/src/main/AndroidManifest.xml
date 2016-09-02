@@ -22,9 +22,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+        <!--启动界面-->
         <activity
             android:name=".activity.StartActivity"
-            android:screenOrientation="sensorLandscape">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -35,17 +36,17 @@
         <!-- 登录界面 -->
         <activity
             android:name=".activity.LoginActivity"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="landscape"/>
 
         <!-- 填写录入信息界面-->
         <activity
             android:name=".activity.FillInfoActivity"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="landscape"/>
 
         <!-- 选择采集指纹还是照片的界面-->
         <activity
             android:name=".activity.GatherActivity"
-            android:screenOrientation="sensorLandscape">
+            android:screenOrientation="landscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
@@ -56,17 +57,17 @@
         <!-- 采集照片的界面-->
         <activity
             android:name=".activity.GatherPictureActivity"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="landscape"/>
 
         <!-- 裁剪照片的界面-->
         <activity
             android:name=".widget.crop.CropImageActivity"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="landscape"/>
 
         <!-- 验证结果界面-->
         <activity
             android:name=".activity.VerifyResultActivity"
-            android:screenOrientation="sensorLandscape"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
@@ -78,7 +79,7 @@
         <!--扫描二维码界面-->
         <activity
             android:name=".activity.ScanBarcodeActivity"
-            android:screenOrientation="sensor">
+            android:screenOrientation="landscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
@@ -89,7 +90,7 @@
         <!--搜索界面-->
         <activity
             android:name=".activity.SearchActivity"
-            android:screenOrientation="sensor">
+            android:screenOrientation="landscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
 
@@ -102,7 +103,8 @@
             android:name=".activity.AccessOCRSampleCodeActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN"/>-->
             <!--<category android:name="android.intent.category.LAUNCHER"/>-->
@@ -120,12 +122,12 @@
         <!--管理员界面-->
         <activity
             android:name=".activity.AdminActivity"
-            android:screenOrientation="sensor"/>
+            android:screenOrientation="landscape"/>
 
         <!--统计结果界面-->
         <activity
             android:name=".activity.CountActivity"
-            android:screenOrientation="sensor"/>
+            android:screenOrientation="landscape"/>
 
     </application>
 
