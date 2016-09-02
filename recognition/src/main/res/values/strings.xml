@@ -50,6 +50,7 @@
     <string name="tab_indicator_title_picture">照片</string>
 
     <string name="information_incomplete">信息不完整</string>
+    <string name="finger_open_failed">指纹模块打开失败</string>
 
     <string name="save_success">保存成功</string>
     <string name="file_no_exit">文件不存在</string>

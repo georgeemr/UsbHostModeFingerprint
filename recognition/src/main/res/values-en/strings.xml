@@ -45,6 +45,7 @@
     <string name="tab_indicator_title_picture">Picture</string>
 
     <string name="information_incomplete">Incomplete information</string>
+    <string name="finger_open_failed">Fingerprint module failed to open</string>
 
     <string name="save_success">save successfully</string>
     <string name="file_no_exit">file does not exist</string>

@@ -162,7 +162,11 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.bottom_right_bt:
-                if (checkInformation() && mUsbManagerUtil.OpenDevice(0, true)) {
+                boolean openDevice = mUsbManagerUtil.OpenDevice(0, true);
+                if (!openDevice) {
+                    showToast(getString(R.string.finger_open_failed));
+                }
+                if (checkInformation() && openDevice) {
                     startGatherFingerprintActivity();
                 }
                 break;
@@ -304,7 +308,14 @@ public class FillInfoActivity extends AppCompatActivity implements View.OnClickL
     private boolean checkInformation() {
         gatherID = Integer.valueOf(mIDTV.getText().toString());
         gatherName = nameET.getText().toString();
-        mAge = Integer.parseInt(String.valueOf(mAgeET.getText()));
+
+        String age = String.valueOf(mAgeET.getText());
+        if (!StringUtil.hasLength(age)) {
+            showToast(getString(R.string.information_incomplete));
+            return false;
+        }
+        mAge = Integer.parseInt(age);
+
         gatherAddress = addressET.getText().toString();
         gatherGender = mGenderTX.getText().toString();
         gatherBirthday = mBirthdayTX.getText().toString();
