@@ -191,6 +191,10 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
                 parameters.setRotation(180);
             }
 
+            //临时解决图像方向问题
+            mCamera.setDisplayOrientation(180);
+            parameters.setRotation(180);
+
             parameters.setPictureSize(320, 240);//192 144  160 120 240 180 264 198 320 240
             parameters.setPreviewSize(320, 240);
 
