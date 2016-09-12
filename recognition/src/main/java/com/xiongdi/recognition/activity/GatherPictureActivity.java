@@ -194,9 +194,11 @@ public class GatherPictureActivity extends AppCompatActivity implements View.OnC
             //临时解决图像方向问题
             mCamera.setDisplayOrientation(180);
             parameters.setRotation(180);
-
-            parameters.setPictureSize(320, 240);//192 144  160 120 240 180 264 198 320 240
-            parameters.setPreviewSize(320, 240);
+            //解决由于临时解决图像方向问题导致图像变形的问题
+//            parameters.setPictureSize(320, 240);//192 144  160 120 240 180 264 198 320 240
+//            parameters.setPreviewSize(320, 240);
+            parameters.setPictureSize(240, 320);//192 144  160 120 240 180 264 198 320 240
+            parameters.setPreviewSize(240, 320);
 
             mCamera.setParameters(parameters);
             mCamera.startPreview();
